@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_x/get_navigation/src/root/get_material_app.dart';
+import 'package:go_roqit_app/View/Screen/Onboarding/SplashScreen/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,11 +10,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Go Roqit App',
+          theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }
