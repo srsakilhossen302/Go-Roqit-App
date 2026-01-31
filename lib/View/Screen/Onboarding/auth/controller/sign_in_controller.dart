@@ -6,6 +6,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import '../../otp/view/otp_view.dart';
+
 class SignInController extends GetxController {
   var isLoading = false.obs;
 
@@ -26,6 +28,7 @@ class SignInController extends GetxController {
 
     successSnack('Signed in successfully');
     // API CALL => auth/sign-in
+    Get.to(() => const OtpView());
   }
 
   void errorSnack(String msg) {

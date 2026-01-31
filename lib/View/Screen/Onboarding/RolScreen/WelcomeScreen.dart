@@ -16,7 +16,6 @@ class WelcomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-
             SizedBox(height: 200.h),
 
             // Main heading
@@ -55,7 +54,7 @@ class WelcomeScreen extends StatelessWidget {
                 // Looking for work card
                 _buildOptionCard(
                   context: context,
-                  icon: Icons.search,
+                  icon: AppIcons.kachi,
                   title: 'I\'m looking for work',
                   subtitle: 'Find jobs at salons & spas',
                   backgroundColor: Color(0xff1B5E3F),
@@ -69,7 +68,7 @@ class WelcomeScreen extends StatelessWidget {
                 // Hiring for salon card
                 _buildOptionCard(
                   context: context,
-                  icon: Icons.shopping_bag,
+                  icon: AppIcons.salon,
                   title: 'I\'m hiring for my salon',
                   subtitle: 'Find talented professionals',
                   backgroundColor: Colors.white,
@@ -93,7 +92,7 @@ class WelcomeScreen extends StatelessWidget {
 
   Widget _buildOptionCard({
     required BuildContext context,
-    required IconData icon,
+    required String icon,
     required String title,
     required String subtitle,
     required Color backgroundColor,
@@ -134,12 +133,11 @@ class WelcomeScreen extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Icon(
+                child: Image.asset(
                   icon,
                   color: backgroundColor == Colors.white
                       ? Color(0xff1B5E3F)
                       : Colors.white,
-                  size: 28.sp,
                 ),
               ),
             ),

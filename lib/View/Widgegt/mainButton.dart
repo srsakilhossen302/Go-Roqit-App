@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget mainButton({required bool loading, required VoidCallback onTap}) {
+Widget mainButton({
+  required bool loading,
+  required VoidCallback onTap,
+  String text = 'Continue',
+}) {
   return SizedBox(
     height: 56.h,
     width: double.infinity,
@@ -17,7 +21,7 @@ Widget mainButton({required bool loading, required VoidCallback onTap}) {
       child: loading
           ? const CircularProgressIndicator(color: Colors.white)
           : Text(
-              'Continue',
+              text,
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
