@@ -32,6 +32,8 @@ class PortfolioView extends GetView<PortfolioController> {
         ),
         title: Text(
           'Step 5 of 6',
+
+          ///jasjd
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
