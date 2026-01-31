@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import '../../../../Utils/AppIcons/app_icons.dart';
-import 'onboardingScreen.dart';
+import '../OnboardingScreen/onboardingScreen.dart';
+import '../auth/view/auth_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -59,6 +60,7 @@ class WelcomeScreen extends StatelessWidget {
                   subtitle: 'Find jobs at salons & spas',
                   backgroundColor: Color(0xff1B5E3F),
                   onTap: () {
+                    Get.to(() => AuthScreen());
                   },
                 ),
 
@@ -76,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
                   subtitleColor: Color(0xff6B7280),
                   onTap: () {
                     // Navigate to hiring flow
-                    // Get.to(() => HiringScreen());
+                    Get.to(() => AuthScreen());
                   },
                 ),
               ],

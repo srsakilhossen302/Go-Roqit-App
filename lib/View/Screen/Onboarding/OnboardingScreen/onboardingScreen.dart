@@ -6,7 +6,7 @@ import 'package:get_x/get_navigation/src/extension_navigation.dart';
 
 import 'OnboardingData.dart';
 import 'OnboardingPage.dart';
-import 'WelcomeScreen.dart';
+import '../RolScreen/WelcomeScreen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
