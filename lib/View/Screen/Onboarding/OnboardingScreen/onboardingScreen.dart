@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 
 import 'OnboardingData.dart';
 import 'OnboardingPage.dart';
@@ -21,24 +22,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<OnboardingData> _pages = [
     OnboardingData(
-      icon: Icons.search,
+      icon: AppIcons.search,
       title: 'Find Work Fast',
       description:
           'Find jobs curated specifically for\nyour skills and experience',
-      imagePath: 'assets/images/Find Work Fast.png', // Replace with your image
+      imagePath: "assets/images/Find Work Fast.png", // Replace with your image
     ),
     OnboardingData(
-      icon: Icons.favorite,
+      icon: AppIcons.love,
       title: 'Swipe to Apply',
       description:
           'Swipe right to apply instantly, left to\nskip - it\'s that simple',
-      imagePath: 'assets/images/Swipe to Apply.png', // Replace with your image
+      imagePath: "assets/images/Swipe to Apply.png", // Replace with your image
     ),
     OnboardingData(
-      icon: Icons.chat_bubble_outline,
+      icon: AppIcons.message,
       title: 'Track & Connect',
       description: 'Track your applications and chat\ndirectly with recruiters',
-      imagePath: 'assets/images/Track & Connect.png', // Replace with your image
+      imagePath:
+          "assets/images/Image (Connect & Hire).png", // Replace with your image
     ),
   ];
 
@@ -57,7 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: EdgeInsets.only(right: 24.w, top: 16.h),
                 child: TextButton(
                   onPressed: () {
-                   Get.offAll(()=> WelcomeScreen());
+                    Get.offAll(() => WelcomeScreen());
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: const Color(0xFFE8F5E9), // Light green bg
@@ -134,7 +136,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      Get.offAll(()=> WelcomeScreen());
+                      Get.offAll(() => WelcomeScreen());
                     }
                   },
                   style: ElevatedButton.styleFrom(

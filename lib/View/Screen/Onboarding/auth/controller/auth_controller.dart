@@ -4,9 +4,6 @@ import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 class AuthController extends GetxController {
   var isSignIn = true.obs;
 
-///dkldklskldfs dfslk;fds dfsmfd mkldfs
-  ///jfklgkl //sdfkjldfskjdsf // fkjdklfklfhghfgh
-
   void switchTab(bool value) {
     isSignIn.value = value;
   }

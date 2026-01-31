@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class OnboardingData {
-  final IconData icon;
+  final String icon;
   final String title;
   final String description;
   final String imagePath;
