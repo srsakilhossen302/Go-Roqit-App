@@ -14,7 +14,7 @@ Widget mainButton({
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF1B5E3F),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28.r),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         elevation: 0,
       ),

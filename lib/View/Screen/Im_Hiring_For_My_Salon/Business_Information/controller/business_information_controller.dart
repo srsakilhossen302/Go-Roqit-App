@@ -5,6 +5,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import '../../Business_Profile/view/business_profile_view.dart';
+
 class BusinessInformationController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -60,7 +62,7 @@ class BusinessInformationController extends GetxController {
       );
 
       // Navigate to Next Step (Step 2 of 3)
-      // Get.to(() => NextStepView());
+      Get.to(() => BusinessProfileView());
     });
   }
 }
