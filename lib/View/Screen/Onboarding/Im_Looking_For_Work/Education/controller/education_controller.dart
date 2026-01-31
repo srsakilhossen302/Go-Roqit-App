@@ -5,6 +5,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import '../../Work_Experience/view/work_experience_view.dart';
+
 class EducationController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -84,7 +86,7 @@ class EducationController extends GetxController {
       );
 
       // Navigate to next step
-      // Get.to(() => NextStepView());
+      Get.to(() => const WorkExperienceView());
     });
   }
 
