@@ -7,7 +7,7 @@ Widget mainButton({
   String text = 'Continue',
 }) {
   return SizedBox(
-    height: 56.h,
+    height: 48.h,
     width: double.infinity,
     child: ElevatedButton(
       onPressed: loading ? null : onTap,

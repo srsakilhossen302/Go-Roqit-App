@@ -280,7 +280,7 @@ class PersonalInformationView extends GetView<PersonalInformationController> {
                 children: [
                   SizedBox(
                     width: 100.w,
-                    height: 56.h,
+                    height: 48.h,
                     child: OutlinedButton(
                       onPressed: controller.skipStep,
                       style: OutlinedButton.styleFrom(
