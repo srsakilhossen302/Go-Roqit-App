@@ -12,15 +12,17 @@ Widget textField(
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 14.sp,
-          color: const Color(0xFF1A1A1A),
+      if (label.isNotEmpty) ...[
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 14.sp,
+            color: const Color(0xFF1A1A1A),
+          ),
         ),
-      ),
-      SizedBox(height: 8.h),
+        SizedBox(height: 8.h),
+      ],
       TextField(
         controller: controller,
         obscureText: obscure,

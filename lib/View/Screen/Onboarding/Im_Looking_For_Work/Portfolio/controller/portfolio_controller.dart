@@ -5,6 +5,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import '../../Additional_Information/view/additional_information_view.dart';
+
 class PortfolioController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -70,7 +72,7 @@ class PortfolioController extends GetxController {
       );
 
       // Navigate to next step
-      // Get.to(() => NextStepView());
+      Get.to(() => const AdditionalInformationView());
     });
   }
 
