@@ -5,6 +5,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import '../../Portfolio/view/portfolio_view.dart';
+
 class WorkExperienceController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -118,7 +120,7 @@ class WorkExperienceController extends GetxController {
       );
 
       // Navigate to next step
-      // Get.to(() => NextStepView());
+      Get.to(() => const PortfolioView());
     });
   }
 
