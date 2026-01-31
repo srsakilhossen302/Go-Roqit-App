@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_instance/src/extension_instance.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get_x/get_state_manager/src/simple/get_view.dart';
 import 'package:pinput/pinput.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
@@ -75,13 +76,16 @@ class OtpView extends GetView<OtpController> {
               ),
             ),
             SizedBox(height: 8.h),
-            Text(
-              'Enter the 4-Digit code sent to you at event@gmail.com',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w400,
-                height: 1.5,
+            SizedBox(height: 8.h),
+            Obx(
+              () => Text(
+                'Enter the 4-Digit code sent to you at ${controller.email.value}',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w400,
+                  height: 1.5,
+                ),
               ),
             ),
             SizedBox(height: 32.h),

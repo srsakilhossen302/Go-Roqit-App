@@ -36,7 +36,7 @@ class SignUpController extends GetxController {
 
     successSnack('Account created successfully');
     // API CALL => auth/sign-up
-    Get.to(() => const OtpView());
+    Get.to(() => const OtpView(), arguments: signUpEmail.text);
   }
 
   void errorSnack(String msg) {

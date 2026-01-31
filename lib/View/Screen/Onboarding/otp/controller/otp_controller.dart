@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+
+import '../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 
 class OtpController extends GetxController {
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
+
+  var email = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    email.value = Get.arguments.toString();
+  }
 
   @override
   void onClose() {
@@ -27,6 +38,7 @@ class OtpController extends GetxController {
           colorText: Colors.white,
         );
         // API CALL => Verify OTP
+        Get.to(() => const PersonalInformationView());
       } else {
         Get.snackbar(
           'Error',

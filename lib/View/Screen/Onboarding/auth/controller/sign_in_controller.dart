@@ -28,7 +28,7 @@ class SignInController extends GetxController {
 
     successSnack('Signed in successfully');
     // API CALL => auth/sign-in
-    Get.to(() => const OtpView());
+    Get.to(() => const OtpView(), arguments: signInEmail.text);
   }
 
   void errorSnack(String msg) {

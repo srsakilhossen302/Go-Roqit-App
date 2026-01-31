@@ -6,6 +6,8 @@ Widget textField(
   TextEditingController controller, {
   bool obscure = false,
   String? hintText,
+  bool readOnly = false,
+  VoidCallback? onTap,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,6 +24,8 @@ Widget textField(
       TextField(
         controller: controller,
         obscureText: obscure,
+        readOnly: readOnly,
+        onTap: onTap,
         style: TextStyle(fontSize: 14.sp, color: Colors.black),
         decoration: InputDecoration(
           hintText: hintText,
