@@ -5,6 +5,7 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../Hiring_Preferences/view/hiring_preferences_view.dart';
 
 class BusinessProfileController extends GetxController {
   /// OBSERVABLES
@@ -76,7 +77,7 @@ class BusinessProfileController extends GetxController {
       );
 
       // Navigate to Next Step (Step 3 of 3)
-      // Get.to(() => Step3View());
+      Get.to(() => const HiringPreferencesView());
     });
   }
 }
