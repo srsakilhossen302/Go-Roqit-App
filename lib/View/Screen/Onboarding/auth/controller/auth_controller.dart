@@ -5,7 +5,7 @@ class AuthController extends GetxController {
   var isSignIn = true.obs;
 
 
-  ///jfklgkl
+  ///jfklgkl //sdfkjldfskjdsf
 
   void switchTab(bool value) {
     isSignIn.value = value;
