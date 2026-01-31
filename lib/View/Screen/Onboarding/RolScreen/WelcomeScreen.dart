@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import '../../../../Utils/AppIcons/app_icons.dart';
-import '../OnboardingScreen/onboardingScreen.dart';
 import '../auth/view/auth_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -14,137 +14,133 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 200.h),
-
-            // Main heading
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Title
+              Text(
                 'I want to...',
                 style: TextStyle(
                   fontSize: 32.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xff111827),
-                  height: 1.2,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xff111827),
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
-
-            // Subheading
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-              child: Text(
+              SizedBox(height: 12.h),
+              // Subtitle
+              Text(
                 'Choose how you\'d like to use Roqit',
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff6B7280),
+                  color: Colors.grey[600],
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
+              SizedBox(height: 40.h),
 
-            // Cards section
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Looking for work card
-                _buildOptionCard(
-                  context: context,
-                  icon: AppIcons.kachi,
-                  title: 'I\'m looking for work',
-                  subtitle: 'Find jobs at salons & spas',
-                  backgroundColor: Color(0xff1B5E3F),
-                  onTap: () {
-                    Get.to(() => AuthScreen());
-                  },
-                ),
+              // Option 1: I'm looking for work
+              _buildOptionCard(
+                icon: AppIcons.kachi, // Assuming scissor icon
+                title: "I'm looking for work",
+                subtitle: "Find jobs at salons & spas",
+                backgroundColor: const Color(0xFF1B5E3F),
+                textColor: Colors.white,
+                subtitleColor: Colors.white.withOpacity(0.8),
+                iconBgColor: Colors.white.withOpacity(0.2),
+                iconColor: Colors.white,
+                onTap: () async {
+                  print("Tap: Looking for work. Saving role: user");
+                  await SharePrefsHelper.setString(
+                    SharedPreferenceValue.role,
+                    'user',
+                  );
+                  print(SharedPreferenceValue.role);
+                  print("Role Saved. Navigating to Auth.");
+                  Get.to(() => const AuthScreen());
+                },
+              ),
 
-                SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
 
-                // Hiring for salon card
-                _buildOptionCard(
-                  context: context,
-                  icon: AppIcons.salon,
-                  title: 'I\'m hiring for my salon',
-                  subtitle: 'Find talented professionals',
-                  backgroundColor: Colors.white,
-                  borderColor: Color(0xffE5E7EB),
-                  textColor: Color(0xff111827),
-                  subtitleColor: Color(0xff6B7280),
-                  onTap: () {
-                    // Navigate to hiring flow
-                    Get.to(() => AuthScreen());
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 60.h),
-          ],
+              // Option 2: I'm hiring for my salon
+              _buildOptionCard(
+                icon: AppIcons.salon, // Assuming shop/salon icon
+                title: "I'm hiring for my salon",
+                subtitle: "Find talented professionals",
+                backgroundColor: Colors.white,
+                borderColor: const Color(0xFF1B5E3F),
+                textColor: const Color(0xFF1B5E3F),
+                subtitleColor: Colors.grey[600]!,
+                iconBgColor: const Color(0xFFE8F5E9), // Light green tint
+                iconColor: const Color(0xFF1B5E3F),
+                onTap: () async {
+                  print("Tap: Hiring for salon. Saving role: hiring");
+                  await SharePrefsHelper.setString(
+                    SharedPreferenceValue.role,
+                    'hiring',
+                  );
+                  print(SharedPreferenceValue.role);
+                  print("Role Saved. Navigating to Auth.");
+                  Get.to(() => const AuthScreen());
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildOptionCard({
-    required BuildContext context,
     required String icon,
     required String title,
     required String subtitle,
     required Color backgroundColor,
+    required Color textColor,
+    required Color subtitleColor,
+    required Color iconBgColor,
+    required Color iconColor,
     Color? borderColor,
-    Color textColor = Colors.white,
-    Color subtitleColor = Colors.white70,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 24.w),
-        padding: EdgeInsets.all(20.w),
+        width: double.infinity,
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: backgroundColor,
+          borderRadius: BorderRadius.circular(16.r),
           border: borderColor != null
-              ? Border.all(color: borderColor, width: 1.5.w)
-              : null,
-          borderRadius: BorderRadius.circular(20.r),
+              ? Border.all(color: borderColor, width: 1.w)
+              : Border.all(color: Colors.transparent),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10.r,
-              offset: Offset(0, 4.h),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
-            // Icon container
+            // Icon Box
             Container(
-              width: 56.w,
               height: 56.w,
+              width: 56.w,
               decoration: BoxDecoration(
-                color: backgroundColor == Colors.white
-                    ? Color(0xffF3F4F6)
-                    : Colors.white.withOpacity(0.2),
-                shape: BoxShape.circle,
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Center(
-                child: Image.asset(
-                  icon,
-                  color: backgroundColor == Colors.white
-                      ? Color(0xff1B5E3F)
-                      : Colors.white,
-                ),
-              ),
+              padding: EdgeInsets.all(14.w),
+              child: Image.asset(icon, color: iconColor),
             ),
-
             SizedBox(width: 16.w),
-
-            // Text content
+            // Text Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +149,7 @@ class WelcomeScreen extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: textColor,
                     ),
                   ),
@@ -161,22 +157,13 @@ class WelcomeScreen extends StatelessWidget {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: 13.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                       color: subtitleColor,
                     ),
                   ),
                 ],
               ),
-            ),
-
-            // Arrow icon
-            Icon(
-              Icons.arrow_forward_ios,
-              color: backgroundColor == Colors.white
-                  ? Color(0xffD1D5DB)
-                  : Colors.white24,
-              size: 16.sp,
             ),
           ],
         ),
