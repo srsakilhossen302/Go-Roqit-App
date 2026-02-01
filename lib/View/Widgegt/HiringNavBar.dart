@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Recruiter_Panel/view/recruiter_panel_view.dart';
+import '../Screen/Im_Hiring_For_My_Salon/Job_Posts/view/job_posts_view.dart';
 // Import other views when created
 
 class HiringNavBar extends StatelessWidget {
@@ -45,8 +46,11 @@ class HiringNavBar extends StatelessWidget {
               icon: AppIcons.jobsNav,
               label: 'Jobs',
               onTap: () {
-                // Get.off(() => JobsView(), transition: Transition.fadeIn);
-                if (selectedIndex != 1) print("Navigate to Jobs");
+                if (selectedIndex != 1)
+                  Get.off(
+                    () => const JobPostsView(),
+                    transition: Transition.fadeIn,
+                  );
               },
             ),
             _buildNavItem(
