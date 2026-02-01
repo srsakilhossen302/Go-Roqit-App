@@ -1,6 +1,7 @@
 class JobPostModel {
   final String id;
   final String title;
+  final String roleType; // Barber, Stylist, etc.
   final String employmentType; // Full-time, Part-time, etc.
   final String location;
   final String salaryRange;
@@ -14,6 +15,7 @@ class JobPostModel {
   JobPostModel({
     required this.id,
     required this.title,
+    required this.roleType,
     required this.employmentType,
     required this.location,
     required this.salaryRange,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
-import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
+
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
 import '../controller/job_posts_controller.dart';
 import '../model/job_post_model.dart';
+import '../../Post_Job/view/post_job_view.dart';
 
 class JobPostsView extends GetView<JobPostsController> {
   const JobPostsView({super.key});
@@ -24,7 +25,7 @@ class JobPostsView extends GetView<JobPostsController> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to Create post logic
+          Get.to(() => const PostJobView());
         },
         backgroundColor: const Color(0xFF1B5E3F),
         shape: RoundedRectangleBorder(
