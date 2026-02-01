@@ -5,6 +5,7 @@ Widget mainButton({
   required bool loading,
   required VoidCallback onTap,
   String text = 'Continue',
+  IconData? icon,
 }) {
   return SizedBox(
     height: 48.h,
@@ -20,13 +21,22 @@ Widget mainButton({
       ),
       child: loading
           ? const CircularProgressIndicator(color: Colors.white)
-          : Text(
-              text,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: Colors.white, size: 20.sp),
+                  SizedBox(width: 8.w),
+                ],
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
     ),
   );

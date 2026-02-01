@@ -4,6 +4,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import '../controller/recruiter_panel_controller.dart';
 import '../model/recruiter_models.dart';
+import '../../Choose_Plan/view/choose_plan_view.dart';
 import '../../Notification/view/notification_view.dart';
 import '../../../../Widgegt/HiringNavBar.dart';
 
@@ -60,21 +61,26 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                       ),
                       Row(
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Text(
-                              'Free',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1B5E3F),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => const ChoosePlanView());
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Text(
+                                'Free',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1B5E3F),
+                                ),
                               ),
                             ),
                           ),
