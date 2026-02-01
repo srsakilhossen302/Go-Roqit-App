@@ -12,6 +12,12 @@ class JobPostModel {
   final String description;
   final List<String> requirements;
 
+  final String minSalary;
+  final String maxSalary;
+  final String salaryType; // per year, per hour
+  final String benefits;
+  final String workSchedule;
+
   JobPostModel({
     required this.id,
     required this.title,
@@ -24,5 +30,10 @@ class JobPostModel {
     this.status = 'Open',
     this.description = '',
     this.requirements = const [],
+    this.minSalary = '',
+    this.maxSalary = '',
+    this.salaryType = 'per year',
+    this.benefits = '',
+    this.workSchedule = '',
   });
 }
