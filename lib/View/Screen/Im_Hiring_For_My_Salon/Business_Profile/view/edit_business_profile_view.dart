@@ -13,6 +13,7 @@ class EditBusinessProfileView extends GetView<BusinessProfileController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: Text(
           'Edit Profile',
           style: TextStyle(
@@ -389,16 +390,19 @@ class EditBusinessProfileView extends GetView<BusinessProfileController> {
 
   Widget _buildGalleryItem(String imageUrl) {
     final isNetwork = imageUrl.startsWith('http');
-    return Container(
-      width: 100.w,
-      height: 100.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        image: DecorationImage(
-          image: isNetwork
-              ? NetworkImage(imageUrl)
-              : FileImage(File(imageUrl)) as ImageProvider,
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: controller.pickGalleryImage,
+      child: Container(
+        width: 100.w,
+        height: 100.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          image: DecorationImage(
+            image: isNetwork
+                ? NetworkImage(imageUrl)
+                : FileImage(File(imageUrl)) as ImageProvider,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

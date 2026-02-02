@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
 import '../model/application_model.dart';
+import 'package:go_roqit_app/View/Widgegt/full_screen_image_viewer.dart';
 
 class ApplicationDetailsView extends StatelessWidget {
   const ApplicationDetailsView({super.key});
@@ -14,6 +16,7 @@ class ApplicationDetailsView extends StatelessWidget {
       backgroundColor: const Color(0xFFF9FAFB), // Light grey background
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Container(
@@ -598,6 +601,7 @@ class ApplicationDetailsView extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const HiringNavBar(selectedIndex: 2),
     );
   }
 
@@ -971,22 +975,34 @@ class ApplicationDetailsView extends StatelessWidget {
               return Wrap(
                 spacing: gap,
                 runSpacing: gap,
-                children: item.images.map((imgUrl) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Image.network(
-                      imgUrl,
-                      width: itemSize,
-                      height: itemSize,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                children: item.images.asMap().entries.map((entry) {
+                  final int index = entry.key;
+                  final String imgUrl = entry.value;
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(
+                        () => FullScreenImageViewer(
+                          imageUrls: item.images,
+                          initialIndex: index,
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Image.network(
+                        imgUrl,
                         width: itemSize,
                         height: itemSize,
-                        color: Colors.grey.shade200,
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 20.sp,
-                          color: Colors.grey,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: itemSize,
+                          height: itemSize,
+                          color: Colors.grey.shade200,
+                          child: Icon(
+                            Icons.broken_image,
+                            size: 20.sp,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),

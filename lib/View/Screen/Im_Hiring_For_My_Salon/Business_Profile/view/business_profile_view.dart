@@ -8,6 +8,7 @@ import 'package:go_roqit_app/View/Screen/Onboarding/auth/view/auth_screen.dart';
 import 'edit_business_profile_view.dart';
 
 import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
+import 'package:go_roqit_app/View/Widgegt/full_screen_image_viewer.dart';
 
 class BusinessProfileView extends GetView<BusinessProfileController> {
   const BusinessProfileView({super.key});
@@ -403,15 +404,30 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                   ),
                   SizedBox(height: 12.h),
                   Row(
-                    children: profile.galleryImages.map((img) {
+                    children: profile.galleryImages.asMap().entries.map((
+                      entry,
+                    ) {
+                      final int index = entry.key;
+                      final String img = entry.value;
                       return Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 8.w),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: Image.network(img, fit: BoxFit.cover),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Using Get.to for navigation to full screen viewer
+                            Get.to(
+                              () => FullScreenImageViewer(
+                                imageUrls: profile.galleryImages,
+                                initialIndex: index,
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Image.network(img, fit: BoxFit.cover),
+                              ),
                             ),
                           ),
                         ),
