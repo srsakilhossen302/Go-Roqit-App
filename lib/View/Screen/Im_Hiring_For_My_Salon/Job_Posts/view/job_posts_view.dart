@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
-
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
 import '../controller/job_posts_controller.dart';
 import '../model/job_post_model.dart';
 import '../../Post_Job/view/post_job_view.dart';
+import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
 
 class JobPostsView extends GetView<JobPostsController> {
   const JobPostsView({super.key});
@@ -103,16 +103,19 @@ class JobPostsView extends GetView<JobPostsController> {
                   if (controller.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return ListView.separated(
-                    itemCount: controller.activeJobPosts.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 16.h),
-                    itemBuilder: (context, index) {
-                      return _buildJobPostCard(
-                        context,
-                        controller.activeJobPosts[index],
-                      );
-                    },
+                  return MyRefreshIndicator(
+                    onRefresh: controller.refreshJobs,
+                    child: ListView.separated(
+                      itemCount: controller.activeJobPosts.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 16.h),
+                      itemBuilder: (context, index) {
+                        return _buildJobPostCard(
+                          context,
+                          controller.activeJobPosts[index],
+                        );
+                      },
+                    ),
                   );
                 }),
               ),

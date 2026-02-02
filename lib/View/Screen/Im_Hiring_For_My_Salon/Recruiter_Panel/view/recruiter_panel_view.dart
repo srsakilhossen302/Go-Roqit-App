@@ -7,6 +7,7 @@ import '../model/recruiter_models.dart';
 import '../../Choose_Plan/view/choose_plan_view.dart';
 import '../../Notification/view/notification_view.dart';
 import '../../../../Widgegt/HiringNavBar.dart';
+import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
 
 class RecruiterPanelView extends GetView<RecruiterPanelController> {
   const RecruiterPanelView({super.key});
@@ -18,380 +19,383 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
     return Scaffold(
       bottomNavigationBar: const HiringNavBar(selectedIndex: 0),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 1. Header Section (Green Background)
-            Container(
-              padding: EdgeInsets.fromLTRB(
-                24.w,
-                50.h,
-                24.w,
-                40.h,
-              ), // Extra padding at bottom for overlap
-              decoration: const BoxDecoration(
-                color: Color(0xFF0F5F3E), // Theme Green
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Top Row: Title + Badges
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Recruiter Panel',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            'Manage hiring',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => const ChoosePlanView());
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
+      body: MyRefreshIndicator(
+        onRefresh: controller.refreshDashboard,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // 1. Header Section (Green Background)
+              Container(
+                padding: EdgeInsets.fromLTRB(
+                  24.w,
+                  50.h,
+                  24.w,
+                  40.h,
+                ), // Extra padding at bottom for overlap
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0F5F3E), // Theme Green
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Row: Title + Badges
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Recruiter Panel',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20.r),
                               ),
-                              child: Text(
-                                'Free',
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.bold,
+                            ),
+                            Text(
+                              'Manage hiring',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => const ChoosePlanView());
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Text(
+                                  'Free',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF1B5E3F),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => const NotificationView());
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  AppIcons.notification,
                                   color: const Color(0xFF1B5E3F),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 12.w),
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => const NotificationView());
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8.w),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Image.asset(
-                                AppIcons.notification,
-                                color: const Color(0xFF1B5E3F),
-                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 20.h),
+
+                    // Profile Info
+                    Row(
+                      children: [
+                        Container(
+                          width: 50.w,
+                          height: 50.w,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.r),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                'https://i.pravatar.cc/150?u=salon_logo',
+                              ), // Placeholder
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  // Profile Info
-                  Row(
-                    children: [
-                      Container(
-                        width: 50.w,
-                        height: 50.w,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.r),
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                              'https://i.pravatar.cc/150?u=salon_logo',
-                            ), // Placeholder
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Glow Beauty Salon',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                        SizedBox(width: 10.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Glow Beauty Salon',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Recruiter',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.white70,
+                            Text(
+                              'Recruiter',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.white70,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    'Welcome back! Here\'s your recruitment overview.',
-                    style: TextStyle(fontSize: 12.sp, color: Colors.white70),
-                  ),
-                ],
-              ),
-            ),
-
-            // 2. Overlapping Stats Cards
-            Transform.translate(
-              offset: const Offset(0, -25),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Row(
-                  children: [
-                    _buildStatCard(
-                      icon: AppIcons.workOutline,
-                      value: controller.totalJobs.toString(),
-                      label: 'Total Jobs',
-                      iconColor: Colors.blueAccent,
-                      bgColor: Colors.blue.shade50,
+                          ],
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 16.w),
-                    _buildStatCard(
-                      icon: AppIcons.peopleOutline,
-                      value: controller.applicants.toString(),
-                      label: 'Applicants',
-                      iconColor: const Color(0xff0F5F3E),
-                      bgColor: Colors.green.shade50,
-                      trend: '+12%',
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Welcome back! Here\'s your recruitment overview.',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.white70),
                     ),
                   ],
                 ),
               ),
-            ),
 
-            // 3. Quick Actions
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Quick Actions',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Row(
+              // 2. Overlapping Stats Cards
+              Transform.translate(
+                offset: const Offset(0, -25),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Row(
                     children: [
-                      // Post Job Card (Dark Green)
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(16.w),
-                          height: 120.h,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1B5E3F),
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 20.sp,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Post Job',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Create new posting',
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                      _buildStatCard(
+                        icon: AppIcons.workOutline,
+                        value: controller.totalJobs.toString(),
+                        label: 'Total Jobs',
+                        iconColor: Colors.blueAccent,
+                        bgColor: Colors.blue.shade50,
                       ),
                       SizedBox(width: 16.w),
-                      // Applications Card (White)
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(16.w),
-                          height: 120.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(color: Colors.grey.shade200),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                spreadRadius: 0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade50,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.remove_red_eye_outlined,
-                                  color: Colors.blueAccent,
-                                  size: 20.sp,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Applications',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Review 45 pending',
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                      _buildStatCard(
+                        icon: AppIcons.peopleOutline,
+                        value: controller.applicants.toString(),
+                        label: 'Applicants',
+                        iconColor: const Color(0xff0F5F3E),
+                        bgColor: Colors.green.shade50,
+                        trend: '+12%',
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
 
-            SizedBox(height: 24.h),
-
-            // 4. Recent Applications
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Recent Applications',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              // 3. Quick Actions
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Quick Actions',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return Column(
-                      children: controller.recentApplications
-                          .map((app) => _buildApplicationItem(app))
-                          .toList(),
-                    );
-                  }),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 24.h),
-
-            // 5. Top Performing Jobs
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Top Performing Jobs',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: Colors.grey.shade200),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 4),
+                    SizedBox(height: 12.h),
+                    Row(
+                      children: [
+                        // Post Job Card (Dark Green)
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1B5E3F),
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 20.sp,
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Post Job',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Create new posting',
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        // Applications Card (White)
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(color: Colors.grey.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade50,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.remove_red_eye_outlined,
+                                    color: Colors.blueAccent,
+                                    size: 20.sp,
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Applications',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Review 45 pending',
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    child: Obx(() {
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 24.h),
+
+              // 4. Recent Applications
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recent Applications',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
                       return Column(
-                        children: controller.topPerformingJobs
-                            .map((job) => _buildJobPerformanceItem(job))
+                        children: controller.recentApplications
+                            .map((app) => _buildApplicationItem(app))
                             .toList(),
                       );
                     }),
-                  ),
-                  SizedBox(height: 40.h),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              SizedBox(height: 24.h),
+
+              // 5. Top Performing Jobs
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Top Performing Jobs',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Obx(() {
+                        return Column(
+                          children: controller.topPerformingJobs
+                              .map((job) => _buildJobPerformanceItem(job))
+                              .toList(),
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 40.h),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

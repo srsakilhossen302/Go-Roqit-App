@@ -70,4 +70,11 @@ class RecruiterPanelController extends GetxController {
       isLoading.value = false;
     });
   }
+
+  Future<void> refreshDashboard() async {
+    isLoading.value = true;
+    // Simulate API Call
+    await Future.delayed(const Duration(seconds: 1));
+    fetchDashboardData();
+  }
 }
