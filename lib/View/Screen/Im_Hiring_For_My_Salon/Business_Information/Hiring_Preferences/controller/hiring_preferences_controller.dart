@@ -4,7 +4,7 @@ import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
-import '../../Recruiter_Panel/view/recruiter_panel_view.dart';
+import '../../../Recruiter_Panel/view/recruiter_panel_view.dart';
 
 class HiringPreferencesController extends GetxController {
   var isLoading = false.obs;
