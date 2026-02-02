@@ -128,4 +128,10 @@ class JobPostsController extends GetxController {
     activeJobPosts.removeWhere((job) => job.id == id);
     Get.snackbar('Deleted', 'Job post removed');
   }
+
+  Future<void> refreshJobs() async {
+    isLoading.value = true;
+    await Future.delayed(const Duration(seconds: 1));
+    loadJobPosts();
+  }
 }
