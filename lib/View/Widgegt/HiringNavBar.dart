@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
+import 'package:go_roqit_app/View/Screen/Chat/view/chat_home_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Recruiter_Panel/view/recruiter_panel_view.dart';
 import '../Screen/Im_Hiring_For_My_Salon/Job_Posts/view/job_posts_view.dart';
 import '../Screen/Im_Hiring_For_My_Salon/Applications/view/applications_view.dart';
+import '../Screen/Im_Hiring_For_My_Salon/Business_Profile/view/business_profile_view.dart';
 // Import other views when created
 
 class HiringNavBar extends StatelessWidget {
@@ -71,8 +73,12 @@ class HiringNavBar extends StatelessWidget {
               icon: AppIcons.message,
               label: 'Messages',
               onTap: () {
-                // Get.off(() => MessagesView(), transition: Transition.fadeIn);
-                if (selectedIndex != 3) print("Navigate to Messages");
+                if (selectedIndex != 3) {
+                  Get.off(
+                    () => const ChatHomeView(),
+                    transition: Transition.fadeIn,
+                  );
+                }
               },
             ),
             _buildNavItem(
@@ -80,8 +86,12 @@ class HiringNavBar extends StatelessWidget {
               icon: AppIcons.businessNav,
               label: 'Business',
               onTap: () {
-                // Get.off(() => BusinessView(), transition: Transition.fadeIn);
-                if (selectedIndex != 4) print("Navigate to Business");
+                if (selectedIndex != 4) {
+                  Get.off(
+                    () => const BusinessProfileView(),
+                    transition: Transition.fadeIn,
+                  );
+                }
               },
             ),
           ],
