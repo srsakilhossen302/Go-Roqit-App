@@ -4,6 +4,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Recruiter_Panel/view/recruiter_panel_view.dart';
 import '../Screen/Im_Hiring_For_My_Salon/Job_Posts/view/job_posts_view.dart';
+import '../Screen/Im_Hiring_For_My_Salon/Applications/view/applications_view.dart';
 // Import other views when created
 
 class HiringNavBar extends StatelessWidget {
@@ -58,8 +59,11 @@ class HiringNavBar extends StatelessWidget {
               icon: AppIcons.applicationsNav,
               label: 'Applications',
               onTap: () {
-                // Get.off(() => ApplicationsView(), transition: Transition.fadeIn);
-                if (selectedIndex != 2) print("Navigate to Applications");
+                if (selectedIndex != 2)
+                  Get.off(
+                    () => const ApplicationsView(),
+                    transition: Transition.fadeIn,
+                  );
               },
             ),
             _buildNavItem(
