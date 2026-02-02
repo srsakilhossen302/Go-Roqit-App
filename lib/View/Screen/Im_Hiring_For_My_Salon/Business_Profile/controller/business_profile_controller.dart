@@ -1,83 +1,180 @@
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../Hiring_Preferences/view/hiring_preferences_view.dart';
+import '../model/business_profile_model.dart';
 
 class BusinessProfileController extends GetxController {
-  /// OBSERVABLES
-  var isLoading = false.obs;
-  var selectedBusinessType = ''.obs; // 'Salon', 'Barbershop', 'Spa', 'Mobile'
+  final ImagePicker _picker = ImagePicker();
 
-  // List to hold image paths or objects. Using String for paths for now.
-  // We have 3 slots.
-  var galleryImages = <String?>[null, null, null].obs;
+  final isLoading = false.obs;
+  final profile = Rxn<BusinessProfileModel>();
 
-  /// TEXT CONTROLLERS
-  final aboutController = TextEditingController();
+  @override
+  void onInit() {
+    super.onInit();
+    loadProfile();
+  }
 
-  /// Constants for Business Types
-  final List<String> businessTypes = ['Salon', 'Barbershop', 'Spa', 'Mobile'];
+  // Form Controllers
+  final nameController = TextEditingController();
+  final categoryController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final websiteController = TextEditingController();
+  final locationController = TextEditingController();
+
+  // Social Media Controllers
+  final linkedinController = TextEditingController();
+  final twitterController = TextEditingController();
+  final facebookController = TextEditingController();
+  final instagramController = TextEditingController();
+
+  final logoPath = Rxn<String>();
+  final galleryImages = <String>[].obs;
+
+  Future<void> refreshProfile() async {
+    isLoading.value = true;
+    await Future.delayed(const Duration(seconds: 1));
+    loadProfile();
+  }
+
+  void loadProfile() {
+    isLoading.value = true;
+
+    // Simulate API delay
+    Future.delayed(const Duration(seconds: 1), () {
+      final mockProfile = BusinessProfileModel(
+        name: 'Glow Beauty Salon',
+        category: 'Beauty Salon',
+        description:
+            'Premium beauty and wellness services in the heart of London. We specialize in hair styling, coloring, and treatments with over 15 years of experience.',
+        logoUrl: 'https://i.pravatar.cc/150?u=glow_logo',
+        // Placeholder
+        coverUrl: 'https://picsum.photos/800/200',
+        // Placeholder
+        contactInfo: ContactInfo(
+          email: 'careers@glowbeauty.co.uk',
+          phone: '+44 20 7946 0123',
+          website: 'https://www.glowbeauty.co.uk',
+          location: 'London, UK',
+        ),
+        socialLinks: SocialLinks(
+          linkedin: 'https://linkedin.com/company/glowbeauty',
+          twitter: 'https://twitter.com/glowbeauty',
+          facebook: 'https://facebook.com/glowbeauty',
+          instagram: 'https://instagram.com/glowbeauty',
+        ),
+        galleryImages: [
+          'https://picsum.photos/200/200?random=1',
+          'https://picsum.photos/200/200?random=2',
+          'https://picsum.photos/200/200?random=3',
+        ],
+      );
+
+      profile.value = mockProfile;
+      _populateFields(mockProfile);
+      isLoading.value = false;
+    });
+  }
+
+  void _populateFields(BusinessProfileModel? data) {
+    if (data == null) return;
+
+    nameController.text = data.name;
+    categoryController.text = data.category;
+    descriptionController.text = data.description;
+    emailController.text = data.contactInfo.email;
+    phoneController.text = data.contactInfo.phone;
+    websiteController.text = data.contactInfo.website;
+    locationController.text = data.contactInfo.location;
+
+    linkedinController.text = data.socialLinks.linkedin;
+    twitterController.text = data.socialLinks.twitter;
+    facebookController.text = data.socialLinks.facebook;
+    instagramController.text = data.socialLinks.instagram;
+
+    logoPath.value = data.logoUrl;
+    galleryImages.assignAll(data.galleryImages);
+  }
+
+  Future<void> pickLogo() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        logoPath.value = image.path;
+        Get.snackbar('Success', 'Logo selected successfully');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick logo: $e');
+    }
+  }
+
+  Future<void> pickGalleryImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        galleryImages.add(image.path);
+        Get.snackbar('Success', 'Image added to gallery');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick image: $e');
+    }
+  }
+
+  Future<void> saveProfile() async {
+    isLoading.value = true;
+
+    // Simulate API POST request
+    print("Saving profile data...");
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Update local model
+    profile.value = BusinessProfileModel(
+      name: nameController.text,
+      category: categoryController.text,
+      description: descriptionController.text,
+      logoUrl: logoPath.value ?? '',
+      coverUrl: profile.value?.coverUrl ?? '',
+      // Keep existing cover
+      contactInfo: ContactInfo(
+        email: emailController.text,
+        phone: phoneController.text,
+        website: websiteController.text,
+        location: locationController.text,
+      ),
+      socialLinks: SocialLinks(
+        linkedin: linkedinController.text,
+        twitter: twitterController.text,
+        facebook: facebookController.text,
+        instagram: instagramController.text,
+      ),
+      galleryImages: List.from(galleryImages),
+    );
+
+    isLoading.value = false;
+    Get.back(); // Return to profile view
+    Get.snackbar(
+      'Success',
+      'Profile updated successfully',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+  }
 
   @override
   void onClose() {
-    aboutController.dispose();
+    nameController.dispose();
+    categoryController.dispose();
+    descriptionController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    websiteController.dispose();
+    locationController.dispose();
+    linkedinController.dispose();
+    twitterController.dispose();
+    facebookController.dispose();
+    instagramController.dispose();
     super.onClose();
-  }
-
-  void selectBusinessType(String type) {
-    selectedBusinessType.value = type;
-  }
-
-  Future<void> pickImage(int index, ImageSource source) async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: source);
-
-      if (image != null) {
-        galleryImages[index] = image.path;
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
-  }
-
-  void submitBusinessProfile() {
-    if (selectedBusinessType.value.isEmpty || aboutController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please select a business type and describe your salon',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.bottom,
-      );
-      return;
-    }
-
-    isLoading.value = true;
-
-    // Simulate API Call
-    Future.delayed(const Duration(seconds: 2), () {
-      isLoading.value = false;
-
-      Get.snackbar(
-        'Success',
-        'Business Profile Saved',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.bottom,
-      );
-
-      // Navigate to Next Step (Step 3 of 3)
-      Get.to(() => const HiringPreferencesView());
-    });
   }
 }
