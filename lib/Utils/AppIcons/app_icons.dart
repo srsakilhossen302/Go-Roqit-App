@@ -18,4 +18,14 @@ class AppIcons {
   static const String applicationsNav =
       "$basePath/applications.png"; // Placeholder
   static const String businessNav = "$basePath/business.png"; // Placeholder
+
+  static const String linkedIn = "$basePath/Container (10).png"; // Placeholder
+  static const String instagram = "$basePath/Container (11).png"; // Placeholder
+  static const String facebook = "$basePath/Container (12).png"; // Placeholder
+  static const String twitter = "$basePath/Container (13).png"; // Placeholder
+
+  static const String linkedInIcons = "$basePath/Icon (18).png"; // Placeholder
+  static const String instagramIcons = "$basePath/Icon (19).png"; // Placeholder
+  static const String facebookIcons = "$basePath/Icon (20).png"; // Placeholder
+  static const String twitterIcons = "$basePath/Icon (21).png"; // Placeholder
 }
