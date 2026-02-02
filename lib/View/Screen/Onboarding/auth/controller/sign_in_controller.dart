@@ -5,7 +5,7 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
-import '../../../Im_Hiring_For_My_Salon/Business_Information/view/business_information_view.dart';
+import '../../../Im_Hiring_For_My_Salon/Business_Information/Business_basics/view/business_information_view.dart';
 import '../../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 
 class SignInController extends GetxController {
