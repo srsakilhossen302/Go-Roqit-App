@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
 class JobDetailsView extends StatelessWidget {
   final JobModel job;
@@ -339,6 +340,7 @@ class JobDetailsView extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 1),
     );
   }
 

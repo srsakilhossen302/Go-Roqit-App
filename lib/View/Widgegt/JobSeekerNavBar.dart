@@ -7,6 +7,7 @@ import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Chat/view/chat_home_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Home/view/home_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Swipe/view/swipe_view.dart';
 
 // Placeholder views for navigation
 class JobsPlaceholderView extends StatelessWidget {
@@ -124,7 +125,7 @@ class JobSeekerNavBar extends StatelessWidget {
                 onTap: () {
                   if (selectedIndex != 2) {
                     Get.off(
-                      () => const SwipePlaceholderView(),
+                      () => const SwipeView(),
                       transition: Transition.fadeIn,
                     );
                   }
@@ -144,7 +145,7 @@ class JobSeekerNavBar extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final bool isSelected = selectedIndex == index;
-    final Color selectedColor = const Color(0xFF1B5E3F);
+    final Color selectedColor = const Color(0xFF0F5F3E);
     final Color unselectedColor = Colors.grey;
 
     return GestureDetector(
@@ -174,8 +175,7 @@ class JobSeekerNavBar extends StatelessWidget {
   }
 
   Widget _buildSwipeItem({required int index, required VoidCallback onTap}) {
-    // Swipe button is special (Active or Inactive, keeping design consistent)
-    // The design shows a green circle with white heart.
+    final bool isSelected = selectedIndex == index;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -185,14 +185,16 @@ class JobSeekerNavBar extends StatelessWidget {
           Container(
             height: 48.h,
             width: 48.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFF91B4A2), // Muted green
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFF0F5F3E)
+                  : const Color(0xFF91B4A2),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 8,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -204,10 +206,8 @@ class JobSeekerNavBar extends StatelessWidget {
             "Swipe",
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.normal,
-              color: Colors
-                  .grey, // Text is grey in design even if button is highlighted?
-              // Actually in design text looks grey. Keeping it grey.
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              color: isSelected ? const Color(0xFF0F5F3E) : Colors.grey,
             ),
           ),
         ],

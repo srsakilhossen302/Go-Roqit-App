@@ -6,6 +6,7 @@ import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import '../../../Im_Hiring_For_My_Salon/Business_Information/Business_basics/view/business_information_view.dart';
+import '../../../Im_Looking_For_Work/Home/view/home_view.dart';
 import '../../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 
 class SignInController extends GetxController {
@@ -33,7 +34,8 @@ class SignInController extends GetxController {
     String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
 
     if (role == 'user') {
-      Get.to(() => const PersonalInformationView());
+      //Get.to(() => const PersonalInformationView());
+      Get.to(() => const HomeView());
     } else if (role == 'hiring') {
       Get.to(() => const BusinessInformationView());
     } else {
