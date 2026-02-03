@@ -7,10 +7,14 @@ import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
 import '../../Additional_Information/view/additional_information_view.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 class PortfolioController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
   var uploadedFileName = 'Browse Files to upload'.obs;
+
+  final ImagePicker _picker = ImagePicker();
 
   /// TEXT CONTROLLERS
   final titleController = TextEditingController();
@@ -23,9 +27,15 @@ class PortfolioController extends GetxController {
     super.onClose();
   }
 
-  void pickImage() {
-    // Logic to pick image
-    uploadedFileName.value = "image_001.jpg"; // Simulate picked file
+  Future<void> pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        uploadedFileName.value = image.name;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick file: $e');
+    }
   }
 
   void addPortfolio() {

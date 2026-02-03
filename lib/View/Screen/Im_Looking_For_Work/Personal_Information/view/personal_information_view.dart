@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_instance/src/extension_instance.dart';
@@ -81,32 +83,91 @@ class PersonalInformationView extends GetView<PersonalInformationController> {
 
             // Profile Photo Upload
             Center(
-              child: Column(
-                children: [
-                  Container(
-                    width: 100.w,
-                    height: 100.w,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey[300]!),
+              child: GestureDetector(
+                onTap: () {
+                  Get.bottomSheet(
+                    Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.all(16.w),
+                      child: SafeArea(
+                        child: Wrap(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.camera_alt),
+                              title: const Text('Camera'),
+                              onTap: () {
+                                controller.pickImage(ImageSource.camera);
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.photo_library),
+                              title: const Text('Gallery'),
+                              onTap: () {
+                                controller.pickImage(ImageSource.gallery);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      size: 32.sp,
-                      color: Colors.grey[500],
+                  );
+                },
+                child: Column(
+                  children: [
+                    Obx(() {
+                      final path = controller.profileImagePath.value;
+                      return Container(
+                        width: 100.w,
+                        height: 100.w,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey[300]!),
+                          image: path.isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(
+                                    // Assuming dart:io is imported or will be.
+                                    // Wait, I need to check imports.
+                                    // Assuming I need to import dart:io.
+                                    // I'll add "import 'dart:io';" to the file if needed in a separate step or here if I can.
+                                    // But I can't modify imports here.
+                                    // I'll rely on File from dart:io.
+                                    // If dart:io isn't imported, I'll get an error.
+                                    // Checking imports... step 709 showed NO dart:io.
+                                    // I should add it first or use a work around? No valid workaround for FileImage(File(path)) without dart:io.
+                                    // I'll proceed and then fix the missing import.
+                                    // Actually, I can use a separate ReplaceFileContent for import.
+                                    // Wait, I can try to use standard Image.file but that also needs File.
+                                    // Okay I will let the lint catch it and fix it.
+                                    // Actually, let's just make it compilable by assuming I'll fix it.
+                                    // BUT, I can check if I can add it now. No, the tool is single block.
+                                    // I'll do this replacement, then fix import.
+                                    File(path),
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: path.isEmpty
+                            ? Icon(
+                                Icons.camera_alt_outlined,
+                                size: 32.sp,
+                                color: Colors.grey[500],
+                              )
+                            : null,
+                      );
+                    }),
+                    SizedBox(height: 12.h),
+                    Text(
+                      'Upload profile photo',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[500],
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    'Upload profile photo',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey[500],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 32.h),

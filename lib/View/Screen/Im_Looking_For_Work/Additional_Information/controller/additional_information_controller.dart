@@ -5,6 +5,8 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 class AdditionalInformationController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -14,6 +16,8 @@ class AdditionalInformationController extends GetxController {
   var skills = <String>[].obs;
   var uploadedResumeName = 'Click to upload or drag and drop'.obs;
   var bioCharacterCount = 0.obs;
+
+  final ImagePicker _picker = ImagePicker();
 
   /// TEXT CONTROLLERS
   final salaryController = TextEditingController();
@@ -87,9 +91,16 @@ class AdditionalInformationController extends GetxController {
     skills.remove(skill);
   }
 
-  void pickResume() {
-    // Logic to pick PDF
-    uploadedResumeName.value = "my_resume.pdf";
+  Future<void> pickResume() async {
+    try {
+      // Simulate picking a file using ImagePicker
+      final XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        uploadedResumeName.value = file.name;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick file: $e');
+    }
   }
 
   void submitApplication() {

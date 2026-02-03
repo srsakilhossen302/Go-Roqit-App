@@ -4,6 +4,7 @@ import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../Education/view/education_view.dart';
 
@@ -27,6 +28,10 @@ class PersonalInformationController extends GetxController {
   /// GENDER OPTIONS
   final genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
 
+  /// IMAGE
+  final ImagePicker _picker = ImagePicker();
+  var profileImagePath = ''.obs;
+
   @override
   void onClose() {
     firstNameController.dispose();
@@ -39,6 +44,17 @@ class PersonalInformationController extends GetxController {
     mobileNumberController.dispose();
     landlineController.dispose();
     super.onClose();
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
+        profileImagePath.value = image.path;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick image: $e');
+    }
   }
 
   void selectGender(String gender) {
