@@ -3,10 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_instance/src/extension_instance.dart';
 import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get_x/get_navigation/src/routes/transitions_type.dart';
+import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/controller/jobs_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_details_view.dart';
 
 class JobsView extends StatelessWidget {
   const JobsView({super.key});
@@ -149,38 +152,49 @@ class JobsView extends StatelessWidget {
               SizedBox(width: 12.w),
               // Job Info
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.title,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(
+                      () => JobDetailsView(job: job),
+                      transition: Transition.rightToLeft,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.title,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      job.companyName,
-                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                    ),
-                    SizedBox(height: 4.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 14.sp,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          job.location,
-                          style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
+                      SizedBox(height: 4.h),
+                      Text(
+                        job.companyName,
+                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                      ),
+                      SizedBox(height: 4.h),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 14.sp,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            job.location,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -209,7 +223,12 @@ class JobsView extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(
+                      () => JobDetailsView(job: job),
+                      transition: Transition.rightToLeft,
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B5E3F),
                     shape: RoundedRectangleBorder(
