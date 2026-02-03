@@ -54,6 +54,10 @@ class SwipeView extends StatelessWidget {
                   controller: controller.swiperController,
                   backgroundCardCount: 2,
                   onSwipeEnd: controller.onSwipe,
+                  swipeOptions: const SwipeOptions.only(
+                    left: true,
+                    right: true,
+                  ),
                   cardCount: controller.jobsController.jobList.length,
                   cardBuilder: (BuildContext context, int index) {
                     final job = controller.jobsController.jobList[index];

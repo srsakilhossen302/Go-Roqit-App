@@ -11,6 +11,8 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_mode
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_details_view.dart';
 
+import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
+
 class JobsView extends StatelessWidget {
   const JobsView({super.key});
 
@@ -21,74 +23,79 @@ class JobsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h),
-              // Header
-              Text(
-                "All Jobs",
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              // Search Bar
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5), // Light grey
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(12.w),
-                      child: Image.asset(
-                        AppIcons.search,
-                        width: 20.w,
-                        height: 20.h,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    hintText: "Find Your Dream Job",
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+        child: MyRefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(const Duration(seconds: 1));
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.h),
+                // Header
+                Text(
+                  "All Jobs",
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-              ),
-              SizedBox(height: 16.h),
-              // Filter Buttons
-              Row(
-                children: [
-                  _buildFilterButton("All Locations"),
-                  SizedBox(width: 12.w),
-                  _buildFilterButton("All Levels"),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              // Job List
-              Expanded(
-                child: Obx(() {
-                  return ListView.separated(
-                    itemCount: controller.jobList.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 16.h),
-                    itemBuilder: (context, index) {
-                      final job = controller.jobList[index];
-                      return _buildJobCard(job);
-                    },
-                  );
-                }),
-              ),
-            ],
+                SizedBox(height: 20.h),
+                // Search Bar
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5), // Light grey
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(12.w),
+                        child: Image.asset(
+                          AppIcons.search,
+                          width: 20.w,
+                          height: 20.h,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      hintText: "Find Your Dream Job",
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                // Filter Buttons
+                Row(
+                  children: [
+                    _buildFilterButton("All Locations"),
+                    SizedBox(width: 12.w),
+                    _buildFilterButton("All Levels"),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                // Job List
+                Expanded(
+                  child: Obx(() {
+                    return ListView.separated(
+                      itemCount: controller.jobList.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 16.h),
+                      itemBuilder: (context, index) {
+                        final job = controller.jobList[index];
+                        return _buildJobCard(job);
+                      },
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      ), // Matches SafeArea
       bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 1),
     );
   }

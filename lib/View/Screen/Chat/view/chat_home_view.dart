@@ -6,6 +6,9 @@ import 'package:go_roqit_app/View/Screen/Chat/controller/chat_controller.dart';
 import 'package:go_roqit_app/View/Screen/Chat/model/chat_model.dart';
 import 'package:go_roqit_app/View/Screen/Chat/view/chat_details_view.dart';
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 
 class ChatHomeView extends GetView<ChatController> {
   const ChatHomeView({super.key});
@@ -16,7 +19,22 @@ class ChatHomeView extends GetView<ChatController> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: const HiringNavBar(selectedIndex: 3), // Messages Tab
+      bottomNavigationBar: FutureBuilder<String>(
+        // Use the correct key from SharedPreferenceValue
+        future: SharePrefsHelper.getString(SharedPreferenceValue.role),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.shrink();
+          }
+          // Check if user role is 'provider' (hiring)
+          final isProvider = snapshot.data == 'provider';
+          if (isProvider) {
+            return const HiringNavBar(selectedIndex: 3);
+          }
+          // Default to Job Seeker
+          return const JobSeekerNavBar(selectedIndex: 3);
+        },
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),

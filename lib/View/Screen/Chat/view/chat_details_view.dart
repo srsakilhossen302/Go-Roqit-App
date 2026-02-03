@@ -4,6 +4,8 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Chat/controller/chat_controller.dart';
 import 'package:go_roqit_app/View/Screen/Chat/model/chat_model.dart';
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 
 class ChatDetailsView extends GetView<ChatController> {
   final ChatListModel chat;
@@ -15,7 +17,7 @@ class ChatDetailsView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: const HiringNavBar(selectedIndex: 3), // Keep Nav Bar
+      // bottomNavigationBar: Removed to prevent navigation stack errors and improve chat interaction space
       body: SafeArea(
         child: Column(
           children: [

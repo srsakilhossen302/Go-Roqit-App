@@ -56,44 +56,204 @@ class JobsController extends GetxController {
       ),
       JobModel(
         id: '2',
-        title: 'Master Barber',
-        companyName: 'The Grooming Room',
-        location: 'Shoreditch, London',
+        title: 'Junior Hair Stylist',
+        companyName: 'Urban Cuts',
+        location: 'Camden, London',
         jobType: 'Full-time',
-        salary: '£28,000 - £35,000/Hour',
+        salary: '£22,000 - £26,000/Year',
         logoUrl:
-            'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
+            'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=200&q=80',
         postedTime: '1 day ago',
         workingHours: 'Monday - Friday',
         workSystem: 'On-site',
-        skills: ['Barbering', 'Shaving', 'Styling'],
-        companyDescription: 'A classic barbershop in the heart of London.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+        skills: [
+          'NVQ Level 2',
+          'Basic cutting skills',
+          'Blow-dry techniques',
+          'Customer handling',
         ],
-        requirements: ['3+ years experience', 'Portfolio required'],
-        benefits: ['Tips', 'Flexible hours'],
+        companyDescription:
+            'A friendly salon looking for a passionate junior stylist eager to grow.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: [
+          'NVQ Level 2 or equivalent',
+          '1–2 years experience',
+          'Good communication skills',
+        ],
+        benefits: ['Staff discount', 'Training support'],
       ),
+
       JobModel(
         id: '3',
-        title: 'Nail Technician',
-        companyName: 'Luxe Nails & Spa',
-        location: 'Manchester City Centre',
-        jobType: 'Part-time',
-        salary: '£28,000 - £35,000/Hour',
+        title: 'Barber',
+        companyName: 'Kings Barber Shop',
+        location: 'Manchester, UK',
+        jobType: 'Full-time',
+        salary: '£25,000 - £30,000/Year',
         logoUrl:
-            'https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
-        postedTime: '5 hours ago',
-        workingHours: 'Weekends',
+            'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=200&q=80',
+        postedTime: '3 days ago',
+        workingHours: 'Monday - Saturday',
         workSystem: 'On-site',
-        skills: ['Manicure', 'Pedicure', 'Nail Art'],
-        companyDescription:
-            'Premium nail salon providing high quality services.',
+        skills: ['Fade cutting', 'Beard styling', 'Clippers expertise'],
+        companyDescription: 'Modern barbershop serving a loyal client base.',
         businessPhotos: [
-          'https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+          'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=400&q=80',
         ],
-        requirements: ['Qualified Nail Tech', 'Creativity'],
-        benefits: ['Employee discount'],
+        requirements: ['2+ years barber experience', 'Strong styling skills'],
+        benefits: ['Commission', 'Flexible shifts'],
+      ),
+
+      JobModel(
+        id: '4',
+        title: 'Hair Color Specialist',
+        companyName: 'Luxe Hair Studio',
+        location: 'Chelsea, London',
+        jobType: 'Part-time',
+        salary: '£30 - £45/Hour',
+        logoUrl:
+            'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=200&q=80',
+        postedTime: '5 days ago',
+        workingHours: 'Flexible',
+        workSystem: 'On-site',
+        skills: ['Balayage', 'Ombre', 'Color correction'],
+        companyDescription:
+            'High-end salon focusing on premium color services.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Color certification', '3+ years experience'],
+        benefits: ['High hourly rate', 'Luxury clients'],
+      ),
+
+      JobModel(
+        id: '5',
+        title: 'Salon Manager',
+        companyName: 'Elite Beauty Lounge',
+        location: 'Birmingham, UK',
+        jobType: 'Full-time',
+        salary: '£35,000 - £45,000/Year',
+        logoUrl:
+            'https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=200&q=80',
+        postedTime: '1 week ago',
+        workingHours: 'Tuesday - Saturday',
+        workSystem: 'On-site',
+        skills: ['Team management', 'Client relations', 'Scheduling'],
+        companyDescription:
+            'Seeking an experienced manager to lead a busy salon.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Management experience', 'Salon background'],
+        benefits: ['Bonus', 'Paid leave'],
+      ),
+
+      JobModel(
+        id: '6',
+        title: 'Nail Technician',
+        companyName: 'Polish & Glow',
+        location: 'Leeds, UK',
+        jobType: 'Full-time',
+        salary: '£20,000 - £25,000/Year',
+        logoUrl:
+            'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=200&q=80',
+        postedTime: '2 days ago',
+        workingHours: 'Monday - Friday',
+        workSystem: 'On-site',
+        skills: ['Manicure', 'Pedicure', 'Gel nails'],
+        companyDescription: 'Trendy nail salon with a young client base.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Certification required'],
+        benefits: ['Tips', 'Staff discount'],
+      ),
+
+      JobModel(
+        id: '7',
+        title: 'Makeup Artist',
+        companyName: 'Glam Studio',
+        location: 'London, UK',
+        jobType: 'Freelance',
+        salary: '£200 - £400/Day',
+        logoUrl:
+            'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&q=80',
+        postedTime: '4 days ago',
+        workingHours: 'Event-based',
+        workSystem: 'On-site',
+        skills: ['Bridal makeup', 'Photoshoot makeup'],
+        companyDescription:
+            'Creative studio working on weddings and fashion shoots.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Portfolio required'],
+        benefits: ['High daily pay'],
+      ),
+
+      JobModel(
+        id: '8',
+        title: 'Spa Therapist',
+        companyName: 'Calm Retreat Spa',
+        location: 'Bath, UK',
+        jobType: 'Full-time',
+        salary: '£24,000 - £28,000/Year',
+        logoUrl:
+            'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=200&q=80',
+        postedTime: '6 days ago',
+        workingHours: 'Rotational',
+        workSystem: 'On-site',
+        skills: ['Massage therapy', 'Facials'],
+        companyDescription: 'Luxury spa focused on relaxation and wellness.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Therapy certification'],
+        benefits: ['Free treatments'],
+      ),
+
+      JobModel(
+        id: '9',
+        title: 'Receptionist (Salon)',
+        companyName: 'Style Hub',
+        location: 'Oxford, UK',
+        jobType: 'Part-time',
+        salary: '£11 - £13/Hour',
+        logoUrl:
+            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=200&q=80',
+        postedTime: 'Today',
+        workingHours: 'Flexible',
+        workSystem: 'On-site',
+        skills: ['Customer service', 'Booking management'],
+        companyDescription: 'Front desk role in a busy salon.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Good communication'],
+        benefits: ['Flexible hours'],
+      ),
+
+      JobModel(
+        id: '10',
+        title: 'Beauty Therapist',
+        companyName: 'Pure Beauty Clinic',
+        location: 'Reading, UK',
+        jobType: 'Full-time',
+        salary: '£26,000 - £32,000/Year',
+        logoUrl:
+            'https://images.unsplash.com/photo-1600948836451-3cfa7b5d24dd?auto=format&fit=crop&w=200&q=80',
+        postedTime: '3 days ago',
+        workingHours: 'Monday - Saturday',
+        workSystem: 'On-site',
+        skills: ['Skin treatments', 'Laser basics'],
+        companyDescription: 'Clinic offering advanced beauty treatments.',
+        businessPhotos: [
+          'https://images.unsplash.com/photo-1600948836451-3cfa7b5d24dd?auto=format&fit=crop&w=400&q=80',
+        ],
+        requirements: ['Relevant certification', '2+ years experience'],
+        benefits: ['Career growth'],
       ),
     ]);
   }

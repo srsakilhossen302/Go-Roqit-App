@@ -5,6 +5,7 @@ import 'package:get_x/get_instance/src/extension_instance.dart';
 import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get_x/get_state_manager/src/simple/get_view.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
+import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
 import '../controller/home_controller.dart';
 import '../../../../Widgegt/JobSeekerNavBar.dart';
 
@@ -17,233 +18,246 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Scrollable Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20.r,
-                          backgroundImage: const NetworkImage(
-                            "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-                          ), // Placeholder
-                          backgroundColor: Colors.grey[200],
-                        ),
-                        SizedBox(width: 12.w),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Hello",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              "Sarah",
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey[200]!),
-                          ),
-                          child: Badge(
-                            smallSize: 8,
-                            backgroundColor: Colors.red,
-                            child: Image.asset(
-                              AppIcons.notification,
-                              width: 20.w,
-                              height: 20.h,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-
-                    Text(
-                      "Every day is a new opportunity to grow and give your best",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-
-                    // Search Bar
-                    TextField(
-                      controller: controller.searchController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFFF5F7F9),
-                        hintText: "Find Your Dream Job",
-                        hintStyle: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey,
-                        ),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(12.w),
-                          child: Icon(Icons.search, color: Colors.grey),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 20.w,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Filters
-                    Row(
-                      children: [
-                        Expanded(child: _buildFilterDropdown("All Locations")),
-                        SizedBox(width: 12.w),
-                        Expanded(child: _buildFilterDropdown("All Levels")),
-                      ],
-                    ),
-                    SizedBox(height: 24.h),
-
-                    // Promo Card
-                    Container(
-                      height: 160.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.r),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                            "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                          ), // Placeholder Salon Image
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Stack(
+        child: MyRefreshIndicator(
+          onRefresh: () async {
+            // Refresh logic here, e.g. controller.loadData()
+            await Future.delayed(const Duration(seconds: 1));
+          },
+          child: Column(
+            children: [
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.r),
-                              gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  Colors.black.withOpacity(0.8),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
+                          CircleAvatar(
+                            radius: 20.r,
+                            backgroundImage: const NetworkImage(
+                              "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+                            ), // Placeholder
+                            backgroundColor: Colors.grey[200],
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(20.w),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Find jobs that match your skills",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          SizedBox(width: 12.w),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Hello",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.grey[600],
                                 ),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  "Swipe through personalized job recommendations",
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 12.sp,
-                                  ),
+                              ),
+                              Text(
+                                "Sarah",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
-                                SizedBox(height: 16.h),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1B5E3F),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20.w,
-                                      vertical: 10.h,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "Swipe Now",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.sp,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Icon(
-                                        Icons.arrow_forward,
-                                        size: 14.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: Badge(
+                              smallSize: 8,
+                              backgroundColor: Colors.red,
+                              child: Image.asset(
+                                AppIcons.notification,
+                                width: 20.w,
+                                height: 20.h,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 16.h),
 
-                    // Job Recommendations Header
-                    Text(
-                      "Job recommendations for you",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      Text(
+                        "Every day is a new opportunity to grow and give your best",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16.h),
+                      SizedBox(height: 20.h),
 
-                    // Job List
-                    Obx(
-                      () => ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: controller.jobRecommendations.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 16.h),
-                        itemBuilder: (context, index) {
-                          final job = controller.jobRecommendations[index];
-                          return _buildJobCard(job);
-                        },
+                      // Search Bar
+                      TextField(
+                        controller: controller.searchController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color(0xFFF5F7F9),
+                          hintText: "Find Your Dream Job",
+                          hintStyle: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey,
+                          ),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(12.w),
+                            child: Icon(Icons.search, color: Colors.grey),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.r),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 0,
+                            horizontal: 20.w,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 16.h),
+
+                      // Filters
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildFilterDropdown("All Locations"),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(child: _buildFilterDropdown("All Levels")),
+                        ],
+                      ),
+                      SizedBox(height: 24.h),
+
+                      // Promo Card
+                      Container(
+                        height: 160.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.r),
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                              "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                            ), // Placeholder Salon Image
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.r),
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    Colors.black.withOpacity(0.8),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(20.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Find jobs that match your skills",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "Swipe through personalized job recommendations",
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF1B5E3F),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20.w,
+                                        vertical: 10.h,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "Swipe Now",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Icon(
+                                          Icons.arrow_forward,
+                                          size: 14.sp,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+
+                      // Job Recommendations Header
+                      Text(
+                        "Job recommendations for you",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Job List
+                      Obx(
+                        () => ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: controller.jobRecommendations.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 16.h),
+                          itemBuilder: (context, index) {
+                            final job = controller.jobRecommendations[index];
+                            return _buildJobCard(job);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 0),
