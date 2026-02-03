@@ -9,6 +9,8 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Home/view/home_view
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Swipe/view/swipe_view.dart';
 
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/view/profile_view.dart';
+
 // Placeholder views for navigation
 class JobsPlaceholderView extends StatelessWidget {
   const JobsPlaceholderView({super.key});
@@ -109,7 +111,7 @@ class JobSeekerNavBar extends StatelessWidget {
                     onTap: () {
                       if (selectedIndex != 4) {
                         Get.off(
-                          () => const ProfilePlaceholderView(),
+                          () => const ProfileView(),
                           transition: Transition.fadeIn,
                         );
                       }

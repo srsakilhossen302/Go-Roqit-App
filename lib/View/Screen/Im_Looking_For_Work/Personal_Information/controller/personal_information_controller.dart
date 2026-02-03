@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart';
 import '../../Education/view/education_view.dart';
 
 class PersonalInformationController extends GetxController {
@@ -31,6 +27,27 @@ class PersonalInformationController extends GetxController {
   /// IMAGE
   final ImagePicker _picker = ImagePicker();
   var profileImagePath = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Check for arguments passed for editing
+    if (Get.arguments != null && Get.arguments is UserInformationModel) {
+      final UserInformationModel model = Get.arguments;
+      firstNameController.text = model.firstName;
+      lastNameController.text = model.lastName;
+      selectedGender.value = model.gender;
+      selectedDateOfBirth.value = model.dateOfBirth;
+      citizenshipController.text = model.citizenship;
+      streetAddressController.text = model.streetAddress;
+      cityController.text = model.city;
+      zipCodeController.text = model.zipCode;
+      countryController.text = model.country;
+      mobileNumberController.text = model.mobileNumber;
+      landlineController.text = model.landline;
+      profileImagePath.value = model.profileImagePath;
+    }
+  }
 
   @override
   void onClose() {
@@ -116,18 +133,39 @@ class PersonalInformationController extends GetxController {
 
     isLoading.value = true;
 
+    // Create updated model
+    final updatedModel = UserInformationModel(
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      gender: selectedGender.value,
+      dateOfBirth: selectedDateOfBirth.value,
+      citizenship: citizenshipController.text,
+      streetAddress: streetAddressController.text,
+      city: cityController.text,
+      zipCode: zipCodeController.text,
+      country: countryController.text,
+      mobileNumber: mobileNumberController.text,
+      landline: landlineController.text,
+      profileImagePath: profileImagePath.value,
+    );
+
     // Simulate API Call
     Future.delayed(const Duration(seconds: 2), () {
       isLoading.value = false;
-      // SUCCESS logic here
-      Get.snackbar(
-        'Success',
-        'Profile Saved Locally',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-      // API HIT: POST personal information
-      Get.to(() => const EducationView());
+
+      // If we are editing (arguments were passed), return the result
+      if (Get.arguments != null && Get.arguments is UserInformationModel) {
+        Get.back(result: updatedModel);
+      } else {
+        // Normal Flow (Registration)
+        Get.snackbar(
+          'Success',
+          'Profile Saved Locally',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.to(() => const EducationView());
+      }
     });
   }
 

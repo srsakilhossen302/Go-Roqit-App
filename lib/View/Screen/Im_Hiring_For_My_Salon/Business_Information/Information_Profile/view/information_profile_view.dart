@@ -13,7 +13,6 @@ class InformationProfileView extends GetView<InformationProfileController> {
     if (!Get.isRegistered<InformationProfileController>()) {
       Get.put(InformationProfileController());
     }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
