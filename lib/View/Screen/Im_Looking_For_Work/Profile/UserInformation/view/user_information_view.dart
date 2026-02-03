@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/controller/user_information_controller.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart'; // Import Model
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart';
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart'; // Import Model
 
 class UserInformationView extends GetView<UserInformationController> {
   const UserInformationView({super.key});
@@ -42,6 +43,7 @@ class UserInformationView extends GetView<UserInformationController> {
         ),
         centerTitle: false,
       ),
+      bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 4),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
         child: Obx(() {

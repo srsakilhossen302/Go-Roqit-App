@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Additional_Information/view/additional_information_view.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Education/view/education_view.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Portfolio/view/portfolio_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/AdditionalInformation/view/additional_information_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/controller/profile_controller.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Work_Experience/view/work_experience_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/WorkExperience/view/work_experience_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Education/view/profile_education_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Portfolio/view/profile_portfolio_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Settings/view/profile_settings_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/HelpSupport/view/profile_help_support_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/view/user_information_view.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
@@ -34,7 +35,9 @@ class ProfileView extends GetView<ProfileController> {
         elevation: 0,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => const ProfileSettingsView());
+            },
             icon: Container(
               padding: EdgeInsets.all(6.w),
               decoration: const BoxDecoration(
@@ -161,40 +164,52 @@ class ProfileView extends GetView<ProfileController> {
                 icon: Icons.description_outlined,
                 title: "Additional Information",
                 subtitle: "Other",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => ProfileAdditionalInformationView());
+                },
               ),
               SizedBox(height: 12.h),
               _buildMenuItem(
                 icon: Icons.work_outline,
-                title: "Experience",
+                title: "Additional Information",
                 subtitle: "2 positions",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const ProfileWorkExperienceView());
+                },
               ),
               SizedBox(height: 12.h),
               _buildMenuItem(
                 icon: Icons.school_outlined,
                 title: "Education",
                 subtitle: "2 qualifications",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const ProfileEducationView());
+                },
               ),
               SizedBox(height: 12.h),
               _buildMenuItem(
                 icon: Icons.image_outlined,
                 title: "Portfolio",
                 subtitle: "2 projects",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const ProfilePortfolioView());
+                },
               ),
               SizedBox(height: 12.h),
               _buildMenuItem(
                 icon: Icons.settings_outlined,
                 title: "Settings",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const ProfileSettingsView());
+                },
               ),
               SizedBox(height: 12.h),
               _buildMenuItem(
                 icon: Icons.help_outline,
                 title: "Help & Support",
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const ProfileHelpSupportView());
+                },
                 showBorder: false,
               ),
 
