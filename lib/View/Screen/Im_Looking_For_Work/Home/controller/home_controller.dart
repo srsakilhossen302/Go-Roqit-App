@@ -14,7 +14,8 @@ class HomeController extends GetxController {
       "location": "Kensington, London",
       "level": "Entry Level",
       "posted": "2 days ago",
-      "image": "assets/images/stylist.png", // Placeholder
+      "image":
+          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
     },
     {
       "role": "Master Barber",
@@ -23,7 +24,8 @@ class HomeController extends GetxController {
       "location": "Kensington, London",
       "level": "Entry Level",
       "posted": "2 days ago",
-      "image": "assets/images/barber.png",
+      "image":
+          "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
     },
     {
       "role": "Nail Technician",
@@ -32,7 +34,8 @@ class HomeController extends GetxController {
       "location": "Kensington, London",
       "level": "Entry Level",
       "posted": "2 days ago",
-      "image": "assets/images/nail.png",
+      "image":
+          "https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
     },
     {
       "role": "Lead Makeup Artist",
@@ -41,7 +44,8 @@ class HomeController extends GetxController {
       "location": "Kensington, London",
       "level": "Entry Level",
       "posted": "2 days ago",
-      "image": "assets/images/makeup.png",
+      "image":
+          "https://images.unsplash.com/photo-1487412947132-26c244971044?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
     },
   ].obs;
 

@@ -293,9 +293,10 @@ class HomeView extends GetView<HomeController> {
             children: [
               CircleAvatar(
                 radius: 24.r,
-                backgroundImage: const NetworkImage(
-                  "https://source.unsplash.com/random/100x100?salon",
-                ), // Placeholder
+                backgroundImage: NetworkImage(
+                  job['image'] ??
+                      "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+                ),
                 backgroundColor: Colors.grey[200],
               ),
               SizedBox(width: 12.w),
