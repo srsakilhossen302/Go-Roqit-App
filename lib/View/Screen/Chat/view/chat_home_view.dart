@@ -27,7 +27,7 @@ class ChatHomeView extends GetView<ChatController> {
             return const SizedBox.shrink();
           }
           // Check if user role is 'provider' (hiring)
-          final isProvider = snapshot.data == 'provider';
+          final isProvider = snapshot.data == 'hiring';
           if (isProvider) {
             return const HiringNavBar(selectedIndex: 3);
           }

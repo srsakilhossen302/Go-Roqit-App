@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
+import 'package:go_roqit_app/View/Screen/Onboarding/auth/view/auth_screen.dart';
 
 import 'OnboardingData.dart';
 import 'OnboardingPage.dart';
@@ -59,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: EdgeInsets.only(right: 24.w, top: 16.h),
                 child: TextButton(
                   onPressed: () {
-                    Get.offAll(() => WelcomeScreen());
+                    Get.offAll(() => AuthScreen());
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: const Color(0xFFE8F5E9), // Light green bg
@@ -136,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      Get.offAll(() => WelcomeScreen());
+                      Get.offAll(() => AuthScreen());
                     }
                   },
                   style: ElevatedButton.styleFrom(

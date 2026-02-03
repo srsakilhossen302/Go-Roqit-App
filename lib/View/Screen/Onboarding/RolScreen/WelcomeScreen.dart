@@ -4,7 +4,7 @@ import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import '../../../../Utils/AppIcons/app_icons.dart';
-import '../auth/view/auth_screen.dart';
+import '../auth/view/sign_up_view.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -60,7 +60,7 @@ class WelcomeScreen extends StatelessWidget {
                   );
                   print(SharedPreferenceValue.role);
                   print("Role Saved. Navigating to Auth.");
-                  Get.to(() => const AuthScreen());
+                  Get.to(() => const SignUpView());
                 },
               ),
 
@@ -85,7 +85,7 @@ class WelcomeScreen extends StatelessWidget {
                   );
                   print(SharedPreferenceValue.role);
                   print("Role Saved. Navigating to Auth.");
-                  Get.to(() => const AuthScreen());
+                  Get.to(() => const SignUpView());
                 },
               ),
             ],
