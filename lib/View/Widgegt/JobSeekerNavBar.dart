@@ -36,100 +36,102 @@ class JobSeekerNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100
-          .h, // Allocate enough height for the floating button without clipping
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          Container(
-            height: 80.h,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  offset: const Offset(0, -2),
-                  blurRadius: 10,
-                ),
-              ],
+    return SafeArea(
+      child: SizedBox(
+        height: 100
+            .h, // Allocate enough height for the floating button without clipping
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              height: 80.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, -2),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildNavItem(
+                    index: 0,
+                    icon: AppIcons.salon,
+                    label: 'Home',
+                    onTap: () {
+                      if (selectedIndex != 0) {
+                        Get.off(
+                          () => const HomeView(),
+                          transition: Transition.fadeIn,
+                        );
+                      }
+                    },
+                  ),
+                  _buildNavItem(
+                    index: 1,
+                    icon: AppIcons.workOutline,
+                    label: 'Jobs',
+                    onTap: () {
+                      if (selectedIndex != 1) {
+                        Get.off(
+                          () => const JobsPlaceholderView(),
+                          transition: Transition.fadeIn,
+                        );
+                      }
+                    },
+                  ),
+                  SizedBox(width: 48.w), // Spacer for the floating button
+                  _buildNavItem(
+                    index: 3,
+                    icon: AppIcons.message,
+                    label: 'Messages',
+                    onTap: () {
+                      if (selectedIndex != 3) {
+                        Get.off(
+                          () => const ChatHomeView(),
+                          transition: Transition.fadeIn,
+                        );
+                      }
+                    },
+                  ),
+                  _buildNavItem(
+                    index: 4,
+                    icon: AppIcons.peopleOutline,
+                    label: 'Profile',
+                    onTap: () {
+                      if (selectedIndex != 4) {
+                        Get.off(
+                          () => const ProfilePlaceholderView(),
+                          transition: Transition.fadeIn,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNavItem(
-                  index: 0,
-                  icon: AppIcons.salon,
-                  label: 'Home',
-                  onTap: () {
-                    if (selectedIndex != 0) {
-                      Get.off(
-                        () => const HomeView(),
-                        transition: Transition.fadeIn,
-                      );
-                    }
-                  },
-                ),
-                _buildNavItem(
-                  index: 1,
-                  icon: AppIcons.workOutline,
-                  label: 'Jobs',
-                  onTap: () {
-                    if (selectedIndex != 1) {
-                      Get.off(
-                        () => const JobsPlaceholderView(),
-                        transition: Transition.fadeIn,
-                      );
-                    }
-                  },
-                ),
-                SizedBox(width: 48.w), // Spacer for the floating button
-                _buildNavItem(
-                  index: 3,
-                  icon: AppIcons.message,
-                  label: 'Messages',
-                  onTap: () {
-                    if (selectedIndex != 3) {
-                      Get.off(
-                        () => const ChatHomeView(),
-                        transition: Transition.fadeIn,
-                      );
-                    }
-                  },
-                ),
-                _buildNavItem(
-                  index: 4,
-                  icon: AppIcons.peopleOutline,
-                  label: 'Profile',
-                  onTap: () {
-                    if (selectedIndex != 4) {
-                      Get.off(
-                        () => const ProfilePlaceholderView(),
-                        transition: Transition.fadeIn,
-                      );
-                    }
-                  },
-                ),
-              ],
+            Positioned(
+              bottom: 30.h, // Lift it up
+              child: _buildSwipeItem(
+                index: 2,
+                onTap: () {
+                  if (selectedIndex != 2) {
+                    Get.off(
+                      () => const SwipePlaceholderView(),
+                      transition: Transition.fadeIn,
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 30.h, // Lift it up
-            child: _buildSwipeItem(
-              index: 2,
-              onTap: () {
-                if (selectedIndex != 2) {
-                  Get.off(
-                    () => const SwipePlaceholderView(),
-                    transition: Transition.fadeIn,
-                  );
-                }
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
