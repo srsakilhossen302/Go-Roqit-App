@@ -7,6 +7,8 @@ import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
 
 import 'package:image_picker/image_picker.dart';
 
+import '../../Home/view/home_view.dart';
+
 class AdditionalInformationController extends GetxController {
   /// OBSERVABLES
   var isLoading = false.obs;
@@ -130,7 +132,7 @@ class AdditionalInformationController extends GetxController {
       );
 
       // Navigate to Dashboard or Home
-      // Get.offAll(() => HomeView());
+      Get.offAll(() => HomeView());
     });
   }
 
