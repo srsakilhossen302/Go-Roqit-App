@@ -5,6 +5,7 @@ import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import '../../../../Utils/AppIcons/app_icons.dart';
 import '../OnboardingScreen/onboardingScreen.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -17,9 +18,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () => Get.offAll(()=> const OnboardingScreen()));
+    Timer(
+      const Duration(seconds: 3),
+      () => Get.offAll(() => const OnboardingScreen()),
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +33,12 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Your logo asset
-            Image.asset(
-              AppIcons.goRoqit, // Placeholder logo
+            SvgPicture.asset(
+              AppIcons.appLogo, // Placeholder logo\
+              color: Colors.white,
               width: 100,
               height: 100,
             ),
-
-            Text("Go Roqit ", style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w700,
-              color: Color(0xffFFFFFF),
-            ),),
-
-            Text("Swipe, Match, Work", style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20,
-              color: Color(0xffFFFFFF),
-            ),)
-
           ],
         ),
       ),

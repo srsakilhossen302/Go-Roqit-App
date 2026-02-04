@@ -11,7 +11,6 @@ class AppIcons {
   static const String notification = "$basePath/notification.png";
   static const String workOutline = "$basePath/Icon (11).png";
   static const String peopleOutline = "$basePath/Icon (12).png";
-
   // NavBar Icons
   static const String overviewNav = "$basePath/Overview.png"; // Placeholder
   static const String jobsNav = "$basePath/jobs.png"; // Placeholder
@@ -28,4 +27,5 @@ class AppIcons {
   static const String instagramIcons = "$basePath/Icon (19).png"; // Placeholder
   static const String facebookIcons = "$basePath/Icon (20).png"; // Placeholder
   static const String twitterIcons = "$basePath/Icon (21).png"; // Placeholder
+  static const String appLogo = "$basePath/LOGO C1.svg"; // Placeholder
 }
