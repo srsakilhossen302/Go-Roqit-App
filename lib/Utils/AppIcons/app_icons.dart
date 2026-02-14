@@ -9,7 +9,7 @@ class AppIcons {
   static const String salon = "$basePath/Container (8).png";
   static const String backIcons = "$basePath/Vector.png";
   static const String notification = "$basePath/notification.png";
-  static const String workOutline = "$basePath/Icon (11).png";
+  static const String workOutline = "$basePath/Frame (1).png";
   static const String peopleOutline = "$basePath/Icon (12).png";
   // NavBar Icons
   static const String overviewNav = "$basePath/Overview.png"; // Placeholder
@@ -28,4 +28,6 @@ class AppIcons {
   static const String facebookIcons = "$basePath/Icon (20).png"; // Placeholder
   static const String twitterIcons = "$basePath/Icon (21).png"; // Placeholder
   static const String appLogo = "$basePath/LOGO C1.svg"; // Placeholder
+  static const String location = "$basePath/Icon (32).png"; // Placeholder
+  static const String enablelocation = "$basePath/Icon (32).png"; // Placeholder
 }

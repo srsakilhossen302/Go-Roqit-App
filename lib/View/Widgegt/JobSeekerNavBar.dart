@@ -6,7 +6,8 @@ import 'package:get_x/get_navigation/src/routes/transitions_type.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Chat/view/chat_home_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Home/view/home_view.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_map_view.dart';
+
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Swipe/view/swipe_view.dart';
 
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/view/profile_view.dart';
@@ -84,7 +85,7 @@ class JobSeekerNavBar extends StatelessWidget {
                     onTap: () {
                       if (selectedIndex != 1) {
                         Get.off(
-                          () => const JobsView(),
+                              () => const JobsMapView(),
                           transition: Transition.fadeIn,
                         );
                       }

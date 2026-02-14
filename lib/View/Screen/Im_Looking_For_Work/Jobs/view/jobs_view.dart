@@ -10,6 +10,7 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/controller/job
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_details_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_map_view.dart';
 
 import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
 
@@ -34,13 +35,38 @@ class JobsView extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 // Header
-                Text(
-                  "All Jobs",
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "All Jobs",
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.off(
+                          () => const JobsMapView(),
+                          transition: Transition.fadeIn,
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF5F5F5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.map_outlined,
+                          color: Colors.black,
+                          size: 24.sp,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20.h),
                 // Search Bar
