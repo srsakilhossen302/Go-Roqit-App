@@ -137,7 +137,7 @@ class HomeView extends GetView<HomeController> {
 
                       // Promo Card
                       Container(
-                        height: 160.h,
+                        height: 180.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20.r),
@@ -165,7 +165,8 @@ class HomeView extends GetView<HomeController> {
                             ),
                             Padding(
                               padding: EdgeInsets.all(20.w),
-                              child: Column(
+                              child: SingleChildScrollView(
+                                child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -222,9 +223,10 @@ class HomeView extends GetView<HomeController> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                       SizedBox(height: 24.h),
 
                       // Job Recommendations Header

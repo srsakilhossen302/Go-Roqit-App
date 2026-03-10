@@ -18,7 +18,6 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_detai
 import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
 
-import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'dart:math' as math;
 
 class JobsMapView extends StatefulWidget {
@@ -417,7 +416,7 @@ class _JobsMapViewState extends State<JobsMapView> {
                 width: isSelected
                     ? 150.w
                     : 120.w, // Slightly larger if selected
-                height: 80.h,
+                height: 110.h,
                 child: GestureDetector(
                   onTap: () {
                     selectedJob.value = job;
@@ -871,13 +870,13 @@ class _JobsMapViewState extends State<JobsMapView> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: NetworkImage(job.logoUrl ?? ""),
+                        image: NetworkImage(job.logoUrl),
                         fit: BoxFit.cover,
                         onError: (_, __) {},
                       ),
                       color: Colors.grey[200],
                     ),
-                    child: (job.logoUrl == null || job.logoUrl!.isEmpty)
+                    child: (job.logoUrl.isEmpty)
                         ? Icon(Icons.business)
                         : null,
                   ),
@@ -888,7 +887,7 @@ class _JobsMapViewState extends State<JobsMapView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          job.title ?? "Job Title",
+                          job.title,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
@@ -899,7 +898,7 @@ class _JobsMapViewState extends State<JobsMapView> {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          job.companyName ?? "Company",
+                          job.companyName,
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Colors.grey[600],
@@ -960,14 +959,14 @@ class _JobsMapViewState extends State<JobsMapView> {
                 children: [
                   _buildInfoChip(
                     Icons.access_time_filled,
-                    job.jobType ?? "Full-time",
+                    job.jobType,
                   ),
                   SizedBox(width: 8.w),
                   _buildInfoChip(
                     Icons.attach_money,
-                    (job.salary != null && job.salary!.contains('/'))
-                        ? job.salary!.split('/')[0]
-                        : (job.salary ?? "Salary"),
+                    (job.salary.contains('/'))
+                        ? job.salary.split('/')[0]
+                        : (job.salary),
                   ),
                 ],
               ),

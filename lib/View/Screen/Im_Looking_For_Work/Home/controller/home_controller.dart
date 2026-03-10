@@ -45,7 +45,7 @@ class HomeController extends GetxController {
       "level": "Entry Level",
       "posted": "2 days ago",
       "image":
-          "https://images.unsplash.com/photo-1487412947132-26c244971044?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
+          "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
     },
   ].obs;
 
