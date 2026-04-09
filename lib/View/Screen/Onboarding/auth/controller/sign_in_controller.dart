@@ -33,10 +33,10 @@ class SignInController extends GetxController {
     // Check role and navigate
     String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
 
-    if (role == 'user') {
+    if (role == 'applicant') {
       //Get.to(() => const PersonalInformationView());
       Get.to(() => const HomeView());
-    } else if (role == 'hiring') {
+    } else if (role == 'recruiter') {
       Get.to(() => const BusinessInformationView());
     } else {
       Get.snackbar(

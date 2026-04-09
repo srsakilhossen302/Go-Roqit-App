@@ -26,9 +26,9 @@ class ChatHomeView extends GetView<ChatController> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox.shrink();
           }
-          // Check if user role is 'provider' (hiring)
-          final isProvider = snapshot.data == 'hiring';
-          if (isProvider) {
+          // Check if user role is 'recruiter'
+          final isRecruiter = snapshot.data == 'recruiter';
+          if (isRecruiter) {
             return const HiringNavBar(selectedIndex: 3);
           }
           // Default to Job Seeker

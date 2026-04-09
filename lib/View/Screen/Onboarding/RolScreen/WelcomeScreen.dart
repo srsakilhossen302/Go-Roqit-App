@@ -45,18 +45,18 @@ class WelcomeScreen extends StatelessWidget {
               // Option 1: I'm looking for work
               _buildOptionCard(
                 icon: AppIcons.kachi, // Assuming scissor icon
-                title: "I'm looking for work",
-                subtitle: "Find jobs at salons & spas",
+                title: "Applicant",
+                subtitle: "I'm looking for work",
                 backgroundColor: const Color(0xFF1B5E3F),
                 textColor: Colors.white,
                 subtitleColor: Colors.white.withOpacity(0.8),
                 iconBgColor: Colors.white.withOpacity(0.2),
                 iconColor: Colors.white,
                 onTap: () async {
-                  print("Tap: Looking for work. Saving role: user");
+                  print("Tap: Looking for work. Saving role: applicant");
                   await SharePrefsHelper.setString(
                     SharedPreferenceValue.role,
-                    'user',
+                    'applicant',
                   );
                   print(SharedPreferenceValue.role);
                   print("Role Saved. Navigating to Auth.");
@@ -69,8 +69,8 @@ class WelcomeScreen extends StatelessWidget {
               // Option 2: I'm hiring for my salon
               _buildOptionCard(
                 icon: AppIcons.salon, // Assuming shop/salon icon
-                title: "I'm hiring for my salon",
-                subtitle: "Find talented professionals",
+                title: "Recruiter",
+                subtitle: "I'm hiring for my salon",
                 backgroundColor: Colors.white,
                 borderColor: const Color(0xFF1B5E3F),
                 textColor: const Color(0xFF1B5E3F),
@@ -78,10 +78,10 @@ class WelcomeScreen extends StatelessWidget {
                 iconBgColor: const Color(0xFFE8F5E9), // Light green tint
                 iconColor: const Color(0xFF1B5E3F),
                 onTap: () async {
-                  print("Tap: Hiring for salon. Saving role: hiring");
+                  print("Tap: Hiring for salon. Saving role: recruiter");
                   await SharePrefsHelper.setString(
                     SharedPreferenceValue.role,
-                    'hiring',
+                    'recruiter',
                   );
                   print(SharedPreferenceValue.role);
                   print("Role Saved. Navigating to Auth.");

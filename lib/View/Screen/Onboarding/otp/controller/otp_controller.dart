@@ -43,9 +43,9 @@ class OtpController extends GetxController {
           SharedPreferenceValue.role,
         );
 
-        if (role == 'user') {
+        if (role == 'applicant') {
           Get.to(() => const PersonalInformationView());
-        } else if (role == 'hiring') {
+        } else if (role == 'recruiter') {
           Get.to(() => const BusinessInformationView());
         }
       } else {
