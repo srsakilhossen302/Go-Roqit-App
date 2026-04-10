@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../../Job_Posts/model/job_post_model.dart';
-import 'package:flutter/widgets.dart';
 
 class PostJobController extends GetxController {
   var currentStep = 1.obs;
@@ -22,7 +24,10 @@ class PostJobController extends GetxController {
   final descriptionController = TextEditingController();
   final requirementsController = TextEditingController();
   final workScheduleController = TextEditingController();
+  final experienceLabelController = TextEditingController(); // New
+  final engagementTypeController = TextEditingController(); // New
 
+  final isLoading = false.obs;
   final isEditMode = false.obs;
   String? editingJobId;
 
@@ -98,12 +103,59 @@ class PostJobController extends GetxController {
 
       currentStep.value++;
     } else {
-      // Final Step (4) - Publish
-      Get.snackbar(
-        'Success',
-        isEditMode.value ? 'Job Updated' : 'Job Posted Successfully',
-      );
-      Get.back(); // Or navigate to some success page/Job list
+      _publishJob();
+    }
+  }
+
+  Future<void> _publishJob() async {
+    isLoading.value = true;
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+
+      final body = {
+        "title": jobTitleController.text,
+        "category": roleTypeController.text,
+        "type": employmentTypeController.text,
+        "engagementType": engagementTypeController.text.isNotEmpty 
+            ? engagementTypeController.text : "Salaried",
+        "startDate": DateTime.now().toIso8601String(),
+        "salryType": salaryTypeController.text,
+        "minSalary": int.tryParse(minSalaryController.text) ?? 0,
+        "maxSalary": int.tryParse(maxSalaryController.text) ?? 0,
+        "description": descriptionController.text,
+        "jobLocation": locationController.text,
+        "experianceLabel": experienceLabelController.text.isNotEmpty 
+            ? experienceLabelController.text : "Mid-level"
+      };
+
+      final headers = {'Authorization': 'Bearer $token'};
+      
+      // Using /job endpoint as per screenshot
+      final response = await apiClient.postData("/job", body, headers: headers);
+
+      print("Post Job Response: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          'Success',
+          isEditMode.value ? 'Job Updated' : 'Job Posted Successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.back();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.body['message'] ?? 'Failed to post job',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection Error: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 

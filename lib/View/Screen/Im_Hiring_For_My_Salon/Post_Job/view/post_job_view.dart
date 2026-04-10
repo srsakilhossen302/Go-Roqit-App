@@ -90,10 +90,12 @@ class PostJobView extends GetView<PostJobController> {
           // Footer Button
           Padding(
             padding: EdgeInsets.all(24.w),
-            child: mainButton(
-              loading: false,
-              onTap: controller.onContinue,
-              text: 'Continue',
+            child: Obx(
+              () => mainButton(
+                loading: controller.isLoading.value,
+                onTap: controller.onContinue,
+                text: controller.currentStep.value == 4 ? 'Publish' : 'Continue',
+              ),
             ),
           ),
         ],
