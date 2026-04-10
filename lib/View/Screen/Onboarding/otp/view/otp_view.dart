@@ -79,7 +79,7 @@ class OtpView extends GetView<OtpController> {
             SizedBox(height: 8.h),
             Obx(
               () => Text(
-                'Enter the 4-Digit code sent to you at ${controller.email.value}',
+                'Enter the 6-Digit code sent to you at ${controller.email.value}',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.grey[600],
@@ -93,13 +93,13 @@ class OtpView extends GetView<OtpController> {
               child: Pinput(
                 controller: controller.pinController,
                 focusNode: controller.focusNode,
-                length: 4,
+                length: 6,
                 defaultPinTheme: defaultPinTheme,
                 focusedPinTheme: focusedPinTheme,
                 submittedPinTheme: submittedPinTheme,
                 separatorBuilder: (index) => SizedBox(width: 16.w),
                 validator: (value) {
-                  return value == '2222' ? null : 'Pin is incorrect';
+                  return value != null && value.length == 6 ? null : 'Pin must be 6 digits';
                 },
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
@@ -122,10 +122,12 @@ class OtpView extends GetView<OtpController> {
               ),
             ),
             SizedBox(height: 32.h),
-            mainButton(
-              loading: false, // TODO: Connect to controller loading state
-              text: 'Submit',
-              onTap: controller.submitOtp,
+            Obx(
+              () => mainButton(
+                loading: controller.isLoading.value,
+                text: 'Submit',
+                onTap: controller.submitOtp,
+              ),
             ),
           ],
         ),

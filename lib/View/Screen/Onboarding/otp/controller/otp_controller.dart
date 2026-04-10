@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../../../Im_Hiring_For_My_Salon/Business_Information/Business_basics/view/business_information_view.dart';
 import '../../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 
@@ -13,6 +12,7 @@ class OtpController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   var email = ''.obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
@@ -28,38 +28,56 @@ class OtpController extends GetxController {
   }
 
   Future<void> submitOtp() async {
-    if (pinController.text.length == 4) {
-      // Validate
-      if (pinController.text == '2222') {
-        Get.snackbar(
-          'Success',
-          'OTP Submitted',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-        // API CALL => Verify OTP
+    if (pinController.text.length == 6) {
+      isLoading.value = true;
+      try {
+        final apiClient = Get.find<ApiClient>();
+        final body = {
+          "email": email.value,
+          "oneTimeCode": pinController.text
+        };
 
-        String role = await SharePrefsHelper.getString(
-          SharedPreferenceValue.role,
-        );
+        final response = await apiClient.postData(ApiUrl.otpVerify, body);
 
-        if (role == 'applicant') {
-          Get.to(() => const PersonalInformationView());
-        } else if (role == 'recruiter') {
-          Get.to(() => const BusinessInformationView());
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          Get.snackbar(
+            'Success',
+            'Account Verified successfully!',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+
+          String role = await SharePrefsHelper.getString(
+            SharedPreferenceValue.role,
+          );
+
+          if (role == 'applicant') {
+            Get.offAll(() => const PersonalInformationView());
+          } else if (role == 'recruiter') {
+            Get.offAll(() => const BusinessInformationView());
+          }
+        } else {
+          Get.snackbar(
+            'Error',
+            response.statusText ?? 'Verification failed',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
-      } else {
+      } catch (e) {
         Get.snackbar(
           'Error',
-          'Pin is incorrect',
+          'Connection Error: $e',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
+      } finally {
+        isLoading.value = false;
       }
     } else {
       Get.snackbar(
         'Error',
-        'Please enter 4 digits',
+        'Please enter 6 digits',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
