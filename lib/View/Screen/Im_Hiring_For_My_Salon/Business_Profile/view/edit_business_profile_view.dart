@@ -213,7 +213,10 @@ class EditBusinessProfileView extends GetView<BusinessProfileController> {
                   spacing: 12.w,
                   runSpacing: 12.h,
                   children: [
-                    ...galleryItems.map((img) => _buildGalleryItem(img)),
+                    ...galleryItems
+                        .asMap()
+                        .entries
+                        .map((entry) => _buildGalleryItem(entry.value, entry.key)),
                     for (int i = 0; i < neededPlaceholders; i++)
                       _buildAddGalleryItem(),
                   ],
@@ -388,23 +391,42 @@ class EditBusinessProfileView extends GetView<BusinessProfileController> {
     );
   }
 
-  Widget _buildGalleryItem(String imageUrl) {
+  Widget _buildGalleryItem(String imageUrl, int index) {
     final isNetwork = imageUrl.startsWith('http');
-    return GestureDetector(
-      onTap: controller.pickGalleryImage,
-      child: Container(
-        width: 100.w,
-        height: 100.w,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          image: DecorationImage(
-            image: isNetwork
-                ? NetworkImage(imageUrl)
-                : FileImage(File(imageUrl)) as ImageProvider,
-            fit: BoxFit.cover,
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () => controller.pickGalleryImage(index: index),
+          child: Container(
+            width: 100.w,
+            height: 100.w,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              image: DecorationImage(
+                image: isNetwork
+                    ? NetworkImage(imageUrl)
+                    : FileImage(File(imageUrl)) as ImageProvider,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
-      ),
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () => controller.removeGalleryImage(index),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, size: 14.sp, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
