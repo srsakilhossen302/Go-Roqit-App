@@ -69,6 +69,22 @@ class SignUpView extends GetView<SignUpController> {
               obscure: true,
               hintText: 'Create a password',
             ),
+            Obx(() {
+              if (controller.selectedRole.value == 'recruiter') {
+                return Column(
+                  children: [
+                    SizedBox(height: 16.h),
+                    textField(
+                      'Company Name',
+                      controller.companyName,
+                      hintText: 'Your salon/company name',
+                    ),
+                  ],
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
             SizedBox(height: 32.h),
 
             // Sign Up Button

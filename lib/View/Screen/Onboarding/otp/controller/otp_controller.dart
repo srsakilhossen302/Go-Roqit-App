@@ -40,15 +40,19 @@ class OtpController extends GetxController {
         final response = await apiClient.postData(ApiUrl.otpVerify, body);
 
         if (response.statusCode == 200 || response.statusCode == 201) {
+          final responseData = response.body;
+          final token = responseData['data']['accessToken'];
+          final role = responseData['data']['role'];
+
+          // Save Token and Role
+          await SharePrefsHelper.setString(SharedPreferenceValue.token, token);
+          await SharePrefsHelper.setString(SharedPreferenceValue.role, role);
+
           Get.snackbar(
             'Success',
             'Account Verified successfully!',
             backgroundColor: Colors.green,
             colorText: Colors.white,
-          );
-
-          String role = await SharePrefsHelper.getString(
-            SharedPreferenceValue.role,
           );
 
           if (role == 'applicant') {

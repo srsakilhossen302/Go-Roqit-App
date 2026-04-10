@@ -284,7 +284,7 @@ class InformationProfileView extends GetView<InformationProfileController> {
           () => ElevatedButton(
             onPressed: controller.isLoading.value
                 ? null
-                : controller.onContinue,
+                : () => controller.onContinue(),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1B5E3F),
               shape: RoundedRectangleBorder(

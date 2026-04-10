@@ -1,6 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
+import 'package:get_x/get_connect.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
+import '../../../Recruiter_Panel/view/recruiter_panel_view.dart';
 import '../../Hiring_Preferences/view/hiring_preferences_view.dart';
 
 class InformationProfileController extends GetxController {
@@ -45,20 +51,93 @@ class InformationProfileController extends GetxController {
   Future<void> onContinue() async {
     // Validate inputs
     if (selectedBusinessType.value == null) {
-      Get.snackbar('Required', 'Please select a business type');
+      Get.snackbar(
+        'Required',
+        'Please select a business type',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    if (aboutController.text.isEmpty) {
+      Get.snackbar(
+        'Required',
+        'Please describe your salon',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    if (galleryImages.isEmpty) {
+      Get.snackbar(
+        'Required',
+        'Please upload at least one image',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
     // Start loading
     isLoading.value = true;
 
-    // Simulate network delay (lod niya)
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final apiClient = Get.find<ApiClient>();
 
-    isLoading.value = false;
+      // Prepare files
+      final portfolioFiles = <MultipartFile>[];
+      for (var path in galleryImages) {
+        final bytes = await File(path).readAsBytes();
+        portfolioFiles.add(
+          MultipartFile(bytes,
+              filename: path.split('/').last, contentType: 'image/jpeg'),
+        );
+      }
 
-    // Proceed to next step
-    Get.to(() => const HiringPreferencesView());
+      final body = FormData({
+        "title": selectedBusinessType.value ?? "Business Portfolio",
+        "description": aboutController.text,
+        "portfolio": portfolioFiles,
+      });
+
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      final response = await apiClient.postData(ApiUrl.addPortfolio, body, headers: headers);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Success Body: ${response.body}");
+        Get.snackbar(
+          'Success',
+          'Portfolio added successfully!',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        // Proceed to next step
+        // Get.to(() => const HiringPreferencesView());
+        Get.to(() => const RecruiterPanelView());
+      } else {
+        print("Error Status Code: ${response.statusCode}");
+        print("Error Body: ${response.body}");
+        Get.snackbar(
+          'Error',
+          response.statusText ?? 'Something went wrong',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Connection Error: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

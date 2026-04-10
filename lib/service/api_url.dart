@@ -4,4 +4,6 @@ class ApiUrl {
   static const String signUp = "/auth/signup";
   static const String signIn = "/auth/signin";
   static const String otpVerify = "/auth/verify-account";
+  static const String updateProfile = "/user/profile";
+  static const String addPortfolio = "/user/applicants/portfolio";
 }

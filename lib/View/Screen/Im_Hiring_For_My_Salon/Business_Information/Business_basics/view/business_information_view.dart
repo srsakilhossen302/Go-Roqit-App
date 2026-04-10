@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_instance/src/extension_instance.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get_x/get_state_manager/src/simple/get_view.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Widgegt/mainButton.dart';
 import 'package:go_roqit_app/View/Widgegt/textField.dart';
@@ -86,12 +82,12 @@ class BusinessInformationView extends GetView<BusinessInformationController> {
               hintText: 'Enter salon name',
             ),
             SizedBox(height: 16.h),
-            textField(
-              'Contact name',
-              controller.contactNameController,
-              hintText: 'Your name',
-            ),
-            SizedBox(height: 16.h),
+            // textField(
+            //   'Contact name',
+            //   controller.contactNameController,
+            //   hintText: 'Your name',
+            // ),
+            // SizedBox(height: 16.h),
             textField(
               'Phone number',
               controller.phoneNumberController,
@@ -140,7 +136,7 @@ class BusinessInformationView extends GetView<BusinessInformationController> {
               () => mainButton(
                 loading: controller.isLoading.value,
                 text: 'Continue',
-                onTap: controller.submitBusinessInfo,
+                onTap: () => controller.submitBusinessInfo(),
               ),
             ),
             SizedBox(height: 20.h),
