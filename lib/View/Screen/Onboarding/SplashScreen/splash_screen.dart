@@ -4,6 +4,8 @@ import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import '../../../../Utils/AppIcons/app_icons.dart';
 import '../OnboardingScreen/onboardingScreen.dart';
+import '../auth/view/auth_screen.dart';
+import '../../../../helper/shared_prefe/shared_prefe.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,10 +20,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-      const Duration(seconds: 3),
-      () => Get.offAll(() => const OnboardingScreen()),
-    );
+    _checkInitialScreen();
+  }
+
+  void _checkInitialScreen() async {
+    await Future.delayed(const Duration(seconds: 3));
+    bool? isOnboardingSeen = await SharePrefsHelper.getBool(SharedPreferenceValue.isOnboarding);
+    
+    if (isOnboardingSeen == true) {
+      Get.offAll(() => const AuthScreen());
+    } else {
+      Get.offAll(() => const OnboardingScreen());
+    }
   }
 
   @override

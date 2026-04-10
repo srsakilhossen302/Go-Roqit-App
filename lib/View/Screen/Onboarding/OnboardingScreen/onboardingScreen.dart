@@ -5,6 +5,7 @@ import 'package:get_x/get_core/src/get_main.dart';
 import 'package:get_x/get_navigation/src/extension_navigation.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Onboarding/auth/view/auth_screen.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 
 import 'OnboardingData.dart';
 import 'OnboardingPage.dart';
@@ -59,8 +60,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Padding(
                 padding: EdgeInsets.only(right: 24.w, top: 16.h),
                 child: TextButton(
-                  onPressed: () {
-                    Get.offAll(() => AuthScreen());
+                  onPressed: () async {
+                    await SharePrefsHelper.setBool(SharedPreferenceValue.isOnboarding, true);
+                    Get.offAll(() => const AuthScreen());
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: const Color(0xFFE8F5E9), // Light green bg
@@ -130,14 +132,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 160.w, // Fixed width for pill shape
                 height: 56.h,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_currentPage < _pages.length - 1) {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      Get.offAll(() => AuthScreen());
+                      await SharePrefsHelper.setBool(SharedPreferenceValue.isOnboarding, true);
+                      Get.offAll(() => const AuthScreen());
                     }
                   },
                   style: ElevatedButton.styleFrom(
