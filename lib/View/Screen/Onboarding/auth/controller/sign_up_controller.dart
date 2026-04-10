@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
-
+import 'package:get_x/get.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../../otp/view/otp_view.dart';
 
 class SignUpController extends GetxController {
@@ -31,12 +28,34 @@ class SignUpController extends GetxController {
     }
 
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    isLoading.value = false;
 
-    successSnack('Account created successfully');
-    // API CALL => auth/sign-up
-    Get.to(() => const OtpView(), arguments: signUpEmail.text);
+    // Fetch role from SharedPreferences
+    String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
+
+    // Prepare request body
+    Map<String, dynamic> body = {
+      "name": fullName.text,
+      "email": signUpEmail.text,
+      "password": signUpPassword.text,
+      "role": role,
+    };
+
+    try {
+      // Hit the API
+      final response = await Get.find<ApiClient>().postData(ApiUrl.signUp, body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        successSnack('Account created successfully');
+        // Passing email to OTP view as an argument
+        Get.to(() => const OtpView(), arguments: signUpEmail.text);
+      } else {
+        errorSnack(response.statusText ?? 'Something went wrong');
+      }
+    } catch (e) {
+      errorSnack('Connection failed: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void errorSnack(String msg) {

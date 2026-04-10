@@ -3,7 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_navigation/src/root/get_material_app.dart';
 import 'package:go_roqit_app/View/Screen/Onboarding/SplashScreen/splash_screen.dart';
 
+import 'package:get_x/get.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.put(ApiClient());
   runApp(const MyApp());
 }
 
