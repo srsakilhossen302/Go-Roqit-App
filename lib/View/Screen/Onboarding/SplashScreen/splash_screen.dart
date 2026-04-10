@@ -6,6 +6,8 @@ import '../../../../Utils/AppIcons/app_icons.dart';
 import '../OnboardingScreen/onboardingScreen.dart';
 import '../auth/view/auth_screen.dart';
 import '../../../../helper/shared_prefe/shared_prefe.dart';
+import '../../Im_Hiring_For_My_Salon/Recruiter_Panel/view/recruiter_panel_view.dart';
+import '../../Im_Looking_For_Work/Home/view/home_view.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -25,8 +27,25 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _checkInitialScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-    bool? isOnboardingSeen = await SharePrefsHelper.getBool(SharedPreferenceValue.isOnboarding);
-    
+
+    // Check Token
+    String? token =
+        await SharePrefsHelper.getString(SharedPreferenceValue.token);
+    String? role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
+
+    if (token != null && token.isNotEmpty) {
+      if (role == 'recruiter') {
+        Get.offAll(() => const RecruiterPanelView());
+      } else {
+        Get.offAll(() => const HomeView());
+      }
+      return;
+    }
+
+    // Check Onboarding
+    bool? isOnboardingSeen =
+        await SharePrefsHelper.getBool(SharedPreferenceValue.isOnboarding);
+
     if (isOnboardingSeen == true) {
       Get.offAll(() => const AuthScreen());
     } else {

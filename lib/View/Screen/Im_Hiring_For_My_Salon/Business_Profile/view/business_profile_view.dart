@@ -552,7 +552,7 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Glow Beauty Salon',
+                controller.profile.value?.name ?? '',
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -560,7 +560,7 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                 ),
               ),
               Text(
-                'Recruiter',
+                controller.profile.value?.category ?? '',
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey),
               ),
               SizedBox(height: 8.h),

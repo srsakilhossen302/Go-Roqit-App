@@ -6,4 +6,5 @@ class ApiUrl {
   static const String otpVerify = "/auth/verify-account";
   static const String updateProfile = "/user/profile";
   static const String addPortfolio = "/user/applicants/portfolio";
+  static const String getProfile = "/user/me";
 }

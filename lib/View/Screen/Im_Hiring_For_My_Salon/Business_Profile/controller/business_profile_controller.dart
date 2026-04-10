@@ -45,43 +45,65 @@ class BusinessProfileController extends GetxController {
     loadProfile();
   }
 
-  void loadProfile() {
+  Future<void> loadProfile() async {
     isLoading.value = true;
 
-    // Simulate API delay
-    Future.delayed(const Duration(seconds: 1), () {
-      final mockProfile = BusinessProfileModel(
-        name: 'Glow Beauty Salon',
-        category: 'Beauty Salon',
-        description:
-            'Premium beauty and wellness services in the heart of London. We specialize in hair styling, coloring, and treatments with over 15 years of experience.',
-        logoUrl: 'https://i.pravatar.cc/150?u=glow_logo',
-        // Placeholder
-        coverUrl: 'https://picsum.photos/800/200',
-        // Placeholder
-        contactInfo: ContactInfo(
-          email: 'careers@glowbeauty.co.uk',
-          phone: '+44 20 7946 0123',
-          website: 'https://www.glowbeauty.co.uk',
-          location: 'London, UK',
-        ),
-        socialLinks: SocialLinks(
-          linkedin: 'https://linkedin.com/company/glowbeauty',
-          twitter: 'https://twitter.com/glowbeauty',
-          facebook: 'https://facebook.com/glowbeauty',
-          instagram: 'https://instagram.com/glowbeauty',
-        ),
-        galleryImages: [
-          'https://picsum.photos/200/200?random=1',
-          'https://picsum.photos/200/200?random=2',
-          'https://picsum.photos/200/200?random=3',
-        ],
-      );
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {'Authorization': 'Bearer $token'};
 
-      profile.value = mockProfile;
-      _populateFields(mockProfile);
+      final response = await apiClient.getData(ApiUrl.getProfile, headers: headers);
+
+      if (response.statusCode == 200) {
+        final resData = response.body['data'];
+        final profileData = resData['profile'];
+
+        if (profileData != null) {
+          // Helper to prepend baseUrl to local paths
+          String fullUrl(String? path) {
+            if (path == null || path.isEmpty) return '';
+            if (path.startsWith('http')) return path;
+            return "https://api.goroqit.com$path";
+          }
+
+          final fetchedProfile = BusinessProfileModel(
+            name: profileData['companyName'] ?? '',
+            category: "Recruiter", // Mocked
+            description: profileData['companyDescription'] ?? '',
+            logoUrl: fullUrl(profileData['companyLogo']),
+            coverUrl: 'https://picsum.photos/800/200', // Mocked
+            contactInfo: ContactInfo(
+              email: profileData['companyEmail'] ?? '',
+              phone: profileData['phone'] ?? '',
+              website: profileData['companyWebsite'] ?? '',
+              location: profileData['location'] ?? '',
+            ),
+            socialLinks: SocialLinks(
+              linkedin: profileData['linkedinProfile'] ?? '',
+              twitter: profileData['twitterProfile'] ?? '',
+              facebook: profileData['facebookProfile'] ?? '',
+              instagram: profileData['instagramProfile'] ?? '',
+            ),
+            galleryImages: (profileData['portfolio'] != null &&
+                    (profileData['portfolio'] as List).isNotEmpty)
+                ? (profileData['portfolio'][0]['portfolioImages'] as List)
+                    .map((e) => fullUrl(e.toString()))
+                    .toList()
+                : [],
+          );
+
+          profile.value = fetchedProfile;
+          _populateFields(fetchedProfile);
+        }
+      } else {
+        Get.snackbar('Error', response.statusText ?? 'Failed to fetch profile');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection Error: $e');
+    } finally {
       isLoading.value = false;
-    });
+    }
   }
 
   void _populateFields(BusinessProfileModel? data) {
