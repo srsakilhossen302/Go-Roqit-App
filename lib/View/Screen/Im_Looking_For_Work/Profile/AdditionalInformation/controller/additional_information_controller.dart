@@ -1,54 +1,62 @@
 import 'package:get_x/get.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/AdditionalInformation/model/additional_information_model.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/controller/profile_controller.dart';
+import '../model/additional_information_model.dart';
 
 class ProfileAdditionalInformationController extends GetxController {
-  final additionalInfoModel = AdditionalInformationModel(
-    resumeFileName: "Resume.pdf",
-    resumeLastUpdated: "Jan 2024",
-    professionalSummary:
-        "Passionate hair stylist with 8+ years of experience specializing in balayage, color correction, and creative styling. I love making clients feel confident and beautiful. Committed to staying updated with the latest trends and techniques.",
-    skills: [
-      "Balayage",
-      "Color Correction",
-      "Cutting",
-      "Styling",
-      "Hair Extensions",
-      "Keratin Treatment",
-    ],
-    languages: ["English", "Spanish"],
-    workPreferences: ["Full Time", "Part Time"],
-    salaryExpectation: "£28,000 - £35,000 per year",
-  ).obs;
+  final ProfileController _profileController = Get.find<ProfileController>();
 
-  void updateSummary(String newSummary) {
-    additionalInfoModel.value.professionalSummary = newSummary;
+  late Rx<AdditionalInformationModel> additionalInfoModel;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _updateModel();
+  }
+
+  void _updateModel() {
+    final profile = _profileController.userData.value?.profile;
+    
+    additionalInfoModel = AdditionalInformationModel(
+      resumeFileName: "Resume.pdf", // Backend doesn't provide file name directly
+      resumeLastUpdated: profile?.updatedAt?.split('T').first ?? "Not set",
+      professionalSummary: "", // Not found in JSON
+      skills: profile?.skills ?? [],
+      languages: profile?.languages ?? [],
+      workPreferences: [], // Not found in JSON
+      salaryExpectation: "Not set", // Not found in JSON
+    ).obs;
+  }
+
+  void refreshData() {
+    _profileController.fetchProfile().then((_) => _updateModel());
+  }
+
+  void updateSummary(String text) {
+    additionalInfoModel.value.professionalSummary = text;
     additionalInfoModel.refresh();
   }
 
-  void updateSkills(List<String> newSkills) {
-    additionalInfoModel.value.skills = newSkills;
+  void updateSkills(List<String> skills) {
+    additionalInfoModel.value.skills = skills;
     additionalInfoModel.refresh();
   }
 
-  void updateLanguages(List<String> newLanguages) {
-    additionalInfoModel.value.languages = newLanguages;
+  void updateLanguages(List<String> languages) {
+    additionalInfoModel.value.languages = languages;
     additionalInfoModel.refresh();
   }
 
-  void updateWorkPreferences(List<String> preferences, String salary) {
-    additionalInfoModel.value.workPreferences = preferences;
+  void updateWorkPreferences(List<String> prefs, String salary) {
+    additionalInfoModel.value.workPreferences = prefs;
     additionalInfoModel.value.salaryExpectation = salary;
     additionalInfoModel.refresh();
   }
 
-  // Placeholder for Resume actions
-  void viewResume() {
-    // Implement logic to view resume
-    print("View Resume");
+  void updateResume() {
+    // Logic to update resume (e.g., File Picker)
   }
 
-  void updateResume() {
-    // Implement logic to pick/upload new resume
-    print("Update Resume");
+  void viewResume() {
+    // Logic to view resume (e.g., Open PDF)
   }
 }

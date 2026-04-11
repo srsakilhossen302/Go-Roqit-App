@@ -1,23 +1,33 @@
 import 'package:get_x/get.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/controller/profile_controller.dart';
 
 class UserInformationController extends GetxController {
-  // Use Rx for the model to update UI automatically
-  final userModel = UserInformationModel(
-    firstName: "Sarah",
-    lastName: "Mitchell",
-    gender: "Female",
-    dateOfBirth: "1995-03-15",
-    citizenship: "United Kingdom",
-    streetAddress: "45 Oxford Street",
-    city: "London",
-    zipCode: "W1D 2DZ",
-    country: "United Kingdom",
-    mobileNumber: "+44 7456 123789",
-    landline: "+44 20 7946 0958",
-    profileImagePath: "",
-  ).obs;
+  final ProfileController _profileController = Get.find<ProfileController>();
+
+  late Rx<UserInformationModel> userModel;
+
+  @override
+  void onInit() {
+    super.onInit();
+    final profile = _profileController.userData.value?.profile;
+    final user = _profileController.userData.value;
+    
+    userModel = UserInformationModel(
+      firstName: profile?.firstName ?? user?.name?.split(' ').first ?? "",
+      lastName: user?.name?.split(' ').length == 2 ? user?.name?.split(' ').last ?? "" : "",
+      gender: profile?.gender ?? "",
+      dateOfBirth: profile?.dateOfBirth?.split('T').first ?? "",
+      citizenship: profile?.citizenship ?? "",
+      streetAddress: profile?.streetAddress ?? "",
+      city: profile?.city ?? "",
+      zipCode: profile?.zipCode ?? "",
+      country: profile?.country ?? "",
+      mobileNumber: profile?.mobile ?? "",
+      landline: profile?.landLine ?? "",
+      profileImagePath: user?.image ?? "",
+    ).obs;
+  }
 
   void updateBasicInfo(
     String firstName,

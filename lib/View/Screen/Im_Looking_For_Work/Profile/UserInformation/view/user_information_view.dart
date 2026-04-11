@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/controller/user_information_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart';
-import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart'; // Import Model
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
 class UserInformationView extends GetView<UserInformationController> {
   const UserInformationView({super.key});
@@ -58,7 +58,7 @@ class UserInformationView extends GetView<UserInformationController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildField("Full Name", model.fullName),
+                    _buildField("Full Name", "${model.firstName} ${model.lastName}".trim()),
                     SizedBox(height: 16.h),
                     _buildField("Gender", model.gender),
                     SizedBox(height: 16.h),
@@ -88,26 +88,28 @@ class UserInformationView extends GetView<UserInformationController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            model.streetAddress,
+                            model.streetAddress.isEmpty ? "No address set" : model.streetAddress,
                             style: TextStyle(
                               fontSize: 14.sp,
                               color: const Color(0xFF0F172A),
                             ),
                           ),
-                          Text(
-                            "${model.city}, ${model.zipCode}",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: const Color(0xFF0F172A),
+                          if (model.city.isNotEmpty || model.zipCode.isNotEmpty)
+                            Text(
+                              "${model.city}, ${model.zipCode}",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: const Color(0xFF0F172A),
+                              ),
                             ),
-                          ),
-                          Text(
-                            model.country,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: const Color(0xFF0F172A),
+                          if (model.country.isNotEmpty)
+                            Text(
+                              model.country,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: const Color(0xFF0F172A),
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -125,13 +127,13 @@ class UserInformationView extends GetView<UserInformationController> {
                     _buildContactItem(
                       Icons.phone_outlined,
                       "Mobile",
-                      model.mobileNumber,
+                      model.mobileNumber.isEmpty ? "Not set" : model.mobileNumber,
                     ),
                     SizedBox(height: 16.h),
                     _buildContactItem(
                       Icons.call_outlined,
                       "Landline",
-                      model.landline,
+                      model.landline.isEmpty ? "Not set" : model.landline,
                     ),
                   ],
                 ),
@@ -457,7 +459,7 @@ class UserInformationView extends GetView<UserInformationController> {
         ),
         SizedBox(height: 4.h),
         Text(
-          value,
+          value.isEmpty ? "Not set" : value,
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w600,

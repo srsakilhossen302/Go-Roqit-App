@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Education/controller/profile_education_controller.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Education/model/education_model.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/model/profile_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
 class ProfileEducationView extends GetView<ProfileEducationController> {
@@ -44,67 +44,71 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
         centerTitle: false,
       ),
       bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 4),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          children: [
-            Obx(
-              () => Column(
-                children: controller.educationList
-                    .map((education) => _buildEducationCard(education))
-                    .toList(),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            // Add Education Button Card
-            GestureDetector(
-              onTap: () {
-                // TODO: Implement add education logic
-              },
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 24.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: Colors.grey.shade200),
+      body: Obx(
+        () => RefreshIndicator(
+          onRefresh: () async => controller.refreshData(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              children: [
+                Column(
+                  children: controller.educationList
+                      .map((education) => _buildEducationCard(education))
+                      .toList(),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10.w),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE8F5E9), // Light green bg
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: const Color(0xFF1B5E3F),
-                        size: 24.sp,
-                      ),
+                SizedBox(height: 16.h),
+                // Add Education Button Card
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Implement add education logic
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 24.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey.shade200),
                     ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      "Add Education",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F172A),
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F5E9), // Light green bg
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: const Color(0xFF1B5E3F),
+                            size: 24.sp,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          "Add Education",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF0F172A),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 20.h),
+              ],
             ),
-            SizedBox(height: 20.h),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildEducationCard(EducationModel education) {
+  Widget _buildEducationCard(Education education) {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(16.w),
@@ -141,7 +145,7 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  education.degree,
+                  education.degreeTitle ?? "",
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -150,7 +154,7 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  education.institution,
+                  education.instituteName ?? "",
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Colors.grey.shade600,
@@ -158,7 +162,7 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  education.fieldOfStudy,
+                  education.major ?? "",
                   style: TextStyle(
                     fontSize: 13.sp,
                     color: Colors.grey.shade500,
@@ -169,13 +173,11 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: [
-                    _buildTag(education.type),
-                    _buildTag(education.cgpa),
-                    _buildTag(education.year),
+                    if (education.yearOfPassing != null)
+                      _buildTag(education.yearOfPassing!),
+                    if (education.duration != null) _buildTag(education.duration!),
                   ],
                 ),
-                SizedBox(height: 8.h),
-                _buildTag(education.duration),
               ],
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/WorkExperience/controller/work_experience_controller.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/WorkExperience/model/work_experience_model.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/model/profile_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
 class ProfileWorkExperienceView
@@ -45,67 +45,71 @@ class ProfileWorkExperienceView
         centerTitle: false,
       ),
       bottomNavigationBar: const JobSeekerNavBar(selectedIndex: 4),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          children: [
-            Obx(
-              () => Column(
-                children: controller.workExperiences
-                    .map((experience) => _buildExperienceCard(experience))
-                    .toList(),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            // Add Work Experience Button Card
-            GestureDetector(
-              onTap: () {
-                // TODO: Implement add work experience logic (e.g., open a form)
-              },
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 24.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: Colors.grey.shade200),
+      body: Obx(
+        () => RefreshIndicator(
+          onRefresh: () async => controller.refreshData(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              children: [
+                Column(
+                  children: controller.workExperiences
+                      .map((experience) => _buildExperienceCard(experience))
+                      .toList(),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10.w),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE8F5E9),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: const Color(0xFF1B5E3F),
-                        size: 24.sp,
-                      ),
+                SizedBox(height: 16.h),
+                // Add Work Experience Button Card
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Implement add work experience logic (e.g., open a form)
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 24.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey.shade200),
                     ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      "Add Work Experience",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F172A),
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F5E9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: const Color(0xFF1B5E3F),
+                            size: 24.sp,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          "Add Work Experience",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF0F172A),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 20.h),
+              ],
             ),
-            SizedBox(height: 20.h),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildExperienceCard(WorkExperienceModel experience) {
+  Widget _buildExperienceCard(WorkExperience experience) {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(16.w),
@@ -142,7 +146,7 @@ class ProfileWorkExperienceView
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  experience.jobTitle,
+                  experience.jobTitle ?? "",
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -151,7 +155,7 @@ class ProfileWorkExperienceView
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  experience.companyName,
+                  experience.companyName ?? "",
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Colors.grey.shade600,
@@ -159,7 +163,7 @@ class ProfileWorkExperienceView
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  experience.location,
+                  experience.location ?? "",
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Colors.grey.shade600,
@@ -167,7 +171,7 @@ class ProfileWorkExperienceView
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  "${experience.startDate} - ${experience.endDate} · ${experience.duration}",
+                  "${experience.startDate?.split('T').first ?? ""} - ${experience.endDate?.split('T').first ?? "Present"}",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.grey.shade500,
@@ -176,12 +180,13 @@ class ProfileWorkExperienceView
                 SizedBox(height: 12.h),
                 Row(
                   children: [
-                    _buildTag(
-                      experience.employmentType,
-                      const Color(0xFFE0F2FE),
-                      const Color(0xFF0284C7),
-                    ),
-                    if (experience.isCurrentPosition) ...[
+                    if (experience.employmentType != null)
+                      _buildTag(
+                        experience.employmentType!,
+                        const Color(0xFFE0F2FE),
+                        const Color(0xFF0284C7),
+                      ),
+                    if (experience.endDate == null) ...[
                       SizedBox(width: 8.w),
                       _buildTag(
                         "Current Position",
