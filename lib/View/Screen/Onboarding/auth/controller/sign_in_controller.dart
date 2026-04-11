@@ -4,6 +4,7 @@ import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import '../../../Im_Hiring_For_My_Salon/Business_Information/Business_basics/view/business_information_view.dart';
+import '../../../Im_Hiring_For_My_Salon/Recruiter_Panel/view/recruiter_panel_view.dart';
 import '../../../Im_Looking_For_Work/Home/view/home_view.dart';
 import '../../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
 
@@ -22,46 +23,57 @@ class SignInController extends GetxController {
     }
 
     isLoading.value = true;
-    
+
     Map<String, dynamic> body = {
       "email": signInEmail.text,
-      "password": signInPassword.text
+      "password": signInPassword.text,
     };
 
     try {
-      final response = await Get.find<ApiClient>().postData(ApiUrl.signIn, body);
+      final response = await Get.find<ApiClient>().postData(
+        ApiUrl.signIn,
+        body,
+      );
       print("Sign In Status Code: ${response.statusCode}");
       print("Sign In Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         successSnack('Signed in successfully');
-        
+
         // Extract data
         final data = response.body['data'];
         if (data != null) {
           String? accessToken = data['accessToken'];
           String? refreshToken = data['refreshToken'];
           String? role = data['role'];
-          
+
           if (accessToken != null) {
-             await SharePrefsHelper.setString(SharedPreferenceValue.token, accessToken);
+            await SharePrefsHelper.setString(
+              SharedPreferenceValue.token,
+              accessToken,
+            );
           }
           if (refreshToken != null) {
-             await SharePrefsHelper.setString(SharedPreferenceValue.refreshToken, refreshToken);
+            await SharePrefsHelper.setString(
+              SharedPreferenceValue.refreshToken,
+              refreshToken,
+            );
           }
           if (role != null) {
-             await SharePrefsHelper.setString(SharedPreferenceValue.role, role);
+            await SharePrefsHelper.setString(SharedPreferenceValue.role, role);
           }
         }
 
         // Check role and navigate
-        String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
+        String role = await SharePrefsHelper.getString(
+          SharedPreferenceValue.role,
+        );
 
         if (role.toLowerCase() == 'applicant') {
           //Get.to(() => const PersonalInformationView());
           Get.to(() => const HomeView());
         } else if (role.toLowerCase() == 'recruiter') {
-          Get.to(() => const BusinessInformationView());
+          Get.to(() => const RecruiterPanelView());
         } else {
           errorSnack('Role not found or unrecognized: $role');
         }

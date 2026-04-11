@@ -143,7 +143,7 @@ class ChoosePlanView extends GetView<ChoosePlanController> {
                 Row(
                   children: [
                     Icon(
-                      _getIconForPlan(plan.id),
+                      _getIconForPlan(plan.name),
                       color: const Color(0xFF374151), // Grey 700
                       size: 20.sp,
                     ),
@@ -167,7 +167,7 @@ class ChoosePlanView extends GetView<ChoosePlanController> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      plan.price,
+                      "£${plan.price}",
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontWeight: FontWeight.bold,
@@ -330,16 +330,16 @@ class ChoosePlanView extends GetView<ChoosePlanController> {
     );
   }
 
-  IconData _getIconForPlan(String id) {
-    switch (id) {
-      case 'starter':
-        return Icons.business_center_outlined;
-      case 'pro':
-        return Icons.bolt;
-      case 'business':
-        return Icons.workspace_premium_outlined; // Crown icon approximation
-      default:
-        return Icons.star_outline;
+  IconData _getIconForPlan(String name) {
+    if (name.toLowerCase().contains('beta')) {
+      return Icons.bolt;
+    } else if (name.toLowerCase().contains('starter')) {
+      return Icons.business_center_outlined;
+    } else if (name.toLowerCase().contains('pro')) {
+      return Icons.workspace_premium_outlined;
+    } else if (name.toLowerCase().contains('business')) {
+      return Icons.star_outline;
     }
+    return Icons.card_membership_outlined;
   }
 }

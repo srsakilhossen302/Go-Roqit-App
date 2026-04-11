@@ -1,4 +1,10 @@
-import 'package:get_x/get.dart';
+import 'package:get_x/get_core/src/get_main.dart';
+import 'package:get_x/get_instance/src/extension_instance.dart';
+import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
+import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../model/plan_model.dart';
 import '../../Payment/view/payment_view.dart';
 
@@ -12,52 +18,26 @@ class ChoosePlanController extends GetxController {
     loadPlans();
   }
 
-  void loadPlans() {
+  Future<void> loadPlans() async {
     isLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().getData(ApiUrl.getPlans);
+      
+      print("Fetch Plans Status: ${response.statusCode}");
+      print("Fetch Plans Body: ${response.body}");
 
-    // Simulate API delay
-    Future.delayed(const Duration(milliseconds: 500), () {
-      plans.value = [
-        PlanModel(
-          id: 'starter',
-          name: 'Starter',
-          price: 'Free',
-          isCurrentPlan: true,
-          features: [
-            PlanFeature('1 Free Job Post / Month'),
-            PlanFeature('Basic Job Filters'),
-            PlanFeature('Unlimited Job Posts', isIncluded: false),
-          ],
-        ),
-        PlanModel(
-          id: 'pro',
-          name: 'Pro',
-          price: '£10',
-          isPopular: true,
-          features: [
-            PlanFeature('Unlimited Job Posts'),
-            PlanFeature(
-              'Freelance, Part-Time, Apprenticeship &\nGuest Spot Options',
-            ),
-            PlanFeature('Candidate Applications Direct to Your Inbox'),
-          ],
-        ),
-        PlanModel(
-          id: 'business',
-          name: 'Business',
-          price: '£99',
-          period: '/Yearly',
-          discountText: 'Save £21/year',
-          features: [
-            PlanFeature('Unlimited Job Posts'),
-            PlanFeature('Priority Placement in Search Results'),
-            PlanFeature('Monthly Insights on Your Job Reach'),
-            PlanFeature('All Pro features Included'),
-          ],
-        ),
-      ];
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null && data['plans'] != null) {
+          List plansData = data['plans'];
+          plans.value = plansData.map((json) => PlanModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      print("Error loading plans: $e");
+    } finally {
       isLoading.value = false;
-    });
+    }
   }
 
   void selectPlan(PlanModel plan) {

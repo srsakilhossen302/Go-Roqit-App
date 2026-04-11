@@ -12,4 +12,5 @@ class ApiUrl {
   static const String getJobs = "/job";
   static const String applyJob = "/application";
   static const String createChat = "/chat";
+  static const String getPlans = "/plan";
 }
