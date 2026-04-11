@@ -1,4 +1,10 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/controller/profile_controller.dart';
 import '../../model/profile_model.dart';
 
@@ -8,7 +14,114 @@ class ProfileEducationController extends GetxController {
   RxList<Education> get educationList => 
     (_profileController.userData.value?.profile?.education ?? <Education>[]).obs;
 
+  var isLoading = false.obs;
+
+  final degreeTitleController = TextEditingController();
+  final majorController = TextEditingController();
+  final instituteNameController = TextEditingController();
+  final yearOfPassingController = TextEditingController();
+  final durationController = TextEditingController();
+  final descriptionController = TextEditingController();
+
+  final ImagePicker _picker = ImagePicker();
+  var certificatePath = ''.obs;
+
   void refreshData() {
     _profileController.fetchProfile();
+  }
+
+  @override
+  void onClose() {
+    degreeTitleController.dispose();
+    majorController.dispose();
+    instituteNameController.dispose();
+    yearOfPassingController.dispose();
+    durationController.dispose();
+    descriptionController.dispose();
+    super.onClose();
+  }
+
+  Future<void> pickCertificate() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        certificatePath.value = image.path;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick image: $e');
+    }
+  }
+
+  void clearForm() {
+    degreeTitleController.clear();
+    majorController.clear();
+    instituteNameController.clear();
+    yearOfPassingController.clear();
+    durationController.clear();
+    descriptionController.clear();
+    certificatePath.value = '';
+  }
+
+  Future<void> submitEducation() async {
+    if (degreeTitleController.text.isEmpty ||
+        instituteNameController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill required fields (Degree and Institute Name)');
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+
+      final Map<String, dynamic> formDataMap = {
+        "degreeTitle": degreeTitleController.text,
+        "instituteName": instituteNameController.text,
+        "major": majorController.text,
+        "duration": durationController.text,
+        "yearOfPassing": yearOfPassingController.text,
+        "description": descriptionController.text,
+      };
+
+      if (certificatePath.value.isNotEmpty) {
+        final file = File(certificatePath.value);
+        if (await file.exists()) {
+          formDataMap["certificate"] = MultipartFile(
+            await file.readAsBytes(),
+            filename: certificatePath.value.split('/').last,
+            contentType: 'image/jpeg',
+          );
+        }
+      }
+
+      final body = FormData(formDataMap);
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final response = await apiClient.postData(ApiUrl.addEducation, body, headers: headers);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back(); // close Bottom Sheet
+        Get.snackbar(
+          'Success',
+          'Education Added successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        clearForm();
+        refreshData();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.body['message'] ?? 'Failed to add education',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection Error: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
