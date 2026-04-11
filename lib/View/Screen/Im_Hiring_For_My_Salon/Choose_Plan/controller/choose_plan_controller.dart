@@ -1,12 +1,9 @@
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_instance/src/extension_instance.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import '../model/plan_model.dart';
-import '../../Payment/view/payment_view.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:go_roqit_app/Utils/Toast/toast.dart';
 
 class ChoosePlanController extends GetxController {
   var plans = <PlanModel>[].obs;
@@ -40,10 +37,39 @@ class ChoosePlanController extends GetxController {
     }
   }
 
-  void selectPlan(PlanModel plan) {
+  Future<void> selectPlan(PlanModel plan) async {
     if (plan.isCurrentPlan) return;
 
-    // Logic to initiate purchase or upgrade
-    Get.to(() => const PaymentView(), arguments: plan);
+    isLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().postData(
+        "${ApiUrl.createCheckout}/${plan.id}",
+        {}, // Empty body as id is in URL
+      );
+
+      print("Create Checkout Status: ${response.statusCode}");
+      print("Create Checkout Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final String? url = response.body['url'] ?? response.body['data']?['url'];
+        if (url != null) {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            ToastHelper.error("Could not launch checkout page.");
+          }
+        } else {
+          ToastHelper.error("Checkout URL not found in response.");
+        }
+      } else {
+        ToastHelper.error("Failed to create checkout session.");
+      }
+    } catch (e) {
+      print("Error during checkout: $e");
+      ToastHelper.error("Connection failed.");
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
