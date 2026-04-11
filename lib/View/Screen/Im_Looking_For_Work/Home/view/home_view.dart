@@ -7,8 +7,10 @@ import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get_x/get_state_manager/src/simple/get_view.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_details_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Swipe/view/swipe_view.dart';
 import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
+import '../../../Im_Hiring_For_My_Salon/Notification/view/notification_view.dart';
 import '../controller/home_controller.dart';
 import '../../../../Widgegt/JobSeekerNavBar.dart';
 
@@ -73,19 +75,24 @@ class HomeView extends GetView<HomeController> {
                             ],
                           ),
                           const Spacer(),
-                          Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.grey[200]!),
-                            ),
-                            child: Badge(
-                              smallSize: 8,
-                              backgroundColor: Colors.red,
-                              child: Image.asset(
-                                AppIcons.notification,
-                                width: 20.w,
-                                height: 20.h,
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => const NotificationView());
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(8.r),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.grey[200]!),
+                              ),
+                              child: Badge(
+                                smallSize: 8,
+                                backgroundColor: Colors.red,
+                                child: Image.asset(
+                                  AppIcons.notification,
+                                  width: 20.w,
+                                  height: 20.h,
+                                ),
                               ),
                             ),
                           ),
@@ -318,7 +325,11 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildJobCard(JobModel job) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => JobDetailsView(job: job));
+      },
+      child: Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -400,6 +411,7 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
+    ),
     );
   }
 
