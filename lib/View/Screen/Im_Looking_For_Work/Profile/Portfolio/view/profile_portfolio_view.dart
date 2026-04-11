@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
@@ -60,9 +62,7 @@ class ProfilePortfolioView extends GetView<ProfilePortfolioController> {
                 SizedBox(height: 16.h),
                 // Add Portfolio Button Card
                 GestureDetector(
-                  onTap: () {
-                    // TODO: Implement add portfolio logic
-                  },
+                  onTap: () => _showAddPortfolioSheet(context),
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 24.h),
@@ -179,6 +179,212 @@ class ProfilePortfolioView extends GetView<ProfilePortfolioController> {
             ),
         ],
       ),
+    );
+  }
+
+  void _showAddPortfolioSheet(BuildContext context) {
+    controller.clearForm();
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        height: 0.85.sh, 
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Add Portfolio",
+                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildTextField("Portfolio Title *", controller.titleController, hintText: 'e.g. E-commerce App Redesign'),
+                    SizedBox(height: 16.h),
+                    _buildTextField(
+                      "Description",
+                      controller.descriptionController,
+                      hintText: 'Describe the project details...',
+                      maxLines: 4,
+                    ),
+                    SizedBox(height: 24.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Upload Images *',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () => controller.pickImage(),
+                          icon: Icon(Icons.add_photo_alternate, size: 18.sp),
+                          label: Text("Add Multiple"),
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF1B5E3F),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Obx(() {
+                      if (controller.selectedImages.isEmpty) {
+                        return GestureDetector(
+                          onTap: () => controller.pickImage(),
+                          child: Container(
+                            width: double.infinity,
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F5F9),
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.upload_file, color: Colors.grey),
+                                SizedBox(height: 8.h),
+                                Text(
+                                  'Tap to add images',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10.w,
+                            mainAxisSpacing: 10.h,
+                          ),
+                          itemCount: controller.selectedImages.length,
+                          itemBuilder: (context, index) {
+                            return Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    image: DecorationImage(
+                                      image: FileImage(File(controller.selectedImages[index].path)),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: GestureDetector(
+                                    onTap: () => controller.removeImage(index),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.close, color: Colors.white, size: 14),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }),
+                    SizedBox(height: 32.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Obx(
+                        () => ElevatedButton(
+                          onPressed: controller.isLoading.value ? null : () => controller.submitPortfolio(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1B5E3F),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: controller.isLoading.value
+                              ? SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  "Save Portfolio",
+                                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                                ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {String? hintText, int maxLines = 1}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+        ),
+        SizedBox(height: 6.h),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12.w,
+              vertical: 12.h,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
