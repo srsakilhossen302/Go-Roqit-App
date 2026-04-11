@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../../../Im_Hiring_For_My_Salon/Business_Information/Business_basics/view/business_information_view.dart';
 import '../../../Im_Looking_For_Work/Home/view/home_view.dart';
 import '../../../Im_Looking_For_Work/Personal_Information/view/personal_information_view.dart';
@@ -24,27 +22,56 @@ class SignInController extends GetxController {
     }
 
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    isLoading.value = false;
+    
+    Map<String, dynamic> body = {
+      "email": signInEmail.text,
+      "password": signInPassword.text
+    };
 
-    successSnack('Signed in successfully');
-    // API CALL => auth/sign-in
+    try {
+      final response = await Get.find<ApiClient>().postData(ApiUrl.signIn, body);
+      print("Sign In Status Code: ${response.statusCode}");
+      print("Sign In Response Body: ${response.body}");
 
-    // Check role and navigate
-    String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        successSnack('Signed in successfully');
+        
+        // Extract data
+        final data = response.body['data'];
+        if (data != null) {
+          String? accessToken = data['accessToken'];
+          String? refreshToken = data['refreshToken'];
+          String? role = data['role'];
+          
+          if (accessToken != null) {
+             await SharePrefsHelper.setString(SharedPreferenceValue.token, accessToken);
+          }
+          if (refreshToken != null) {
+             await SharePrefsHelper.setString(SharedPreferenceValue.refreshToken, refreshToken);
+          }
+          if (role != null) {
+             await SharePrefsHelper.setString(SharedPreferenceValue.role, role);
+          }
+        }
 
-    if (role == 'applicant') {
-      //Get.to(() => const PersonalInformationView());
-      Get.to(() => const HomeView());
-    } else if (role == 'recruiter') {
-      Get.to(() => const BusinessInformationView());
-    } else {
-      Get.snackbar(
-        'Error',
-        'Role not found: $role',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+        // Check role and navigate
+        String role = await SharePrefsHelper.getString(SharedPreferenceValue.role);
+
+        if (role.toLowerCase() == 'applicant') {
+          //Get.to(() => const PersonalInformationView());
+          Get.to(() => const HomeView());
+        } else if (role.toLowerCase() == 'recruiter') {
+          Get.to(() => const BusinessInformationView());
+        } else {
+          errorSnack('Role not found or unrecognized: $role');
+        }
+      } else {
+        errorSnack(response.statusText ?? 'Incorrect email or password');
+      }
+    } catch (e) {
+      errorSnack('Connection failed: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
