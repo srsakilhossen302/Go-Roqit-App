@@ -69,6 +69,18 @@ class JobModel {
       lng = 90.4125 + (random.nextDouble() - 0.5) * 0.1;
     }
 
+    List<String> photos = [];
+    if (json["user"]?["profile"]?["portfolio"] != null && json["user"]["profile"]["portfolio"] is List) {
+      for (var item in json["user"]["profile"]["portfolio"]) {
+        if (item is String) {
+          photos.add("https://api.goroqit.com$item");
+        } else if (item is Map && item["path"] != null) {
+          photos.add("https://api.goroqit.com${item["path"]}");
+        }
+      }
+    }
+    if (photos.isEmpty) photos.add(logo);
+
     return JobModel(
         id: json["_id"] ?? "",
         title: json["title"] ?? "",
@@ -81,8 +93,8 @@ class JobModel {
         workingHours: "Not Specified",
         workSystem: json["engagementType"] ?? "On-site",
         skills: json["experianceLabel"] != null ? [json["experianceLabel"]] : [],
-        companyDescription: json["description"] ?? "",
-        businessPhotos: [logo],
+        companyDescription: json["user"]?["profile"]?["companyDescription"] ?? json["description"] ?? "",
+        businessPhotos: photos,
         requirements: [],
         benefits: [],
         latitude: lat, 
