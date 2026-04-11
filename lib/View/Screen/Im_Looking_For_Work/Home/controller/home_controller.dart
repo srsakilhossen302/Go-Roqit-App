@@ -9,11 +9,32 @@ class HomeController extends GetxController {
   var searchText = "".obs;
   var isLoading = false.obs;
   var jobList = <JobModel>[].obs;
+  
+  var userName = "Sarah".obs; // Default
+  var userImage = "https://i.pravatar.cc/150?u=a042581f4e29026024d".obs; // Default
 
   @override
   void onInit() {
     super.onInit();
+    fetchProfile();
     fetchJobs();
+  }
+
+  Future<void> fetchProfile() async {
+    try {
+      final response = await Get.find<ApiClient>().getData(ApiUrl.getProfile);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null) {
+          userName.value = data['name'] ?? "User";
+          if (data['image'] != null && data['image'].toString().isNotEmpty) {
+             userImage.value = "https://api.goroqit.com${data['image']}";
+          }
+        }
+      }
+    } catch (e) {
+      print("Error fetching profile: $e");
+    }
   }
 
   Future<void> fetchJobs({String searchTerm = ""}) async {

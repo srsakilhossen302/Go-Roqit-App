@@ -23,8 +23,8 @@ class HomeView extends GetView<HomeController> {
       body: SafeArea(
         child: MyRefreshIndicator(
           onRefresh: () async {
-            // Refresh logic here, e.g. controller.loadData()
-            await Future.delayed(const Duration(seconds: 1));
+            await controller.fetchProfile();
+            await controller.fetchJobs();
           },
           child: Column(
             children: [
@@ -38,15 +38,16 @@ class HomeView extends GetView<HomeController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: 20.r,
-                            backgroundImage: const NetworkImage(
-                              "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-                            ), // Placeholder
-                            backgroundColor: Colors.grey[200],
+                          Obx(
+                            () => CircleAvatar(
+                              radius: 20.r,
+                              backgroundImage: NetworkImage(
+                                controller.userImage.value,
+                              ),
+                              backgroundColor: Colors.grey[200],
+                            ),
                           ),
                           SizedBox(width: 12.w),
                           Column(
@@ -59,12 +60,14 @@ class HomeView extends GetView<HomeController> {
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              Text(
-                                "Sarah",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                              Obx(
+                                () => Text(
+                                  controller.userName.value,
+                                  style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ],
