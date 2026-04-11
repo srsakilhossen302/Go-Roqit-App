@@ -44,16 +44,22 @@ class SwipeController extends GetxController {
   }
 
   void _handleApply(int index) {
+    // We hit the real API in both cases, but we might show the "Boost" dialog if profile is incomplete
+    final JobModel job = jobsController.jobList[index];
+    
     if (isProfileComplete.value) {
-      _showApplyDialog(index, startWithSuccess: true);
+       jobsController.applyToJob(job.id).then((_) {
+         // If jobsController shows snackbar, we might not need separate dialog,
+         // but the mockup has a success content dialog.
+         _showApplyDialog(job, startWithSuccess: true);
+       });
     } else {
-      _showApplyDialog(index, startWithSuccess: false);
+      _showApplyDialog(job, startWithSuccess: false);
     }
   }
 
-  void _showApplyDialog(int index, {required bool startWithSuccess}) {
+  void _showApplyDialog(JobModel job, {required bool startWithSuccess}) {
     final RxBool showSuccess = startWithSuccess.obs;
-    final JobModel job = jobsController.jobList[index];
 
     Get.dialog(
       Dialog(
@@ -107,19 +113,23 @@ class SwipeController extends GetxController {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
-        ElevatedButton.icon(
-          onPressed: () {
-            // Switch to success view without closing dialog
-            showSuccess.value = true;
-          },
-          icon: const Icon(
-            Icons.favorite_border,
-            color: Colors.white,
-            size: 20,
-          ),
-          label: const Text(
-            "Apply Anyway",
-            style: TextStyle(color: Colors.white),
+        Obx(() => ElevatedButton.icon(
+          onPressed: jobsController.isApplying.value 
+            ? null 
+            : () async {
+                await jobsController.applyToJob(job.id);
+                showSuccess.value = true;
+              },
+          icon: jobsController.isApplying.value 
+            ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+            : const Icon(
+                Icons.favorite_border,
+                color: Colors.white,
+                size: 20,
+              ),
+          label: Text(
+            jobsController.isApplying.value ? "Applying..." : "Apply Anyway",
+            style: const TextStyle(color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1B5E3F),
@@ -129,7 +139,7 @@ class SwipeController extends GetxController {
             ),
             elevation: 0,
           ),
-        ),
+        )),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () {

@@ -10,4 +10,5 @@ class ApiUrl {
   static const String addEducation = "/user/applicants/education";
   static const String addWorkExperience = "/user/applicants/experience";
   static const String getJobs = "/job";
+  static const String applyJob = "/application";
 }

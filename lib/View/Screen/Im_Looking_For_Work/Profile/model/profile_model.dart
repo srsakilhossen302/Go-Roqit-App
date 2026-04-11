@@ -63,6 +63,7 @@ class ApplicantProfile {
   String? mobile;
   String? streetAddress;
   String? zipCode;
+  String? resume;
   String? updatedAt;
 
   ApplicantProfile({
@@ -84,6 +85,7 @@ class ApplicantProfile {
     this.mobile,
     this.streetAddress,
     this.zipCode,
+    this.resume,
     this.updatedAt,
   });
 
@@ -120,6 +122,7 @@ class ApplicantProfile {
       mobile: json['mobile'],
       streetAddress: json['streetAddress'],
       zipCode: json['zipCode'],
+      resume: json['resume'],
       updatedAt: json['updatedAt'],
     );
   }

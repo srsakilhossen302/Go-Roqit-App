@@ -1,6 +1,7 @@
 class AdditionalInformationModel {
   String resumeFileName;
   String resumeLastUpdated;
+  String? resumeUrl;
   String professionalSummary;
   List<String> skills;
   List<String> languages;
@@ -10,6 +11,7 @@ class AdditionalInformationModel {
   AdditionalInformationModel({
     required this.resumeFileName,
     required this.resumeLastUpdated,
+    this.resumeUrl,
     required this.professionalSummary,
     required this.skills,
     required this.languages,

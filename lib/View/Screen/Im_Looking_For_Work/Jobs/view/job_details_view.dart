@@ -339,7 +339,7 @@ class JobDetailsView extends StatelessWidget {
                   border: Border(top: BorderSide(color: Colors.grey.shade200)),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: controller.isLoading.value ? null : () => controller.applyToJob(displayJob.id),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B5E3F),
                     minimumSize: Size(double.infinity, 50.h),
@@ -347,14 +347,20 @@ class JobDetailsView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                  child: Text(
-                    "Apply Now",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: controller.isLoading.value 
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
+                        "Apply Now",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                 ),
               ),
             ),

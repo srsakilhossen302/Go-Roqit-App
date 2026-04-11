@@ -1000,10 +1000,10 @@ class _JobsMapViewState extends State<JobsMapView> {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Apply Logic
-                      },
+                    child: Obx(() => ElevatedButton(
+                      onPressed: jobsController.isApplying.value 
+                          ? null 
+                          : () => jobsController.applyToJob(job.id),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1B5E3F),
                         padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -1012,26 +1012,35 @@ class _JobsMapViewState extends State<JobsMapView> {
                         ),
                         elevation: 0,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.favorite_border,
-                            color: Colors.white,
-                            size: 18.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            "Apply Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.sp,
+                      child: jobsController.isApplying.value
+                          ? SizedBox(
+                              height: 18.h,
+                              width: 18.h,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.near_me, // Changed from favorite to near_me for apply action
+                                  color: Colors.white,
+                                  size: 18.sp,
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  "Apply Now",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    )),
                   ),
                 ],
               ),

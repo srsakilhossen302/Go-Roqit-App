@@ -71,9 +71,9 @@ class JobSeekerNavBar extends StatelessWidget {
                     label: 'Home',
                     onTap: () {
                       if (selectedIndex != 0) {
-                        Get.off(
+                        Get.offAll(
                           () => const HomeView(),
-                          transition: Transition.fadeIn,
+                          transition: Transition.noTransition,
                         );
                       }
                     },
@@ -84,9 +84,9 @@ class JobSeekerNavBar extends StatelessWidget {
                     label: 'Jobs',
                     onTap: () {
                       if (selectedIndex != 1) {
-                        Get.off(
-                              () => const JobsMapView(),
-                          transition: Transition.fadeIn,
+                        Get.offAll(
+                          () => const JobsMapView(),
+                          transition: Transition.noTransition,
                         );
                       }
                     },
@@ -98,9 +98,9 @@ class JobSeekerNavBar extends StatelessWidget {
                     label: 'Messages',
                     onTap: () {
                       if (selectedIndex != 3) {
-                        Get.off(
+                        Get.offAll(
                           () => const ChatHomeView(),
-                          transition: Transition.fadeIn,
+                          transition: Transition.noTransition,
                         );
                       }
                     },
@@ -111,9 +111,9 @@ class JobSeekerNavBar extends StatelessWidget {
                     label: 'Profile',
                     onTap: () {
                       if (selectedIndex != 4) {
-                        Get.off(
+                        Get.offAll(
                           () => const ProfileView(),
-                          transition: Transition.fadeIn,
+                          transition: Transition.noTransition, // Switching tabs shouldn't have heavy animations
                         );
                       }
                     },
@@ -127,9 +127,9 @@ class JobSeekerNavBar extends StatelessWidget {
                 index: 2,
                 onTap: () {
                   if (selectedIndex != 2) {
-                    Get.off(
+                    Get.offAll(
                       () => const SwipeView(),
-                      transition: Transition.fadeIn,
+                      transition: Transition.noTransition,
                     );
                   }
                 },
