@@ -1,9 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -14,9 +16,10 @@ class AdditionalInformationController extends GetxController {
   var isLoading = false.obs;
   var selectedWorkType = ''.obs;
   var selectedLanguages = <String>[].obs;
-  var salaryFrequency = 'Per Year'.obs;
+  var salaryFrequency = 'yearly'.obs;
   var skills = <String>[].obs;
   var uploadedResumeName = 'Click to upload or drag and drop'.obs;
+  var resumePath = ''.obs;
   var bioCharacterCount = 0.obs;
 
   final ImagePicker _picker = ImagePicker();
@@ -27,8 +30,8 @@ class AdditionalInformationController extends GetxController {
   final skillInputController = TextEditingController();
 
   /// STATIC DATA
-  final workTypes = ['Full Time', 'Part Time', 'Contract'];
-  final languages = [
+  final workTypes = ['Full-time', 'Part-time', 'Temp', 'Self-employed', 'Chair-rental'];
+  final languagesList = [
     'English',
     'Spanish',
     'French',
@@ -38,7 +41,7 @@ class AdditionalInformationController extends GetxController {
     'Bengali',
     'Hindi',
   ];
-  final salaryFrequencies = ['Per Year', 'Per Month', 'Per Hour', 'Part time'];
+  final salaryFrequencies = ['yearly', 'monthly', 'weekly', 'hourly'];
 
   @override
   void onInit() {
@@ -99,41 +102,82 @@ class AdditionalInformationController extends GetxController {
       final XFile? file = await _picker.pickImage(source: ImageSource.gallery);
       if (file != null) {
         uploadedResumeName.value = file.name;
+        resumePath.value = file.path;
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to pick file: $e');
     }
   }
 
-  void submitApplication() {
+  Future<void> submitApplication() async {
     if (selectedWorkType.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please select a preferred work type',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.bottom,
-      );
+      Get.snackbar('Error', 'Please select a preferred work type');
       return;
     }
 
     isLoading.value = true;
 
-    // Simulate API Call
-    Future.delayed(const Duration(seconds: 2), () {
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token =
+          await SharePrefsHelper.getString(SharedPreferenceValue.token);
+
+      final dataBody = {
+        "preferredWorkType": selectedWorkType.value,
+        "languages": selectedLanguages.toList(),
+        "salaryExpectation": {
+          "type": salaryFrequency.value,
+          "amount": double.tryParse(salaryController.text) ?? 0,
+        },
+        "bio": bioController.text,
+        "skills": skills.toList(),
+      };
+
+      final Map<String, dynamic> formDataMap = {
+        "data": jsonEncode(dataBody),
+      };
+
+      if (resumePath.value.isNotEmpty) {
+        final file = File(resumePath.value);
+        if (await file.exists()) {
+          formDataMap["resume"] = MultipartFile(
+            await file.readAsBytes(),
+            filename: resumePath.value.split('/').last,
+            contentType: 'application/pdf',
+          );
+        }
+      }
+
+      final body = FormData(formDataMap);
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final response = await apiClient.patchData(ApiUrl.updateProfile, body,
+          headers: headers);
+
+      print(
+          "Additional Info Response: ${response.statusCode} - ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          'Success',
+          'Profile updated successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.offAll(() => HomeView());
+      } else {
+        Get.snackbar(
+          'Error',
+          response.body['message'] ?? 'Failed to update profile',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection Error: $e');
+    } finally {
       isLoading.value = false;
-
-      Get.snackbar(
-        'Success',
-        'Application Completed Successfully!',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.bottom,
-      );
-
-      // Navigate to Dashboard or Home
-      Get.offAll(() => HomeView());
-    });
+    }
   }
 
   void skipStep() {

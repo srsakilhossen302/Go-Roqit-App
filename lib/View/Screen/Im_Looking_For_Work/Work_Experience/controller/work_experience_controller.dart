@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 import '../../Portfolio/view/portfolio_view.dart';
 
@@ -13,12 +13,22 @@ class WorkExperienceController extends GetxController {
   var isCurrentlyWorking = false.obs;
   var startDate = ''.obs;
   var endDate = ''.obs;
+  var selectedEmploymentType = ''.obs;
 
   /// TEXT CONTROLLERS
   final jobTitleController = TextEditingController();
   final companyNameController = TextEditingController();
   final locationController = TextEditingController();
   final employmentTypeController = TextEditingController();
+  final experienceController = TextEditingController(); 
+
+  final employmentTypes = [
+    'Full-time',
+    'Part-time',
+    'Temp',
+    'Self-employed',
+    'Chair-rental'
+  ];
 
   @override
   void onClose() {
@@ -26,6 +36,7 @@ class WorkExperienceController extends GetxController {
     companyNameController.dispose();
     locationController.dispose();
     employmentTypeController.dispose();
+    experienceController.dispose();
     super.onClose();
   }
 
@@ -97,31 +108,79 @@ class WorkExperienceController extends GetxController {
     jobTitleController.clear();
     companyNameController.clear();
     locationController.clear();
-    employmentTypeController.clear();
+    selectedEmploymentType.value = '';
+    experienceController.clear();
     startDate.value = '';
     endDate.value = '';
     isCurrentlyWorking.value = false;
   }
 
-  void submitWorkExperience() {
-    // API CALL to save education details
+  Future<void> submitWorkExperience() async {
+    if (jobTitleController.text.isEmpty ||
+        companyNameController.text.isEmpty ||
+        selectedEmploymentType.isEmpty ||
+        startDate.value.isEmpty) {
+      Get.snackbar('Error', 'Please fill required fields');
+      return;
+    }
+
     isLoading.value = true;
 
-    // Simulate API Call
-    Future.delayed(const Duration(seconds: 2), () {
-      isLoading.value = false;
-
-      Get.snackbar(
-        'Success',
-        'Work Experience Saved',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.bottom,
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(
+        SharedPreferenceValue.token,
       );
 
-      // Navigate to next step
-      Get.to(() => const PortfolioView());
-    });
+      final Map<String, dynamic> workExperienceData = {
+        "jobTitle": jobTitleController.text,
+        "companyName": companyNameController.text,
+        "location": locationController.text,
+        "employmentType": selectedEmploymentType.value,
+        "startDate": startDate.value,
+        "endDate": isCurrentlyWorking.value ? null : endDate.value,
+        "experience": experienceController.text,
+      };
+
+      final body = FormData({
+        "data": jsonEncode({
+          "workExperience": [workExperienceData] 
+        }),
+      });
+
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final response = await apiClient.patchData(
+        ApiUrl.updateProfile,
+        body,
+        headers: headers,
+      );
+
+      print(
+        "Work Experience Response: ${response.statusCode} - ${response.body}",
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          'Success',
+          'Work Experience Added successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.to(() => const PortfolioView());
+      } else {
+        Get.snackbar(
+          'Error',
+          response.body['message'] ?? 'Failed to add work experience',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection Error: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void skipStep() {

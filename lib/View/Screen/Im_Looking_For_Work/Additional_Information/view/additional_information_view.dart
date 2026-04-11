@@ -134,7 +134,7 @@ class AdditionalInformationView
             Wrap(
               spacing: 8.w,
               runSpacing: 8.h,
-              children: controller.languages.map((language) {
+              children: controller.languagesList.map((language) {
                 return Obx(() {
                   final isSelected = controller.selectedLanguages.contains(
                     language,
@@ -211,10 +211,16 @@ class AdditionalInformationView
                           items: controller.salaryFrequencies.map((
                             String value,
                           ) {
+                            String displayName = value;
+                            if (value == 'yearly') displayName = 'Per Year';
+                            if (value == 'monthly') displayName = 'Per Month';
+                            if (value == 'weekly') displayName = 'Per Week';
+                            if (value == 'hourly') displayName = 'Per Hour';
+
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
-                                value,
+                                displayName,
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Colors.black,

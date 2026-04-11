@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
+import 'package:get_x/get_connect.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/model/user_information_model.dart';
 import '../../Education/view/education_view.dart';
 
@@ -109,7 +115,7 @@ class PersonalInformationController extends GetxController {
     }
   }
 
-  void submitPersonalInformation() {
+  void submitPersonalInformation() async {
     // validation
     if (firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
@@ -133,40 +139,81 @@ class PersonalInformationController extends GetxController {
 
     isLoading.value = true;
 
-    // Create updated model
-    final updatedModel = UserInformationModel(
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      gender: selectedGender.value,
-      dateOfBirth: selectedDateOfBirth.value,
-      citizenship: citizenshipController.text,
-      streetAddress: streetAddressController.text,
-      city: cityController.text,
-      zipCode: zipCodeController.text,
-      country: countryController.text,
-      mobileNumber: mobileNumberController.text,
-      landline: landlineController.text,
-      profileImagePath: profileImagePath.value,
-    );
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token =
+          await SharePrefsHelper.getString(SharedPreferenceValue.token);
 
-    // Simulate API Call
-    Future.delayed(const Duration(seconds: 2), () {
-      isLoading.value = false;
+      final dataBody = {
+        "firstName": "${firstNameController.text} ${lastNameController.text}",
+        "gender": selectedGender.value,
+        "dateOfBirth": selectedDateOfBirth.value,
+        "citizenship": citizenshipController.text,
+        "streetAddress": streetAddressController.text,
+        "city": cityController.text,
+        "zipCode": zipCodeController.text,
+        "country": countryController.text,
+        "mobile": mobileNumberController.text,
+        "landLine": landlineController.text,
+      };
 
-      // If we are editing (arguments were passed), return the result
-      if (Get.arguments != null && Get.arguments is UserInformationModel) {
-        Get.back(result: updatedModel);
-      } else {
-        // Normal Flow (Registration)
+      final Map<String, dynamic> formDataMap = {
+        "data": jsonEncode(dataBody),
+      };
+
+      // Handle Profile Image
+      if (profileImagePath.value.isNotEmpty &&
+          !profileImagePath.value.startsWith('http')) {
+        final file = File(profileImagePath.value);
+        if (await file.exists()) {
+          formDataMap["image"] = MultipartFile(
+            await file.readAsBytes(),
+            filename: profileImagePath.value.split('/').last,
+            contentType: 'image/jpeg',
+          );
+        }
+      }
+
+      final body = FormData(formDataMap);
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final response = await apiClient.patchData(ApiUrl.updateProfile, body,
+          headers: headers);
+
+      print("Personal Info Response Status: ${response.statusCode}");
+      print("Personal Info Response Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         Get.snackbar(
           'Success',
-          'Profile Saved Locally',
+          'Profile updated successfully',
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.to(() => const EducationView());
+
+        if (Get.arguments != null && Get.arguments is UserInformationModel) {
+          Get.back();
+        } else {
+          Get.to(() => const EducationView());
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          response.statusText ?? 'Something went wrong',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
-    });
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Connection Error: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void skipStep() {

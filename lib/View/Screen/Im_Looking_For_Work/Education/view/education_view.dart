@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_instance/src/extension_instance.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get_x/get_state_manager/src/simple/get_view.dart';
+import 'package:get_x/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Widgegt/mainButton.dart';
 import 'package:go_roqit_app/View/Widgegt/textField.dart';
@@ -98,11 +96,6 @@ class EducationView extends GetView<EducationController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   textField(
-                    'Level of Education *',
-                    controller.levelOfEducationController,
-                  ),
-                  SizedBox(height: 16.h),
-                  textField(
                     'Degree Title *',
                     controller.degreeTitleController,
                     hintText: 'e.g. Bachelor of Science',
@@ -124,26 +117,6 @@ class EducationView extends GetView<EducationController> {
                     children: [
                       Expanded(
                         child: textField(
-                          'CGPA',
-                          controller.cgpaController,
-                          hintText: '3.5',
-                        ),
-                      ),
-                      SizedBox(width: 16.w),
-                      Expanded(
-                        child: textField(
-                          'Scale',
-                          controller.scaleController,
-                          hintText: '4.0',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: textField(
                           'Year of Passing',
                           controller.yearOfPassingController,
                           hintText: '2023',
@@ -158,6 +131,89 @@ class EducationView extends GetView<EducationController> {
                         ),
                       ),
                     ],
+                  ),
+                  SizedBox(height: 16.h),
+                  textField(
+                    'Description',
+                    controller.descriptionController,
+                    hintText: 'Describe your studies or achievements...',
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // Certificate Section
+                  Text(
+                    'Certificate *',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF111827),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  GestureDetector(
+                    onTap: () {
+                      Get.bottomSheet(
+                        Container(
+                          color: Colors.white,
+                          padding: EdgeInsets.all(16.w),
+                          child: SafeArea(
+                            child: Wrap(
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.camera_alt),
+                                  title: const Text('Camera'),
+                                  onTap: () {
+                                    controller.pickCertificate(
+                                      ImageSource.camera,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.photo_library),
+                                  title: const Text('Gallery'),
+                                  onTap: () {
+                                    controller.pickCertificate(
+                                      ImageSource.gallery,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Obx(() {
+                      final path = controller.certificatePath.value;
+                      return Container(
+                        width: double.infinity,
+                        height: 120.h,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: path.isEmpty
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.upload_file, color: Colors.grey),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    'Upload Certificate',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Image.file(
+                                  File(path),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                      );
+                    }),
                   ),
                   SizedBox(height: 24.h),
 
@@ -191,7 +247,7 @@ class EducationView extends GetView<EducationController> {
                         child: SizedBox(
                           height: 48.h,
                           child: ElevatedButton(
-                            onPressed: controller.addEducation,
+                            onPressed: controller.submitEducation,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1B5E3F),
                               elevation: 0,

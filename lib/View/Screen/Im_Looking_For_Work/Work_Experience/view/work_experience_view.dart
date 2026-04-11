@@ -115,9 +115,53 @@ class WorkExperienceView extends GetView<WorkExperienceController> {
                     hintText: 'e.g. London, UK',
                   ),
                   SizedBox(height: 16.h),
-                  textField(
+                  Text(
                     'Employment Type *',
-                    controller.employmentTypeController,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF1A1A1A),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Obx(
+                    () => Wrap(
+                      spacing: 8.w,
+                      runSpacing: 8.h,
+                      children: controller.employmentTypes.map((type) {
+                        final isSelected =
+                            controller.selectedEmploymentType.value == type;
+                        return ChoiceChip(
+                          label: Text(type),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              controller.selectedEmploymentType.value = type;
+                            }
+                          },
+                          selectedColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: isSelected
+                                ? const Color(0xFF1B5E3F)
+                                : Colors.grey[300]!,
+                          ),
+                          labelStyle: TextStyle(
+                            color: isSelected
+                                ? const Color(0xFF1B5E3F)
+                                : Colors.grey[600],
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 12.sp,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          showCheckmark: false,
+                        );
+                      }).toList(),
+                    ),
                   ),
                   SizedBox(height: 16.h),
                   Row(
@@ -154,6 +198,12 @@ class WorkExperienceView extends GetView<WorkExperienceController> {
                         ),
                       ),
                     ],
+                  ),
+                  SizedBox(height: 16.h),
+                  textField(
+                    'Experience Description',
+                    controller.experienceController,
+                    hintText: 'Describe your roles and responsibilities...',
                   ),
                   SizedBox(height: 12.h),
 

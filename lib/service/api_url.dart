@@ -7,4 +7,6 @@ class ApiUrl {
   static const String updateProfile = "/user/profile";
   static const String addPortfolio = "/user/applicants/portfolio";
   static const String getProfile = "/user/me";
+  static const String addEducation = "/user/applicants/education";
+  static const String addWorkExperience = "/user/applicants/experience";
 }

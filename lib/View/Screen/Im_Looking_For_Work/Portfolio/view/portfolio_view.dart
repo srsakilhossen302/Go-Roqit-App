@@ -1,10 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_instance/src/extension_instance.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
-import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get_x/get_state_manager/src/simple/get_view.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
 import 'package:go_roqit_app/View/Widgegt/mainButton.dart';
 import 'package:go_roqit_app/View/Widgegt/textField.dart';
@@ -32,8 +29,6 @@ class PortfolioView extends GetView<PortfolioController> {
         ),
         title: Text(
           'Step 5 of 6',
-
-          ///jasjd
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
@@ -99,39 +94,90 @@ class PortfolioView extends GetView<PortfolioController> {
                     ),
                   ),
                   SizedBox(height: 12.h),
-                  GestureDetector(
-                    onTap: controller.pickImage,
-                    child: Container(
-                      height: 120.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.upload_file_outlined,
-                            size: 32.sp,
-                            color: Colors.grey[500],
+
+                  Obx(() {
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: controller.pickImage,
+                          child: Container(
+                            height: 100.h,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF9FAFB),
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.upload_file_outlined,
+                                  size: 28.sp,
+                                  color: Colors.grey[500],
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  'Browse Files to upload',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF1A1A1A),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 8.h),
-                          Obx(
-                            () => Text(
-                              controller.uploadedFileName.value,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF1A1A1A),
-                              ),
+                        ),
+                        if (controller.selectedImages.isNotEmpty) ...[
+                          SizedBox(height: 16.h),
+                          SizedBox(
+                            height: 80.h,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(right: 8.w),
+                                      width: 80.w,
+                                      height: 80.h,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8.r),
+                                        image: DecorationImage(
+                                          image: FileImage(File(
+                                              controller.selectedImages[index].path)),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 4,
+                                      right: 12,
+                                      child: GestureDetector(
+                                        onTap: () => controller.removeImage(index),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(Icons.close,
+                                              size: 14.sp, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                  ),
+                      ],
+                    );
+                  }),
+
                   SizedBox(height: 16.h),
                   textField(
                     'Title',
@@ -191,7 +237,7 @@ class PortfolioView extends GetView<PortfolioController> {
                   SizedBox(height: 24.h),
                   SizedBox(
                     height: 48.h,
-                    width: 150.w,
+                    width: double.infinity,
                     child: ElevatedButton(
                       onPressed: controller.addPortfolio,
                       style: ElevatedButton.styleFrom(
