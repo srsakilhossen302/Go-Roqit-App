@@ -18,6 +18,7 @@ class JobModel {
   final List<String> benefits;
   final double? latitude;
   final double? longitude;
+  final String recruiterId;
 
   JobModel({
     required this.id,
@@ -37,6 +38,7 @@ class JobModel {
     required this.benefits,
     this.latitude,
     this.longitude,
+    required this.recruiterId,
   });
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
@@ -99,6 +101,7 @@ class JobModel {
         benefits: [],
         latitude: lat, 
         longitude: lng,
+        recruiterId: json["user"] != null ? (json["user"]["_id"] ?? "") : "",
     );
   }
 }

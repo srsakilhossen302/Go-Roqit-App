@@ -1131,7 +1131,24 @@ class _JobsMapViewState extends State<JobsMapView> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12.w),
+                  SizedBox(width: 8.w),
+                  Container(
+                    height: 48.h,
+                    width: 48.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
+                    child: IconButton(
+                      onPressed: () => jobsController.createChat(job.recruiterId),
+                      icon: Icon(
+                        Icons.chat_bubble_outline,
+                        color: const Color(0xFF1B5E3F),
+                        size: 20.sp,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
                   Expanded(
                     child: Obx(
                       () => ElevatedButton(
@@ -1159,14 +1176,13 @@ class _JobsMapViewState extends State<JobsMapView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons
-                                        .near_me, // Changed from favorite to near_me for apply action
+                                    Icons.near_me,
                                     color: Colors.white,
                                     size: 18.sp,
                                   ),
-                                  SizedBox(width: 8.w),
+                                  SizedBox(width: 4.w),
                                   Text(
-                                    "Apply Now",
+                                    "Apply",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,

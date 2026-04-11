@@ -173,4 +173,26 @@ class JobsController extends GetxController {
   void onChangeSearchTriggered(String value) {
      loadJobs();
   }
+
+  Future<void> createChat(String recruiterId) async {
+    if (recruiterId.isEmpty) {
+      ToastHelper.error("Recruiter information not available.");
+      return;
+    }
+    
+    try {
+      final response = await Get.find<ApiClient>().postData(ApiUrl.createChat, {
+        "participants": [recruiterId],
+      });
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ToastHelper.success("Chat initiated! 💬");
+      } else {
+        ToastHelper.error("Failed to start chat.");
+      }
+    } catch (e) {
+      print("Error creating chat: $e");
+      ToastHelper.error("Connection failed.");
+    }
+  }
 }

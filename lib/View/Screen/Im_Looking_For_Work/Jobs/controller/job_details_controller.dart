@@ -55,4 +55,33 @@ class JobDetailsController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> createChat(String recruiterId) async {
+    if (recruiterId.isEmpty) {
+      ToastHelper.error("Recruiter information not available.");
+      return;
+    }
+    
+    isLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().postData(ApiUrl.createChat, {
+        "participants": [recruiterId],
+      });
+
+      print("Create Chat Status: ${response.statusCode}");
+      print("Create Chat Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ToastHelper.success("Chat initiated! 💬");
+        // Optionally navigate to ChatDetailsView here if response contains data
+      } else {
+        ToastHelper.error("Failed to start chat. Please try again.");
+      }
+    } catch (e) {
+      print("Error creating chat: $e");
+      ToastHelper.error("Connection failed.");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

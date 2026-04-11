@@ -348,9 +348,7 @@ class JobDetailsView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: IconButton(
-                        onPressed: () {
-                          // TODO: Implement messaging
-                        },
+                        onPressed: () => controller.createChat(displayJob.recruiterId),
                         icon: Icon(
                           Icons.chat_bubble_outline,
                           color: const Color(0xFF1B5E3F),
