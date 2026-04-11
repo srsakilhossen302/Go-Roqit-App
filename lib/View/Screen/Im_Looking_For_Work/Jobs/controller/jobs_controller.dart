@@ -1,20 +1,32 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get_x/get_rx/src/rx_types/rx_types.dart';
-import 'package:get_x/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class JobsController extends GetxController {
   var jobList = <JobModel>[].obs;
   var isLoadingLocation = true.obs;
+  var isLoadingJobs = false.obs;
+  
   var userLatitude = 23.8103.obs; // Default Dhaka
   var userLongitude = 90.4125.obs;
+
+  // Search & Filter
+  final searchController = TextEditingController();
+  var selectedCategory = ''.obs;
+  var selectedType = ''.obs;
+  var selectedLocation = ''.obs;
+  var minSalary = ''.obs;
+
+  // Pagination
+  var currentPage = 1.obs;
+  var hasMore = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Use Dhaka as default, but try to get real location.
-    // If real location is found, the map will move there.
-    // But the jobs are hardcoded to Dhaka as requested.
     _initLocationAndJobs();
   }
 
@@ -23,12 +35,9 @@ class JobsController extends GetxController {
       Position position = await _determinePosition();
       userLatitude.value = position.latitude;
       userLongitude.value = position.longitude;
-      // We ignore the user's real location for generating jobs,
-      // forcing them to be in Dhaka as requested.
       loadJobs();
     } catch (e) {
       print("Location error: $e");
-      // Fallback/Default is already Dhaka
       loadJobs();
     } finally {
       isLoadingLocation.value = false;
@@ -61,287 +70,77 @@ class JobsController extends GetxController {
     return await Geolocator.getCurrentPosition();
   }
 
+  Future<void> fetchJobs({bool isRefresh = false}) async {
+    if (isRefresh) {
+      currentPage.value = 1;
+      hasMore.value = true;
+      jobList.clear();
+    }
+
+    if (!hasMore.value || isLoadingJobs.value) return;
+
+    isLoadingJobs.value = true;
+
+    try {
+      String queryString = "?page=${currentPage.value}&limit=10";
+
+      if (searchController.text.isNotEmpty) {
+        queryString += "&searchTerm=${Uri.encodeComponent(searchController.text)}";
+      }
+      if (selectedCategory.value.isNotEmpty) {
+        queryString += "&category=${Uri.encodeComponent(selectedCategory.value)}";
+      }
+      if (selectedType.value.isNotEmpty) {
+        queryString += "&type=${Uri.encodeComponent(selectedType.value)}";
+      }
+      if (selectedLocation.value.isNotEmpty) {
+        queryString += "&jobLocation=${Uri.encodeComponent(selectedLocation.value)}";
+      }
+      if (minSalary.value.isNotEmpty) {
+        queryString += "&minSalary=${Uri.encodeComponent(minSalary.value)}";
+      }
+
+      String finalUrl = ApiUrl.getJobs + queryString;
+      final response = await Get.find<ApiClient>().getData(finalUrl);
+      
+      print("Fetch Jobs Status Code: ${response.statusCode}");
+      print("Fetch Jobs Response Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null && data['data'] != null) {
+          List jobsData = data['data'];
+          List<JobModel> loadedJobs = jobsData.map((job) => JobModel.fromJson(job)).toList();
+          
+          if (isRefresh) {
+            jobList.assignAll(loadedJobs);
+          } else {
+            jobList.addAll(loadedJobs);
+          }
+
+          if (loadedJobs.length < 10) {
+            hasMore.value = false;
+          } else {
+            currentPage.value++;
+          }
+        }
+      } else {
+        Get.snackbar("Error", response.statusText ?? "Failed to fetch jobs");
+      }
+    } catch (e) {
+      print("Error fetching jobs: $e");
+      Get.snackbar("Error", "Connection failed. Please check your network.");
+    } finally {
+      isLoadingJobs.value = false;
+    }
+  }
+
+  // Exposed wrapper for clean initial fetch
   void loadJobs() {
-    jobList.clear();
+    fetchJobs(isRefresh: true);
+  }
 
-    // Fixed Dhaka Locations covering various distances
-    // Center approx: 23.8103, 90.4125
-
-    jobList.addAll([
-      // JobModel(
-      //   id: '1',
-      //   title: 'Senior Hair Stylist',
-      //   companyName: 'Glow Beauty Salon',
-      //   location: 'Gulshan 1, Dhaka',
-      //   jobType: 'Full-time',
-      //   salary: 'BDT 25,000 - 35,000/Month',
-      //   logoUrl:
-      //       'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
-      //   postedTime: '2 day ago',
-      //   workingHours: 'Tuesday - Saturday',
-      //   workSystem: 'On-site',
-      //   skills: ['Level 3 Diploma', 'Advanced Color'],
-      //   companyDescription:
-      //       "Luxury salon in Gulshan looking for experienced stylists.",
-      //   businessPhotos: [
-      //     'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-      //   ],
-      //   requirements: ['Experience required'],
-      //   benefits: ['Commission'],
-      //   latitude: 23.7925,
-      //   longitude: 90.4078, // Gulshan (~2km)
-      // ),
-
-      JobModel(
-        id: '1',
-        title: 'Senior Hair Stylist',
-        companyName: 'Glow Beauty Salon',
-        location: 'Gulshan 1, Dhaka',
-        jobType: 'Full-time',
-        salary: '£28,000 - £35,000/Hour',
-        logoUrl:
-            'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
-        postedTime: '2 day ago',
-        workingHours: 'Tuesday - Saturday',
-        workSystem: 'On-site',
-        skills: [
-          'Level 3 Diploma',
-          '5+ years of',
-          'Knowledge of current',
-          'Advanced color and',
-          'Excellent customer service',
-        ],
-        companyDescription:
-            "We're looking for an experienced stylist to join our growing team in a luxury salon environment. You'll work with high-end clients and have access to ongoing training.\n\nProfessional salon environment with a focus on quality service and team development. We value our staff and provide ongoing training and career growth opportunities.",
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-          'https://images.unsplash.com/photo-1595476106812-c4058d8c289f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-          'https://images.unsplash.com/photo-1595476106812-c4058d8c289f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: [
-          'Level 3 Diploma in Hairdressing or equivalent',
-          '5+ years of professional experience',
-          'Advanced color and cutting skills',
-          'Excellent customer service abilities',
-          'Knowledge of current trends and techniques',
-        ],
-        benefits: [
-          'Commission on retail',
-          'Staff discount',
-          'Training opportunities',
-          'Pension scheme',
-        ],
-
-        latitude: 23.7925,
-        longitude: 90.4078, // Gulshan (~2km)
-      ),
-
-      JobModel(
-        id: '2',
-        title: 'Junior Hair Stylist',
-        companyName: 'Urban Cuts',
-        location: 'Banani, Dhaka',
-        jobType: 'Full-time',
-        salary: 'BDT 15,000 - 20,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=200&q=80',
-        postedTime: '1 day ago',
-        workingHours: 'Monday - Friday',
-        workSystem: 'On-site',
-        skills: ['Basic cutting', 'Customer handling'],
-        companyDescription: 'Trendy salon in Banani.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Basic skills'],
-        benefits: ['Training'],
-        latitude: 23.7940,
-        longitude: 90.4043, // Banani (~2km)
-      ),
-
-      JobModel(
-        id: '3',
-        title: 'Barber',
-        companyName: 'Kings Barber Shop',
-        location: 'Dhanmondi, Dhaka',
-        jobType: 'Full-time',
-        salary: 'BDT 18,000 - 25,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=200&q=80',
-        postedTime: '3 days ago',
-        workingHours: 'Monday - Saturday',
-        workSystem: 'On-site',
-        skills: ['Fade cutting', 'Beard styling'],
-        companyDescription: 'Popular barber shop in Dhanmondi.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Barber experience'],
-        benefits: ['Tips'],
-        latitude: 23.7461,
-        longitude: 90.3742, // Dhanmondi (~10km)
-      ),
-
-      JobModel(
-        id: '4',
-        title: 'Hair Color Specialist',
-        companyName: 'Luxe Hair Studio',
-        location: 'Uttara, Dhaka',
-        jobType: 'Part-time',
-        salary: 'BDT 500/Hour',
-        logoUrl:
-            'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=200&q=80',
-        postedTime: '5 days ago',
-        workingHours: 'Flexible',
-        workSystem: 'On-site',
-        skills: ['Color correction'],
-        companyDescription: 'Premium color studio.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Certification'],
-        benefits: ['Flexible hours'],
-        latitude: 23.8759,
-        longitude: 90.3795, // Uttara (~8km)
-      ),
-
-      JobModel(
-        id: '5',
-        title: 'Salon Manager',
-        companyName: 'Elite Beauty Lounge',
-        location: 'Mirpur 10, Dhaka',
-        jobType: 'Full-time',
-        salary: 'BDT 40,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=200&q=80',
-        postedTime: '1 week ago',
-        workingHours: 'Sunday - Thursday',
-        workSystem: 'On-site',
-        skills: ['Management'],
-        companyDescription: 'Large salon in Mirpur.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Managerial Exp'],
-        benefits: ['Bonuses'],
-        latitude: 23.8042,
-        longitude: 90.3667, // Mirpur (~6km)
-      ),
-
-      JobModel(
-        id: '6',
-        title: 'Nail Technician',
-        companyName: 'Polish & Glow',
-        location: 'Bashundhara R/A, Dhaka',
-        jobType: 'Full-time',
-        salary: 'BDT 20,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=200&q=80',
-        postedTime: '2 days ago',
-        workingHours: 'Monday - Friday',
-        workSystem: 'On-site',
-        skills: ['Nail Art'],
-        companyDescription: 'Nail studio in Bashundhara.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Experience'],
-        benefits: ['Commission'],
-        latitude: 23.8191,
-        longitude: 90.4526, // Bashundhara (~4km)
-      ),
-
-      JobModel(
-        id: '7',
-        title: 'Makeup Artist',
-        companyName: 'Glam Studio',
-        location: 'Savar, Dhaka',
-        jobType: 'Freelance',
-        salary: 'BDT 5,000/Day',
-        logoUrl:
-            'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&q=80',
-        postedTime: '4 days ago',
-        workingHours: 'Event-based',
-        workSystem: 'On-site',
-        skills: ['Bridal'],
-        companyDescription: 'Freelance makeup gigs.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Portfolio'],
-        benefits: ['High Pay'],
-        latitude: 23.8407,
-        longitude: 90.2575, // Savar (~18km)
-      ),
-
-      JobModel(
-        id: '8',
-        title: 'Spa Therapist',
-        companyName: 'Calm Retreat',
-        location: 'Gazipur',
-        jobType: 'Full-time',
-        salary: 'BDT 22,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=200&q=80',
-        postedTime: '6 days ago',
-        workingHours: 'Shift',
-        workSystem: 'On-site',
-        skills: ['Massage'],
-        companyDescription: 'Resort spa in Gazipur.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['Certificate'],
-        benefits: ['Accommodation'],
-        latitude: 23.9999,
-        longitude: 90.4203, // Gazipur (~25km)
-      ),
-
-      JobModel(
-        id: '9',
-        title: 'Receptionist',
-        companyName: 'Style Hub',
-        location: 'Narayanganj',
-        jobType: 'Full-time',
-        salary: 'BDT 15,000/Month',
-        logoUrl:
-            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=200&q=80',
-        postedTime: 'Today',
-        workingHours: '9-5',
-        workSystem: 'On-site',
-        skills: ['Communication'],
-        companyDescription: 'Salon in Narayanganj.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['HSC Pass'],
-        benefits: ['Lunch'],
-        latitude: 23.6238,
-        longitude: 90.5000, // Narayanganj (~22km)
-      ),
-
-      JobModel(
-        id: '10',
-        title: 'Beauty Trainer',
-        companyName: 'Pure Beauty',
-        location: 'Comilla',
-        jobType: 'Contract',
-        salary: 'BDT 50,000/Course',
-        logoUrl:
-            'https://images.unsplash.com/photo-1600948836451-3cfa7b5d24dd?auto=format&fit=crop&w=200&q=80',
-        postedTime: '3 days ago',
-        workingHours: 'Daytime',
-        workSystem: 'On-site',
-        skills: ['Teaching'],
-        companyDescription: 'Beauty academy in Comilla.',
-        businessPhotos: [
-          'https://images.unsplash.com/photo-1600948836451-3cfa7b5d24dd?auto=format&fit=crop&w=400&q=80',
-        ],
-        requirements: ['5yr Exp'],
-        benefits: ['Travel Allowance'],
-        latitude: 23.4607,
-        longitude: 91.1809, // Comilla (Distance > 80km)
-      ),
-    ]);
+  void onChangeSearchTriggered(String value) {
+     loadJobs();
   }
 }

@@ -26,6 +26,7 @@ class JobsView extends StatelessWidget {
       body: SafeArea(
         child: MyRefreshIndicator(
           onRefresh: () async {
+            controller.loadJobs();
             await Future.delayed(const Duration(seconds: 1));
           },
           child: Padding(
@@ -76,6 +77,8 @@ class JobsView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: TextField(
+                    controller: controller.searchController,
+                    onSubmitted: (value) => controller.loadJobs(),
                     decoration: InputDecoration(
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(12.w),
