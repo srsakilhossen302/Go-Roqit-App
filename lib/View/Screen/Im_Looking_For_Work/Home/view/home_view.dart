@@ -5,6 +5,7 @@ import 'package:get_x/get_instance/src/extension_instance.dart';
 import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get_x/get_state_manager/src/simple/get_view.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_model.dart';
 import 'package:go_roqit_app/View/Widgegt/my_refresh_indicator.dart';
 import '../controller/home_controller.dart';
 import '../../../../Widgegt/JobSeekerNavBar.dart';
@@ -99,6 +100,7 @@ class HomeView extends GetView<HomeController> {
                       // Search Bar
                       TextField(
                         controller: controller.searchController,
+                        onChanged: (value) => controller.onSearchChanged(value),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: const Color(0xFFF5F7F9),
@@ -135,124 +137,141 @@ class HomeView extends GetView<HomeController> {
                       ),
                       SizedBox(height: 24.h),
 
-                      // Promo Card
-                      Container(
-                        height: 180.h,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.r),
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                              "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                            ), // Placeholder Salon Image
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.r),
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    Colors.black.withOpacity(0.8),
-                                    Colors.transparent,
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(20.w),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Find jobs that match your skills",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
+                      // Promo Card and Header (Hidden when searching)
+                      Obx(() => controller.searchText.value.isEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 180.h,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    image: const DecorationImage(
+                                      image: NetworkImage(
+                                        "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                                      ), // Placeholder Salon Image
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Swipe through personalized job recommendations",
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF1B5E3F),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          20.r,
-                                        ),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20.w,
-                                        vertical: 10.h,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          "Swipe Now",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.sp,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20.r),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              Colors.black.withOpacity(0.8),
+                                              Colors.transparent,
+                                            ],
                                           ),
                                         ),
-                                        SizedBox(width: 4.w),
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          size: 14.sp,
-                                          color: Colors.white,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(20.w),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Find jobs that match your skills",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 8.h),
+                                              Text(
+                                                "Swipe through personalized job recommendations",
+                                                style: TextStyle(
+                                                  color: Colors
+                                                      .white
+                                                      .withOpacity(0.9),
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ),
+                                              SizedBox(height: 16.h),
+                                              ElevatedButton(
+                                                onPressed: () {},
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color(0xFF1B5E3F),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      20.r,
+                                                    ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 20.w,
+                                                    vertical: 10.h,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      "Swipe Now",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 4.w),
+                                                    Icon(
+                                                      Icons.arrow_forward,
+                                                      size: 14.sp,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                      SizedBox(height: 24.h),
-
-                      // Job Recommendations Header
-                      Text(
-                        "Job recommendations for you",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
+                                ),
+                                SizedBox(height: 24.h),
+                                Text(
+                                  "Job recommendations for you",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                              ],
+                            )
+                          : const SizedBox.shrink()),
 
                       // Job List
                       Obx(
-                        () => ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: controller.jobRecommendations.length,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: 16.h),
-                          itemBuilder: (context, index) {
-                            final job = controller.jobRecommendations[index];
-                            return _buildJobCard(job);
-                          },
-                        ),
+                        () => controller.isLoading.value
+                            ? const Center(child: CircularProgressIndicator())
+                            : ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: controller.jobList.length > 5
+                                    ? 5
+                                    : controller.jobList.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: 16.h),
+                                itemBuilder: (context, index) {
+                                  final job = controller.jobList[index];
+                                  return _buildJobCard(job);
+                                },
+                              ),
                       ),
                     ],
                   ),
@@ -286,7 +305,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildJobCard(Map<String, dynamic> job) {
+  Widget _buildJobCard(JobModel job) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -309,10 +328,7 @@ class HomeView extends GetView<HomeController> {
             children: [
               CircleAvatar(
                 radius: 24.r,
-                backgroundImage: NetworkImage(
-                  job['image'] ??
-                      "https://images.unsplash.com/photo-1560066984-138dadb4c035",
-                ),
+                backgroundImage: NetworkImage(job.logoUrl),
                 backgroundColor: Colors.grey[200],
               ),
               SizedBox(width: 12.w),
@@ -321,7 +337,7 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      job['role'],
+                      job.title,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -330,7 +346,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      job['company'],
+                      job.companyName,
                       style: TextStyle(
                         fontSize: 13.sp,
                         color: Colors.grey[600],
@@ -346,23 +362,11 @@ class HomeView extends GetView<HomeController> {
           Wrap(
             spacing: 8.w,
             runSpacing: 8.h,
-            children: (job['tags'] as List).map<Widget>((tag) {
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5E9),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  tag,
-                  style: TextStyle(
-                    color: const Color(0xFF1B5E3F),
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            }).toList(),
+            children: [
+              _buildTag(job.jobType),
+              _buildTag(job.salary),
+              _buildTag(job.workSystem),
+            ],
           ),
           SizedBox(height: 12.h),
           Row(
@@ -370,26 +374,38 @@ class HomeView extends GetView<HomeController> {
               Icon(Icons.location_on_outlined, size: 14.sp, color: Colors.grey),
               SizedBox(width: 4.w),
               Text(
-                job['location'],
-                style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
-              ),
-              SizedBox(width: 12.w),
-              Icon(Icons.trending_up, size: 14.sp, color: Colors.grey),
-              SizedBox(width: 4.w),
-              Text(
-                job['level'],
+                job.location,
                 style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
               ),
               const Spacer(),
               Icon(Icons.access_time, size: 14.sp, color: Colors.grey),
               SizedBox(width: 4.w),
               Text(
-                job['posted'],
+                job.postedTime,
                 style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTag(String text) {
+    if (text.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F5E9),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: const Color(0xFF1B5E3F),
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
