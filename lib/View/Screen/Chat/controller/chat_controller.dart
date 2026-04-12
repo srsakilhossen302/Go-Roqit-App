@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
@@ -9,6 +10,10 @@ class ChatController extends GetxController {
   var messages = <MessageModel>[].obs;
   var isLoading = false.obs;
   var myId = "".obs;
+  
+  Timer? _chatListTimer;
+  Timer? _messageTimer;
+  String? _activeChatId;
 
   final ScrollController scrollController = ScrollController();
 
@@ -16,6 +21,44 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     initChat();
+    startPollingChatList();
+  }
+
+  @override
+  void onClose() {
+    stopPollingChatList();
+    stopPollingMessages();
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void startPollingChatList() {
+    _chatListTimer?.cancel();
+    _chatListTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      loadChats(showLoading: false);
+    });
+  }
+
+  void stopPollingChatList() {
+    _chatListTimer?.cancel();
+  }
+
+  void startPollingMessages(String chatId) {
+    _activeChatId = chatId;
+    _messageTimer?.cancel();
+    // Fetch immediately first
+    loadMessages(chatId);
+    // Then poll every 3 seconds
+    _messageTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_activeChatId != null) {
+        loadMessages(_activeChatId!, showLoading: false);
+      }
+    });
+  }
+
+  void stopPollingMessages() {
+    _messageTimer?.cancel();
+    _activeChatId = null;
   }
 
   Future<void> initChat() async {
@@ -41,8 +84,8 @@ class ChatController extends GetxController {
     await loadChats();
   }
 
-  Future<void> loadChats() async {
-    isLoading.value = true;
+  Future<void> loadChats({bool showLoading = true}) async {
+    if (showLoading) isLoading.value = true;
     try {
       final response = await Get.find<ApiClient>().getData(ApiUrl.createChat);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -54,53 +97,45 @@ class ChatController extends GetxController {
     } catch (e) {
       print("Error loading chats: $e");
     } finally {
-      isLoading.value = false;
+      if (showLoading) isLoading.value = false;
     }
   }
 
-  void loadMessages(String chatId) {
-    // Determine the partner name based on selected chat (simplified for mock)
-    // In a real app, this would fetch from API based on chatId
-
-    // Mock messages for 'Glow Beauty Salon' (Chat Details UI match)
-    messages.value = [
-      MessageModel(
-        id: '1',
-        content:
-            'Hi! I saw your application for the stylist position. Your portfolio looks amazing!',
-        isMe: false, // Received
-        timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
-      ),
-      MessageModel(
-        id: '2',
-        content: 'Thank you so much! I\'d love to learn more about the role.',
-        isMe: true, // Sent
-        timestamp: DateTime.now().subtract(const Duration(minutes: 28)),
-      ),
-      MessageModel(
-        id: '3',
-        content: 'Great! When can you come in for a trial shift?',
-        isMe: false, // Received
-        timestamp: DateTime.now().subtract(const Duration(minutes: 25)),
-      ),
-    ];
-
-    // Scroll to bottom when messages are loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController.hasClients) {
-        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+  Future<void> loadMessages(String chatId, {bool showLoading = true}) async {
+    if (showLoading) isLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().getData("${ApiUrl.getMessages}/$chatId");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null && data['messages'] != null) {
+          List msgData = data['messages'];
+          messages.value = msgData.map((json) => MessageModel.fromJson(json)).toList();
+          
+          // Scroll to bottom (only if new messages arrived or it's the first load)
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (scrollController.hasClients) {
+              scrollController.jumpTo(scrollController.position.maxScrollExtent);
+            }
+          });
+        }
       }
-    });
+    } catch (e) {
+      print("Error loading messages: $e");
+    } finally {
+      if (showLoading) isLoading.value = false;
+    }
   }
 
-  void sendMessage(String content) {
+  void sendMessage(String chatId, String content) {
     if (content.isEmpty) return;
 
     messages.add(
       MessageModel(
         id: DateTime.now().toString(),
+        chatId: chatId,
+        sender: myId.value,
         content: content,
-        isMe: true,
+        type: 'TEXT',
         timestamp: DateTime.now(),
       ),
     );

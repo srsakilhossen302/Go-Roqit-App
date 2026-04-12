@@ -144,9 +144,12 @@ class ChatHomeView extends GetView<ChatController> {
 
     return InkWell(
       onTap: () {
-        // Load messages for this chat
-        controller.loadMessages(chat.id);
-        Get.to(() => ChatDetailsView(chat: chat));
+        // Start polling messages for this chat
+        controller.startPollingMessages(chat.id);
+        Get.to(() => ChatDetailsView(chat: chat))?.then((_) {
+          // Stop polling when returning to chat list
+          controller.stopPollingMessages();
+        });
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),

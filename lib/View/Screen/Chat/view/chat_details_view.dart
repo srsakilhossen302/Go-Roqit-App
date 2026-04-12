@@ -176,7 +176,7 @@ class ChatDetailsView extends GetView<ChatController> {
                   GestureDetector(
                     onTap: () {
                       if (_textController.text.isNotEmpty) {
-                        controller.sendMessage(_textController.text);
+                        controller.sendMessage(chat.id, _textController.text);
                         _textController.clear();
                       }
                     },
@@ -204,20 +204,22 @@ class ChatDetailsView extends GetView<ChatController> {
   }
 
   Widget _buildMessageBubble(MessageModel message) {
+    final bool isMe = message.isMine(controller.myId.value);
+
     return Padding(
       padding: EdgeInsets.only(bottom: 20.h),
       child: Column(
-        crossAxisAlignment: message.isMe
+        crossAxisAlignment: isMe
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: message.isMe
+            mainAxisAlignment: isMe
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!message.isMe) ...[
+              if (!isMe) ...[
                 Builder(builder: (context) {
                   Participant other = chat.participants.firstWhere(
                     (p) => p.id != controller.myId.value,
@@ -241,16 +243,16 @@ class ChatDetailsView extends GetView<ChatController> {
                 child: Container(
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: message.isMe
+                    color: isMe
                         ? const Color(0xFF1B5E3F)
                         : Colors.grey.shade50,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16.r),
                       topRight: Radius.circular(16.r),
-                      bottomLeft: message.isMe
+                      bottomLeft: isMe
                           ? Radius.circular(16.r)
                           : Radius.zero,
-                      bottomRight: message.isMe
+                      bottomRight: isMe
                           ? Radius.zero
                           : Radius.circular(16.r),
                     ),
@@ -259,7 +261,7 @@ class ChatDetailsView extends GetView<ChatController> {
                     message.content,
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: message.isMe ? Colors.white : Colors.black87,
+                      color: isMe ? Colors.white : Colors.black87,
                       height: 1.4,
                     ),
                   ),
@@ -271,7 +273,7 @@ class ChatDetailsView extends GetView<ChatController> {
           // Time Stamp
           Padding(
             padding: EdgeInsets.only(
-              left: message.isMe ? 0 : 40.w,
+              left: isMe ? 0 : 40.w,
             ), // Align under bubble if received
             child: Text(
               _formatTime(message.timestamp),

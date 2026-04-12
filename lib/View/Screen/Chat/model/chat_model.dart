@@ -79,14 +79,33 @@ class LastMessage {
 
 class MessageModel {
   final String id;
+  final String chatId;
+  final String sender;
   final String content;
-  final bool isMe;
+  final String type;
   final DateTime timestamp;
 
   MessageModel({
     required this.id,
+    required this.chatId,
+    required this.sender,
     required this.content,
-    required this.isMe,
+    required this.type,
     required this.timestamp,
   });
+
+  factory MessageModel.fromJson(Map<String, dynamic> json) {
+    return MessageModel(
+      id: json['_id'] ?? '',
+      chatId: json['chatId'] ?? '',
+      sender: json['sender'] ?? '',
+      content: json['text'] ?? '',
+      type: json['type'] ?? 'TEXT',
+      timestamp: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+    );
+  }
+
+  bool isMine(String myId) => sender == myId;
 }
