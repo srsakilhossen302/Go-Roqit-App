@@ -37,6 +37,7 @@ class BusinessProfileController extends GetxController {
   final instagramController = TextEditingController();
 
   final logoPath = Rxn<String>();
+  final profileImagePath = Rxn<String>();
   final galleryImages = <String>[].obs;
 
   Future<void> refreshProfile() async {
@@ -58,6 +59,7 @@ class BusinessProfileController extends GetxController {
       if (response.statusCode == 200) {
         final resData = response.body['data'];
         final profileData = resData['profile'];
+        final userObject = resData; // User object might contain 'image' direktly
 
         if (profileData != null) {
           // Helper to prepend baseUrl to local paths
@@ -72,6 +74,7 @@ class BusinessProfileController extends GetxController {
             category: "Recruiter", // Mocked
             description: profileData['companyDescription'] ?? '',
             logoUrl: fullUrl(profileData['companyLogo']),
+            profileImageUrl: fullUrl(resData['image']), // Get profile image from parent data
             coverUrl: 'https://picsum.photos/800/200', // Mocked
             contactInfo: ContactInfo(
               email: profileData['companyEmail'] ?? '',
@@ -123,6 +126,7 @@ class BusinessProfileController extends GetxController {
     instagramController.text = data.socialLinks.instagram;
 
     logoPath.value = data.logoUrl;
+    profileImagePath.value = data.profileImageUrl;
     galleryImages.assignAll(data.galleryImages);
   }
 
@@ -135,6 +139,18 @@ class BusinessProfileController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to pick logo: $e');
+    }
+  }
+
+  Future<void> pickProfileImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        profileImagePath.value = image.path;
+        Get.snackbar('Success', 'Profile image selected successfully');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick profile image: $e');
     }
   }
 
@@ -195,6 +211,18 @@ class BusinessProfileController extends GetxController {
           formDataMap["companyLogo"] = MultipartFile(
             await logoFile.readAsBytes(),
             filename: logoPath.value!.split('/').last,
+            contentType: 'image/jpeg',
+          );
+        }
+      }
+
+      // Handle Profile Image
+      if (profileImagePath.value != null && !profileImagePath.value!.startsWith('http')) {
+        final profileFile = File(profileImagePath.value!);
+        if (await profileFile.exists()) {
+          formDataMap["image"] = MultipartFile(
+            await profileFile.readAsBytes(),
+            filename: profileImagePath.value!.split('/').last,
             contentType: 'image/jpeg',
           );
         }

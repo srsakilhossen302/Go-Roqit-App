@@ -3,6 +3,7 @@ class BusinessProfileModel {
   final String category;
   final String description;
   final String logoUrl;
+  final String profileImageUrl;
   final String coverUrl;
   final ContactInfo contactInfo;
   final SocialLinks socialLinks;
@@ -13,6 +14,7 @@ class BusinessProfileModel {
     required this.category,
     required this.description,
     required this.logoUrl,
+    required this.profileImageUrl,
     required this.coverUrl,
     required this.contactInfo,
     required this.socialLinks,

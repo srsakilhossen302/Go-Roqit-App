@@ -193,45 +193,65 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Logo
-                                Container(
-                                  width: 60.w,
-                                  height: 60.w,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 3,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 5,
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // Logo
+                                      Container(
+                                        width: 60.w,
+                                        height: 60.w,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12.r),
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 3,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 5,
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8.r),
+                                          child: Image.network(
+                                            profile.logoUrl,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (c, o, s) => const Icon(
+                                              Icons.business,
+                                            ), // Component placeholder
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      // Profile Image
+                                      Stack(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 30.r,
+                                            backgroundColor: Colors.white,
+                                            child: CircleAvatar(
+                                              radius: 27.r,
+                                              backgroundImage: NetworkImage(profile.profileImageUrl),
+                                              backgroundColor: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.r),
-                                    child: Image.network(
-                                      profile.logoUrl,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (c, o, s) => const Icon(
-                                        Icons.business,
-                                      ), // Component placeholder
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    profile.name,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  profile.name,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 4.h),
+                                  SizedBox(height: 4.h),
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 8.w,

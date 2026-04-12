@@ -41,6 +41,54 @@ class EditBusinessProfileView extends GetView<BusinessProfileController> {
               SizedBox(height: 20.h),
 
               Text(
+                'Profile Image (Personal Photo)',
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                   Obx(() {
+                      return CircleAvatar(
+                        radius: 40.r,
+                        backgroundColor: Colors.grey.shade100,
+                        backgroundImage: controller.profileImagePath.value != null &&
+                                controller.profileImagePath.value!.isNotEmpty
+                            ? (controller.profileImagePath.value!.startsWith('http')
+                                ? NetworkImage(controller.profileImagePath.value!)
+                                : FileImage(File(controller.profileImagePath.value!)) as ImageProvider)
+                            : null,
+                        child: controller.profileImagePath.value == null ||
+                                controller.profileImagePath.value!.isEmpty
+                            ? Icon(Icons.person, size: 40.sp, color: Colors.grey)
+                            : null,
+                      );
+                    }),
+                  SizedBox(width: 16.w),
+                  ElevatedButton.icon(
+                    onPressed: controller.pickProfileImage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade100,
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
+                    ),
+                    icon: Icon(Icons.photo_camera_outlined, size: 18.sp),
+                    label: Text(
+                      'Upload Photo',
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.h),
+
+              Text(
                 'Business Logo',
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
               ),
