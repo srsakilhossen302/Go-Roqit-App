@@ -126,21 +126,21 @@ class ChatController extends GetxController {
     }
   }
 
-  void sendMessage(String chatId, String content) {
+  Future<void> sendMessage(String chatId, String content) async {
     if (content.isEmpty) return;
 
-    messages.add(
-      MessageModel(
-        id: DateTime.now().toString(),
-        chatId: chatId,
-        sender: myId.value,
-        content: content,
-        type: 'TEXT',
-        timestamp: DateTime.now(),
-      ),
+    // Optional: Optimistic UI update
+    final newMessage = MessageModel(
+      id: "temp_${DateTime.now().millisecondsSinceEpoch}",
+      chatId: chatId,
+      sender: myId.value,
+      content: content,
+      type: 'TEXT',
+      timestamp: DateTime.now(),
     );
-
-    // Scroll to bottom after sending
+    messages.add(newMessage);
+    
+    // Scroll to bottom
     Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.hasClients) {
         scrollController.animateTo(
@@ -150,5 +150,26 @@ class ChatController extends GetxController {
         );
       }
     });
+
+    try {
+      Map<String, dynamic> body = {
+        "chatId": chatId,
+        "text": content,
+        "type": "TEXT",
+      };
+
+      final response = await Get.find<ApiClient>().postData(ApiUrl.getMessages, body);
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Success - optionally refresh messages to get the real ID and server timestamp
+        // loadMessages(chatId, showLoading: false);
+      } else {
+        // Revert or show error if failed
+        print("Failed to send message: ${response.statusCode}");
+        // messages.remove(newMessage); 
+      }
+    } catch (e) {
+      print("Error sending message: $e");
+    }
   }
 }
