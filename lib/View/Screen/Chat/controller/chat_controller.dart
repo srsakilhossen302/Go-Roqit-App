@@ -1,59 +1,61 @@
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../model/chat_model.dart';
-
-import 'package:flutter/widgets.dart'; // For ScrollController
+import 'package:flutter/widgets.dart';
 
 class ChatController extends GetxController {
   var chatList = <ChatListModel>[].obs;
   var messages = <MessageModel>[].obs;
   var isLoading = false.obs;
+  var myId = "".obs;
 
   final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
-    loadChats();
+    initChat();
+  }
+
+  Future<void> initChat() async {
+    await fetchMyProfile();
+    await loadChats();
+  }
+
+  Future<void> fetchMyProfile() async {
+    try {
+      final response = await Get.find<ApiClient>().getData(ApiUrl.getProfile);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null) {
+          myId.value = data['_id'] ?? "";
+        }
+      }
+    } catch (e) {
+      print("Error fetching profile in ChatController: $e");
+    }
   }
 
   Future<void> refreshChats() async {
-    isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1));
-    loadChats();
-    isLoading.value = false;
+    await loadChats();
   }
 
-  void loadChats() {
-    // Mock data based on the provided image
-    chatList.value = [
-      ChatListModel(
-        id: '1',
-        name: 'Glow Beauty Salon',
-        role: 'Senior Hair Stylist',
-        imageUrl: 'https://i.pravatar.cc/150?u=glow',
-        lastMessage: 'Great! When can you come in for a trial shift?',
-        time: '30m ago',
-        isRead: false,
-      ),
-      ChatListModel(
-        id: '2',
-        name: 'Sarah Mitchell',
-        role: 'Hair Stylist',
-        imageUrl: 'https://i.pravatar.cc/150?u=sarah',
-        lastMessage: 'Thanks for your application! We\'d love to chat.',
-        time: '2h ago',
-        isRead: true,
-      ),
-      ChatListModel(
-        id: '3',
-        name: 'The Grooming Room',
-        role: 'Barber',
-        imageUrl: 'https://i.pravatar.cc/150?u=grooming',
-        lastMessage: 'The position is still available if you\'re interested.',
-        time: '1d ago',
-        isRead: true,
-      ),
-    ];
+  Future<void> loadChats() async {
+    isLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().getData(ApiUrl.createChat);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = response.body['data'];
+        if (data != null && data is List) {
+          chatList.value = data.map((json) => ChatListModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      print("Error loading chats: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void loadMessages(String chatId) {

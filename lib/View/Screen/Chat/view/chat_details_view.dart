@@ -37,31 +37,51 @@ class ChatDetailsView extends GetView<ChatController> {
                     constraints: const BoxConstraints(),
                   ),
                   SizedBox(width: 16.w),
-                  CircleAvatar(
-                    radius: 20.r,
-                    backgroundImage: NetworkImage(chat.imageUrl),
-                    backgroundColor: Colors.grey.shade200,
-                  ),
-                  SizedBox(width: 12.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chat.name,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        chat.role,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                    ],
+                  Builder(
+                    builder: (context) {
+                      Participant other = chat.participants.firstWhere(
+                        (p) => p.id != controller.myId.value,
+                        orElse: () => chat.participants.isNotEmpty 
+                            ? chat.participants.first 
+                            : Participant(id: '', email: '', name: 'Unknown', image: ''),
+                      );
+                      
+                      String name = other.name;
+                      String imageUrl = other.image.startsWith('http') 
+                          ? other.image 
+                          : "https://api.goroqit.com${other.image}";
+
+                      return Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 20.r,
+                            backgroundImage: NetworkImage(imageUrl),
+                            backgroundColor: Colors.grey.shade200,
+                          ),
+                          SizedBox(width: 12.w),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                "Active", // Placeholder for role or status
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -198,11 +218,22 @@ class ChatDetailsView extends GetView<ChatController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!message.isMe) ...[
-                CircleAvatar(
-                  radius: 16.r,
-                  backgroundImage: NetworkImage(chat.imageUrl),
-                  backgroundColor: Colors.grey.shade200,
-                ),
+                Builder(builder: (context) {
+                  Participant other = chat.participants.firstWhere(
+                    (p) => p.id != controller.myId.value,
+                    orElse: () => chat.participants.isNotEmpty
+                        ? chat.participants.first
+                        : Participant(id: '', email: '', name: '', image: ''),
+                  );
+                  String imageUrl = other.image.startsWith('http')
+                      ? other.image
+                      : "https://api.goroqit.com${other.image}";
+                  return CircleAvatar(
+                    radius: 16.r,
+                    backgroundImage: NetworkImage(imageUrl),
+                    backgroundColor: Colors.grey.shade200,
+                  );
+                }),
                 SizedBox(width: 8.w),
               ],
 

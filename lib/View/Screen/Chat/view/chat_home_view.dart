@@ -112,6 +112,36 @@ class ChatHomeView extends GetView<ChatController> {
   }
 
   Widget _buildChatItem(ChatListModel chat) {
+    // Identify the other participant (not me)
+    Participant other = chat.participants.firstWhere(
+      (p) => p.id != controller.myId.value,
+      orElse: () => chat.participants.isNotEmpty 
+          ? chat.participants.first 
+          : Participant(id: '', email: '', name: 'Unknown', image: ''),
+    );
+
+    String name = other.name;
+    String imageUrl = other.image.startsWith('http') 
+        ? other.image 
+        : "https://api.goroqit.com${other.image}";
+    String lastMsg = chat.lastMessage?.text ?? "No messages yet";
+    String time = "";
+    
+    if (chat.lastMessage != null) {
+      final diff = DateTime.now().difference(chat.lastMessage!.createdAt);
+      if (diff.inDays > 0) {
+        time = "${diff.inDays}d ago";
+      } else if (diff.inHours > 0) {
+        time = "${diff.inHours}h ago";
+      } else if (diff.inMinutes > 0) {
+        time = "${diff.inMinutes}m ago";
+      } else {
+        time = "just now";
+      }
+    }
+
+    bool isRead = true; // status field in API might mean something else, setting true for now
+
     return InkWell(
       onTap: () {
         // Load messages for this chat
@@ -128,10 +158,13 @@ class ChatHomeView extends GetView<ChatController> {
               children: [
                 CircleAvatar(
                   radius: 24.r,
-                  backgroundImage: NetworkImage(chat.imageUrl),
+                  backgroundImage: NetworkImage(imageUrl),
                   backgroundColor: Colors.grey.shade200,
+                  onBackgroundImageError: (_, __) {
+                    // Fallback to placeholder if image fails to load
+                  },
                 ),
-                if (!chat.isRead)
+                if (!isRead)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -159,7 +192,7 @@ class ChatHomeView extends GetView<ChatController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        chat.name,
+                        name,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
@@ -167,7 +200,7 @@ class ChatHomeView extends GetView<ChatController> {
                         ),
                       ),
                       Text(
-                        chat.time,
+                        time,
                         style: TextStyle(
                           fontSize: 10.sp,
                           color: Colors.grey.shade500,
@@ -176,24 +209,27 @@ class ChatHomeView extends GetView<ChatController> {
                     ],
                   ),
                   SizedBox(height: 4.h),
+                  // Role is not in the new API, we can hide it or use placeholder
+                  /*
                   Text(
-                    chat.role,
+                    "Participant",
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: Colors.grey.shade500,
                     ),
                   ),
                   SizedBox(height: 4.h),
+                  */
                   Text(
-                    chat.lastMessage,
+                    lastMsg,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: chat.isRead
+                      fontWeight: isRead
                           ? FontWeight.normal
                           : FontWeight.w600,
-                      color: chat.isRead ? Colors.grey.shade600 : Colors.black,
+                      color: isRead ? Colors.grey.shade600 : Colors.black,
                     ),
                   ),
                 ],
