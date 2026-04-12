@@ -286,7 +286,6 @@ class ChatDetailsView extends GetView<ChatController> {
   }
 
   String _formatTime(DateTime timestamp) {
-    // Simple formatter for mock
-    return "${timestamp.hour > 12 ? timestamp.hour - 12 : timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')} ${timestamp.hour >= 12 ? 'PM' : 'AM'}";
+    return "${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}";
   }
 }
