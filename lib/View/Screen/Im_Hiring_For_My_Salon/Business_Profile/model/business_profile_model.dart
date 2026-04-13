@@ -1,5 +1,6 @@
 class BusinessProfileModel {
-  final String name;
+  final String name; // This is company name
+  final String userName;
   final String category;
   final String description;
   final String logoUrl;
@@ -11,6 +12,7 @@ class BusinessProfileModel {
 
   BusinessProfileModel({
     required this.name,
+    required this.userName,
     required this.category,
     required this.description,
     required this.logoUrl,

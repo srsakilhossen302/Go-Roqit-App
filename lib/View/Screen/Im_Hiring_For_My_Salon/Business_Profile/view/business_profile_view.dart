@@ -234,8 +234,13 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                                             backgroundColor: Colors.white,
                                             child: CircleAvatar(
                                               radius: 27.r,
-                                              backgroundImage: NetworkImage(profile.profileImageUrl),
+                                              backgroundImage: profile.profileImageUrl.isNotEmpty
+                                                  ? NetworkImage(profile.profileImageUrl)
+                                                  : null,
                                               backgroundColor: Colors.grey.shade200,
+                                              child: profile.profileImageUrl.isEmpty
+                                                  ? Icon(Icons.person, size: 30.sp, color: Colors.grey)
+                                                  : null,
                                             ),
                                           ),
                                         ],
@@ -243,10 +248,19 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                                     ],
                                   ),
                                   SizedBox(height: 8.h),
+                                  // User Name
                                   Text(
-                                    profile.name,
+                                    profile.userName,
                                     style: TextStyle(
-                                      fontSize: 16.sp,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                  Text(
+                                    profile.name, // This is Company Name
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),

@@ -71,6 +71,7 @@ class BusinessProfileController extends GetxController {
 
           final fetchedProfile = BusinessProfileModel(
             name: profileData['companyName'] ?? '',
+            userName: resData['name'] ?? '',
             category: "Recruiter", // Mocked
             description: profileData['companyDescription'] ?? '',
             logoUrl: fullUrl(profileData['companyLogo']),
