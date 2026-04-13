@@ -193,76 +193,70 @@ class BusinessProfileView extends GetView<BusinessProfileController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      // Logo
-                                      Container(
-                                        width: 60.w,
-                                        height: 60.w,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          border: Border.all(
-                                            color: Colors.white,
-                                            width: 3,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 5,
-                                            ),
-                                          ],
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.r),
-                                          child: Image.network(
-                                            profile.logoUrl,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (c, o, s) => const Icon(
-                                              Icons.business,
-                                            ), // Component placeholder
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      // Profile Image
-                                      Stack(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 30.r,
-                                            backgroundColor: Colors.white,
-                                            child: CircleAvatar(
-                                              radius: 27.r,
-                                              backgroundImage: profile.profileImageUrl.isNotEmpty
-                                                  ? NetworkImage(profile.profileImageUrl)
-                                                  : null,
-                                              backgroundColor: Colors.grey.shade200,
-                                              child: profile.profileImageUrl.isEmpty
-                                                  ? Icon(Icons.person, size: 30.sp, color: Colors.grey)
-                                                  : null,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                  // Profile Image (Main floating)
+                                  CircleAvatar(
+                                    radius: 40.r,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: 37.r,
+                                      backgroundImage: profile.profileImageUrl.isNotEmpty
+                                          ? NetworkImage(profile.profileImageUrl)
+                                          : null,
+                                      backgroundColor: Colors.grey.shade200,
+                                      child: profile.profileImageUrl.isEmpty
+                                          ? Icon(Icons.person, size: 40.sp, color: Colors.grey)
+                                          : null,
+                                    ),
                                   ),
-                                  SizedBox(height: 8.h),
+                                  SizedBox(height: 16.h),
+                                  /*
+                                  // Company Logo (Smaller, below profile)
+                                  Container(
+                                    width: 40.w,
+                                    height: 40.w,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                        color: Colors.grey.shade200,
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 5,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(6.r),
+                                      child: Image.network(
+                                        profile.logoUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (c, o, s) => const Icon(
+                                          Icons.business,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  */
+                                  SizedBox(height: 12.h),
                                   // User Name
                                   Text(
                                     profile.userName,
                                     style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    profile.name, // This is Company Name
-                                    style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    profile.name, // Company Name
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade600,
                                     ),
                                   ),
                                   SizedBox(height: 4.h),
