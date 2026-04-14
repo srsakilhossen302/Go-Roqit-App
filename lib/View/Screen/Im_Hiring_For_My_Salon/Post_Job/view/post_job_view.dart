@@ -9,7 +9,9 @@ class PostJobView extends GetView<PostJobController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(PostJobController());
+    if (!Get.isRegistered<PostJobController>()) {
+      Get.put(PostJobController());
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -74,15 +76,15 @@ class PostJobView extends GetView<PostJobController> {
             child: Obx(() {
               switch (controller.currentStep.value) {
                 case 1:
-                  return _buildStep1();
+                  return _buildStep1(context);
                 case 2:
-                  return _buildStep2();
+                  return _buildStep2(context);
                 case 3:
-                  return _buildStep3();
+                  return _buildStep3(context);
                 case 4:
                   return _buildStep4();
                 default:
-                  return _buildStep1();
+                  return _buildStep1(context);
               }
             }),
           ),
@@ -104,7 +106,7 @@ class PostJobView extends GetView<PostJobController> {
   }
 
   // --- STEP 1: JOB BASICS ---
-  Widget _buildStep1() {
+  Widget _buildStep1(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(24.w),
       child: Column(
@@ -122,24 +124,61 @@ class PostJobView extends GetView<PostJobController> {
           ),
           SizedBox(height: 20.h),
 
-          _buildLabel('Role Type *'),
-          _buildTextField(
+          _buildLabel('Role Type / Category *'),
+          _buildSelectionField(
+            context: context,
             controller: controller.roleTypeController,
-            hint: 'e.g. Barber, Stylist',
+            hint: 'Select Category',
+            options: controller.categories,
           ),
           SizedBox(height: 20.h),
 
-          _buildLabel('Location *'),
+          _buildLabel('Job Location (Address)'),
           _buildTextField(
             controller: controller.locationController,
-            hint: 'e.g. Shoreditch, London',
+            hint: 'e.g. Banani, Dhaka',
+          ),
+          SizedBox(height: 20.h),
+
+          _buildLabel('Engagement Type *'),
+          _buildSelectionField(
+            context: context,
+            controller: controller.engagementTypeController,
+            hint: 'Select engagement',
+            options: controller.engagementTypes,
+          ),
+          SizedBox(height: 20.h),
+
+          _buildLabel('Start Date *'),
+          GestureDetector(
+            onTap: () => controller.selectStartDate(context),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFE5E7EB)),
+                borderRadius: BorderRadius.circular(12.r),
+                color: Colors.white,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Obx(() => Text(
+                    "${controller.startDate.value.day}/${controller.startDate.value.month}/${controller.startDate.value.year}",
+                    style: TextStyle(fontSize: 14.sp, color: const Color(0xFF111827)),
+                  )),
+                  const Icon(Icons.calendar_today, size: 18, color: Color(0xFF6B7280)),
+                ],
+              ),
+            ),
           ),
           SizedBox(height: 20.h),
 
           _buildLabel('Employment Type *'),
-          _buildTextField(
+          _buildSelectionField(
+            context: context,
             controller: controller.employmentTypeController,
-            hint: 'e.g. Full-time, Part-time',
+            hint: 'Select type',
+            options: ['Full-time', 'Part-time', 'Temp'],
           ),
         ],
       ),
@@ -147,7 +186,7 @@ class PostJobView extends GetView<PostJobController> {
   }
 
   // --- STEP 2: COMPENSATION ---
-  Widget _buildStep2() {
+  Widget _buildStep2(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(24.w),
       child: Column(
@@ -192,25 +231,21 @@ class PostJobView extends GetView<PostJobController> {
           SizedBox(height: 20.h),
 
           _buildLabel('Salary Type *'),
-          _buildTextField(
+          _buildSelectionField(
+            context: context,
             controller: controller.salaryTypeController,
-            hint: 'e.g. Per Year',
+            hint: 'Select frequency',
+            options: ['yearly', 'monthly', 'weekly', 'hourly'],
           ),
           SizedBox(height: 20.h),
 
-          _buildLabel('Benefits (Optional)'),
-          _buildTextField(
-            controller: controller.benefitsController,
-            hint: 'Health insurance, flexible hours...',
-            maxLines: 4,
-          ),
         ],
       ),
     );
   }
 
   // --- STEP 3: JOB DETAILS ---
-  Widget _buildStep3() {
+  Widget _buildStep3(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(24.w),
       child: Column(
@@ -229,18 +264,12 @@ class PostJobView extends GetView<PostJobController> {
           ),
           SizedBox(height: 20.h),
 
-          _buildLabel('Requirements *'),
-          _buildTextField(
-            controller: controller.requirementsController,
-            hint: 'List skills, experience, certifications...',
-            maxLines: 4,
-          ),
-          SizedBox(height: 20.h),
-
-          _buildLabel('Work Schedule'),
-          _buildTextField(
-            controller: controller.workScheduleController,
-            hint: 'Monday - Friday, 9 AM - 6 PM',
+          _buildLabel('Experience Level *'),
+          _buildSelectionField(
+            context: context,
+            controller: controller.experienceLabelController,
+            hint: 'Select level',
+            options: ['Junior', 'Mid-Level', 'Senior', 'Master'],
           ),
         ],
       ),
@@ -278,7 +307,7 @@ class PostJobView extends GetView<PostJobController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'salon', // Hardcoded or dynamic salon name
+                  controller.jobTitleController.text,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -296,7 +325,7 @@ class PostJobView extends GetView<PostJobController> {
                       icon: Icons.location_on,
                       text: controller.locationController.text.isNotEmpty
                           ? controller.locationController.text
-                          : 'London, UK',
+                          : 'Location set',
                       color: const Color(0xFFEFF6FF),
                       textColor: const Color(0xFF2563EB),
                       iconColor: const Color(0xFF2563EB),
@@ -304,18 +333,25 @@ class PostJobView extends GetView<PostJobController> {
                     _buildTag(
                       icon: Icons.attach_money,
                       text:
-                          '£${controller.minSalaryController.text} - £${controller.maxSalaryController.text}/${controller.salaryTypeController.text.replaceAll('per ', '')}',
+                          '£${controller.minSalaryController.text} - £${controller.maxSalaryController.text}/${controller.salaryTypeController.text}',
                       color: const Color(0xFFECFDF5),
                       textColor: const Color(0xFF0F5F3E),
                       iconColor: const Color(0xFF0F5F3E),
-                      isMoney: true, // Use proper logic
+                      isMoney: true,
                     ),
                     _buildTag(
                       text: controller.employmentTypeController.text.isNotEmpty
                           ? controller.employmentTypeController.text
-                          : 'Part Time',
+                          : 'Full-time',
                       color: const Color(0xFFF3E8FF),
                       textColor: const Color(0xFF7E22CE),
+                    ),
+                    _buildTag(
+                      text: controller.experienceLabelController.text.isNotEmpty
+                          ? controller.experienceLabelController.text
+                          : 'Mid-Level',
+                      color: const Color(0xFFFFF7ED),
+                      textColor: const Color(0xFFEA580C),
                     ),
                   ],
                 ),
@@ -324,11 +360,6 @@ class PostJobView extends GetView<PostJobController> {
                 _buildReviewSection(
                   'Description',
                   controller.descriptionController.text,
-                ),
-                SizedBox(height: 12.h),
-                _buildReviewSection(
-                  'Requirements',
-                  controller.requirementsController.text,
                 ),
               ],
             ),
@@ -345,7 +376,7 @@ class PostJobView extends GetView<PostJobController> {
               border: Border.all(color: const Color(0xFFBFDBFE)),
             ),
             child: Text(
-              'Your job will be published and visible to all professionals.',
+              'Your job will be published with coordinates: [${controller.longitude.value}, ${controller.latitude.value}].',
               style: TextStyle(fontSize: 14.sp, color: const Color(0xFF2563EB)),
               textAlign: TextAlign.center,
             ),
@@ -376,9 +407,8 @@ class PostJobView extends GetView<PostJobController> {
             Icon(icon, size: 14.sp, color: iconColor),
             SizedBox(width: 4.w),
           ] else if (isMoney) ...[
-            // Logic to show currency symbol if needed without icon
             Text(
-              '\$',
+              '£',
               style: TextStyle(fontSize: 12.sp, color: textColor),
             ),
             SizedBox(width: 2.w),
@@ -413,7 +443,7 @@ class PostJobView extends GetView<PostJobController> {
         ),
         SizedBox(height: 4.h),
         Text(
-          content.isNotEmpty ? content : 'wwwwwwwwww',
+          content.isNotEmpty ? content : 'No content provided',
           style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -474,6 +504,80 @@ class PostJobView extends GetView<PostJobController> {
         ),
         filled: true,
         fillColor: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildSelectionField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String hint,
+    required List<String> options,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Get.bottomSheet(
+          Container(
+            padding: EdgeInsets.all(20.w),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  margin: EdgeInsets.only(bottom: 20.h),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+                Text(
+                  hint,
+                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10.h),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: options.length,
+                    separatorBuilder: (context, index) => Divider(color: Colors.grey.shade100, height: 1),
+                    itemBuilder: (context, index) {
+                      final option = options[index];
+                      return ListTile(
+                        title: Text(
+                          option,
+                          style: TextStyle(
+                            color: controller.text == option ? const Color(0xFF0F5F3E) : Colors.black,
+                            fontWeight: controller.text == option ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                        trailing: controller.text == option
+                            ? const Icon(Icons.check_circle, color: Color(0xFF0F5F3E))
+                            : null,
+                        onTap: () {
+                          controller.text = option;
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20.h),
+              ],
+            ),
+          ),
+          isScrollControlled: true,
+        );
+      },
+      child: AbsorbPointer(
+        child: _buildTextField(
+          controller: controller,
+          hint: hint,
+        ),
       ),
     );
   }

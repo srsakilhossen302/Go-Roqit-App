@@ -3,10 +3,38 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../Job_Posts/model/job_post_model.dart';
 
 class PostJobController extends GetxController {
   var currentStep = 1.obs;
+
+  // Location Coordinates
+  var latitude = 0.0.obs;
+  var longitude = 0.0.obs;
+  var startDate = DateTime.now().obs;
+
+  final categories = [
+    "Salon Specialist",
+    "Hair Stylist",
+    "Receptionist",
+    "Salon Manager",
+    "Design",
+    "IT"
+  ];
+  final engagementTypes = ["Salaried", "Self-employed", "Contract", "Freelance"];
+
+  Future<void> selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: startDate.value,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != startDate.value) {
+      startDate.value = picked;
+    }
+  }
 
   // Step 1: Job Basics
   final jobTitleController = TextEditingController();
@@ -18,12 +46,9 @@ class PostJobController extends GetxController {
   final minSalaryController = TextEditingController();
   final maxSalaryController = TextEditingController();
   final salaryTypeController = TextEditingController();
-  final benefitsController = TextEditingController();
 
   // Step 3: Job Details
   final descriptionController = TextEditingController();
-  final requirementsController = TextEditingController();
-  final workScheduleController = TextEditingController();
   final experienceLabelController = TextEditingController(); // New
   final engagementTypeController = TextEditingController(); // New
 
@@ -37,6 +62,7 @@ class PostJobController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getCurrentLocation(); // Auto-fetch location on start
 
     // Check for arguments (Edit Mode)
     if (Get.arguments != null && Get.arguments is JobPostModel) {
@@ -54,12 +80,8 @@ class PostJobController extends GetxController {
       minSalaryController.text = job.minSalary;
       maxSalaryController.text = job.maxSalary;
       salaryTypeController.text = job.salaryType;
-      benefitsController.text = job.benefits;
-
       // Step 3
       descriptionController.text = job.description;
-      requirementsController.text = job.requirements.join('\n');
-      workScheduleController.text = job.workSchedule;
     }
   }
 
@@ -72,10 +94,9 @@ class PostJobController extends GetxController {
     minSalaryController.dispose();
     maxSalaryController.dispose();
     salaryTypeController.dispose();
-    benefitsController.dispose();
     descriptionController.dispose();
-    requirementsController.dispose();
-    workScheduleController.dispose();
+    experienceLabelController.dispose();
+    engagementTypeController.dispose();
     super.onClose();
   }
 
@@ -83,8 +104,7 @@ class PostJobController extends GetxController {
     if (currentStep.value < 4) {
       // Basic validation for each step
       if (currentStep.value == 1) {
-        if (jobTitleController.text.isEmpty ||
-            locationController.text.isEmpty) {
+        if (jobTitleController.text.isEmpty) {
           Get.snackbar('Error', 'Please fill in required fields');
           return;
         }
@@ -107,31 +127,109 @@ class PostJobController extends GetxController {
     }
   }
 
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Get.snackbar('Error', 'Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        Get.snackbar('Error', 'Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      Get.snackbar('Error', 'Location permissions are permanently denied');
+      return;
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      latitude.value = position.latitude;
+      longitude.value = position.longitude;
+      print("Location Captured: ${latitude.value}, ${longitude.value}");
+    } catch (e) {
+      print("Error getting location: $e");
+    }
+  }
+
   Future<void> _publishJob() async {
     isLoading.value = true;
     try {
       final apiClient = Get.find<ApiClient>();
-      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final token =
+          await SharePrefsHelper.getString(SharedPreferenceValue.token);
+
+      // Normalization helpers to match backend enums
+      String normalizedType = employmentTypeController.text.trim().toLowerCase();
+      if (normalizedType.contains("full")) {
+        normalizedType = "Full-time";
+      } else if (normalizedType.contains("part")) {
+        normalizedType = "Part-time";
+      } else if (normalizedType.contains("temp")) {
+        normalizedType = "Temp";
+      } else {
+        normalizedType = "Full-time"; // fallback
+      }
+
+      String normalizedSalaryType = salaryTypeController.text.trim().toLowerCase();
+      if (normalizedSalaryType.contains("year")) {
+        normalizedSalaryType = "yearly";
+      } else if (normalizedSalaryType.contains("month")) {
+        normalizedSalaryType = "monthly";
+      } else if (normalizedSalaryType.contains("week")) {
+        normalizedSalaryType = "weekly";
+      } else if (normalizedSalaryType.contains("hour")) {
+        normalizedSalaryType = "hourly";
+      } else {
+        normalizedSalaryType = "yearly"; // fallback
+      }
+
+      String normalizedExperience = experienceLabelController.text.trim().toLowerCase();
+      if (normalizedExperience.contains("junior")) {
+        normalizedExperience = "Junior";
+      } else if (normalizedExperience.contains("mid")) {
+        normalizedExperience = "Mid-Level";
+      } else if (normalizedExperience.contains("senior")) {
+        normalizedExperience = "Senior";
+      } else if (normalizedExperience.contains("master")) {
+        normalizedExperience = "Master";
+      } else {
+        normalizedExperience = "Mid-Level"; // fallback
+      }
 
       final body = {
         "title": jobTitleController.text,
         "category": roleTypeController.text,
-        "type": employmentTypeController.text,
-        "engagementType": engagementTypeController.text.isNotEmpty 
-            ? engagementTypeController.text : "Salaried",
-        "startDate": DateTime.now().toIso8601String(),
-        "salryType": salaryTypeController.text,
+        "type": normalizedType,
+        "engagementType": engagementTypeController.text.isNotEmpty
+            ? engagementTypeController.text
+            : "Salaried",
+        "startDate": DateTime.utc(startDate.value.year, startDate.value.month, startDate.value.day).toIso8601String(),
+        "paymentType": normalizedSalaryType,
         "minSalary": int.tryParse(minSalaryController.text) ?? 0,
         "maxSalary": int.tryParse(maxSalaryController.text) ?? 0,
         "description": descriptionController.text,
-        "jobLocation": locationController.text,
-        "experianceLabel": experienceLabelController.text.isNotEmpty 
-            ? experienceLabelController.text : "Mid-level"
+        "jobLocation": locationController.text.isNotEmpty 
+            ? locationController.text 
+            : "Real-time Location",
+        "location": {
+          "type": "Point",
+          "coordinates": [longitude.value, latitude.value]
+        },
+        "experianceLabel": normalizedExperience,
       };
 
       final headers = {'Authorization': 'Bearer $token'};
       
-      // Using /job endpoint as per screenshot
       final response = await apiClient.postData("/job", body, headers: headers);
 
       print("Post Job Response: ${response.body}");
