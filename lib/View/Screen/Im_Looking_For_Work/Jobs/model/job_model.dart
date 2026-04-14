@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class JobModel {
   final String id;
@@ -58,7 +59,7 @@ class JobModel {
 
     String logo = "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80"; // default
     if (json["user"] != null && json["user"]["profile"] != null && json["user"]["profile"]["companyLogo"] != null) {
-         logo = "https://api.goroqit.com" + json["user"]["profile"]["companyLogo"];
+         logo = ApiUrl.IMGUrl + json["user"]["profile"]["companyLogo"];
     }
 
     double? lat = json["latitude"]?.toDouble();
@@ -75,9 +76,9 @@ class JobModel {
     if (json["user"]?["profile"]?["portfolio"] != null && json["user"]["profile"]["portfolio"] is List) {
       for (var item in json["user"]["profile"]["portfolio"]) {
         if (item is String) {
-          photos.add("https://api.goroqit.com$item");
+          photos.add("${ApiUrl.IMGUrl}$item");
         } else if (item is Map && item["path"] != null) {
-          photos.add("https://api.goroqit.com${item["path"]}");
+          photos.add("${ApiUrl.IMGUrl}${item["path"]}");
         }
       }
     }

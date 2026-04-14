@@ -9,6 +9,7 @@ import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class ChatHomeView extends GetView<ChatController> {
   const ChatHomeView({super.key});
@@ -123,7 +124,7 @@ class ChatHomeView extends GetView<ChatController> {
     String name = other.name;
     String imageUrl = other.image.startsWith('http') 
         ? other.image 
-        : "https://api.goroqit.com${other.image}";
+        : "${ApiUrl.IMGUrl}${other.image}";
     String lastMsg = chat.lastMessage?.text ?? "No messages yet";
     String time = "";
     

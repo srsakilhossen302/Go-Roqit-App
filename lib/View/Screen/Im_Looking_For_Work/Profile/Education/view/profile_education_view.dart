@@ -6,6 +6,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Education/controller/profile_education_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/model/profile_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class ProfileEducationView extends GetView<ProfileEducationController> {
   const ProfileEducationView({super.key});
@@ -208,7 +209,7 @@ class ProfileEducationView extends GetView<ProfileEducationController> {
                             child: Image.network(
                               imgPath.startsWith('http')
                                   ? imgPath
-                                  : "https://api.goroqit.com$imgPath",
+                                  : "${ApiUrl.IMGUrl}$imgPath",
                               fit: BoxFit.cover,
                             ),
                           ),

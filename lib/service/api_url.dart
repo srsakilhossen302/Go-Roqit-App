@@ -1,6 +1,9 @@
 class ApiUrl {
   static const String baseUrl =
-      "https://api.goroqit.com/api/v1"; // Replace with your actual base URL
+      "https://fahim5001.naimulhassan.me/api/v1"; // Replace with your actual base URL
+
+  static const String IMGUrl = "https://fahim5001.naimulhassan.me/";
+
   static const String signUp = "/auth/signup";
   static const String signIn = "/auth/login";
   static const String otpVerify = "/auth/verify-account";

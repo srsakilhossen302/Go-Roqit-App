@@ -10,6 +10,7 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Settings/vi
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/HelpSupport/view/profile_help_support_view.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/UserInformation/view/user_information_view.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -86,7 +87,7 @@ class ProfileView extends GetView<ProfileController> {
                     backgroundImage: NetworkImage(
                       profileImage.startsWith('http') 
                         ? profileImage 
-                        : "https://api.goroqit.com$profileImage"
+                        : "${ApiUrl.IMGUrl}$profileImage"
                     ),
                     backgroundColor: Colors.grey[200],
                   ),

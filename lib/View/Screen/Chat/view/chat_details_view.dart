@@ -4,6 +4,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Chat/controller/chat_controller.dart';
 import 'package:go_roqit_app/View/Screen/Chat/model/chat_model.dart';
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 
@@ -49,7 +50,7 @@ class ChatDetailsView extends GetView<ChatController> {
                       String name = other.name;
                       String imageUrl = other.image.startsWith('http') 
                           ? other.image 
-                          : "https://api.goroqit.com${other.image}";
+                          : "${ApiUrl.IMGUrl}${other.image}";
 
                       return Row(
                         children: [
@@ -229,7 +230,7 @@ class ChatDetailsView extends GetView<ChatController> {
                   );
                   String imageUrl = other.image.startsWith('http')
                       ? other.image
-                      : "https://api.goroqit.com${other.image}";
+                      : "${ApiUrl.IMGUrl}${other.image}";
                   return CircleAvatar(
                     radius: 16.r,
                     backgroundImage: NetworkImage(imageUrl),

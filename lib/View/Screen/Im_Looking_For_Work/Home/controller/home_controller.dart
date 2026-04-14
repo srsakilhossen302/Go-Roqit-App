@@ -28,7 +28,7 @@ class HomeController extends GetxController {
         if (data != null) {
           userName.value = data['name'] ?? "User";
           if (data['image'] != null && data['image'].toString().isNotEmpty) {
-             userImage.value = "https://api.goroqit.com${data['image']}";
+             userImage.value = "${ApiUrl.IMGUrl}${data['image']}";
           }
         }
       }

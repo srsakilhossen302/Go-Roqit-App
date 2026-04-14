@@ -6,6 +6,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/Portfolio/controller/profile_portfolio_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Profile/model/profile_model.dart';
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class ProfilePortfolioView extends GetView<ProfilePortfolioController> {
   const ProfilePortfolioView({super.key});
@@ -171,7 +172,7 @@ class ProfilePortfolioView extends GetView<ProfilePortfolioController> {
                   child: Image.network(
                     imgPath.startsWith('http')
                         ? imgPath
-                        : "https://api.goroqit.com$imgPath",
+                        : "${ApiUrl.IMGUrl}$imgPath",
                     fit: BoxFit.cover,
                   ),
                 );

@@ -84,7 +84,7 @@ class ProfileAdditionalInformationController extends GetxController {
     String? url = additionalInfoModel.value.resumeUrl;
     if (url != null && url.isNotEmpty) {
       if (!url.startsWith('http')) {
-        url = "https://api.goroqit.com$url";
+        url = "${ApiUrl.IMGUrl}$url";
       }
       
       final uri = Uri.parse(url);

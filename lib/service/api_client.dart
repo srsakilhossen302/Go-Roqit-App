@@ -1,15 +1,27 @@
 import 'package:get_x/get.dart';
-import 'package:go_roqit_app/service/api_url.dart';
+import 'package:go_roqit_app/View/Screen/Onboarding/auth/view/auth_screen.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 
 class ApiClient extends GetConnect implements GetxService {
   @override
   void onInit() {
     httpClient.baseUrl = ApiUrl.baseUrl;
     httpClient.timeout = const Duration(seconds: 30);
-    
+
     httpClient.addRequestModifier<void>((request) async {
-      String token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      String token =
+          await SharePrefsHelper.getString(SharedPreferenceValue.token);
+
+      // Check if it's a public route
+      bool isPublicRoute = request.url.path.contains(ApiUrl.signIn) ||
+          request.url.path.contains(ApiUrl.signUp) ||
+          request.url.path.contains(ApiUrl.otpVerify);
+
+      if (token.isEmpty && !isPublicRoute) {
+        _handleLogout();
+      }
+
       if (token.isNotEmpty) {
         request.headers['Authorization'] = 'Bearer $token';
         print("API Request: ${request.method} ${request.url}");
@@ -17,8 +29,21 @@ class ApiClient extends GetConnect implements GetxService {
       }
       return request;
     });
-    
+
+    httpClient.addResponseModifier<void>((request, response) async {
+      if (response.statusCode == 401) {
+        _handleLogout();
+      }
+      return response;
+    });
+
     super.onInit();
+  }
+
+  void _handleLogout() async {
+    await SharePrefsHelper.remove(SharedPreferenceValue.token);
+    await SharePrefsHelper.remove(SharedPreferenceValue.role);
+    Get.offAll(() => const AuthScreen());
   }
 
   Future<Response> postData(String uri, dynamic body, {Map<String, String>? headers}) async {

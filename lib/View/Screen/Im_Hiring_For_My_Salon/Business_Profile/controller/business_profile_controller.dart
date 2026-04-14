@@ -66,7 +66,7 @@ class BusinessProfileController extends GetxController {
           String fullUrl(String? path) {
             if (path == null || path.isEmpty) return '';
             if (path.startsWith('http')) return path;
-            return "https://api.goroqit.com$path";
+            return "${ApiUrl.IMGUrl}$path";
           }
 
           final fetchedProfile = BusinessProfileModel(
