@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
@@ -19,13 +20,20 @@ class JobPostsController extends GetxController {
   Future<void> loadJobPosts() async {
     isLoading.value = true;
     try {
-      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final token = await SharePrefsHelper.getString(
+        SharedPreferenceValue.token,
+      );
       final headers = {'Authorization': 'Bearer $token'};
-      final response = await Get.find<ApiClient>().getData(ApiUrl.myJobs, headers: headers);
+      final response = await Get.find<ApiClient>().getData(
+        ApiUrl.myJobs,
+        headers: headers,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List jobsData = response.body['data']['data'] ?? [];
-        activeJobPosts.value = jobsData.map((json) => JobPostModel.fromJson(json)).toList();
+        activeJobPosts.value = jobsData
+            .map((json) => JobPostModel.fromJson(json))
+            .toList();
       } else {
         Get.snackbar('Error', response.statusText ?? 'Failed to load jobs');
       }
@@ -47,22 +55,41 @@ class JobPostsController extends GetxController {
   }
 
   Future<void> deleteJob(String id) async {
-    try {
-      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
-      final headers = {'Authorization': 'Bearer $token'};
-      
-      // Assuming DELETE /job/:id exists based on pattern
-      final response = await Get.find<ApiClient>().deleteData("/job/$id", headers: headers);
-      
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        activeJobPosts.removeWhere((job) => job.id == id);
-        Get.snackbar('Success', 'Job post removed');
-      } else {
-        Get.snackbar('Error', 'Failed to delete job');
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Connection failed');
-    }
+    Get.defaultDialog(
+      title: "Delete Job",
+      middleText: "Are you sure you want to delete this job post?",
+      textConfirm: "Delete",
+      textCancel: "Cancel",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        // Close the dialog first
+        if (Get.isOverlaysOpen) {
+          Get.back();
+        }
+        
+        try {
+          final token = await SharePrefsHelper.getString(
+            SharedPreferenceValue.token,
+          );
+          final headers = {'Authorization': 'Bearer $token'};
+
+          final response = await Get.find<ApiClient>().deleteData(
+            "/job/$id",
+            headers: headers,
+          );
+
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            activeJobPosts.removeWhere((job) => job.id == id);
+            Get.snackbar('Success', 'Job post removed');
+          } else {
+            Get.snackbar('Error', 'Failed to delete job');
+          }
+        } catch (e) {
+          Get.snackbar('Error', 'Connection failed');
+        }
+      },
+    );
   }
 
   Future<void> refreshJobs() async {

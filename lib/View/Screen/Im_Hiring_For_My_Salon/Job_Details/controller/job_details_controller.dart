@@ -40,4 +40,27 @@ class JobDetailsController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<bool> deleteJob(String id) async {
+    isLoading.value = true;
+    try {
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {'Authorization': 'Bearer $token'};
+      
+      final response = await Get.find<ApiClient>().deleteData("/job/$id", headers: headers);
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar('Success', 'Job post removed');
+        return true;
+      } else {
+        Get.snackbar('Error', 'Failed to delete job');
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Connection failed');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

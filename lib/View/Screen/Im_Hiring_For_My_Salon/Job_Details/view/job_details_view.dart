@@ -44,6 +44,15 @@ class JobDetailsView extends StatelessWidget {
             child: Image.asset(AppIcons.backIcons),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _showDeleteConfirmation(context, controller, controller.job.value!.id);
+            },
+            icon: const Icon(Icons.delete_outline, color: Colors.red),
+          ),
+          SizedBox(width: 8.w),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -254,6 +263,26 @@ class JobDetailsView extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, JobDetailsController controller, String id) {
+    Get.defaultDialog(
+      title: "Delete Job",
+      middleText: "Are you sure you want to delete this job post?",
+      textConfirm: "Delete",
+      textCancel: "Cancel",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        if (Get.isOverlaysOpen) {
+          Get.back(); // Close dialog
+        }
+        final success = await controller.deleteJob(id);
+        if (success) {
+          Get.back(); // Return to previous screen
+        }
+      },
     );
   }
 
