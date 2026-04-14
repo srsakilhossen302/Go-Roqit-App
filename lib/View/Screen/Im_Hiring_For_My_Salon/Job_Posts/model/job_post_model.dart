@@ -1,39 +1,58 @@
 class JobPostModel {
   final String id;
   final String title;
-  final String roleType; // Barber, Stylist, etc.
-  final String employmentType; // Full-time, Part-time, etc.
-  final String location;
-  final String salaryRange;
-  final String postedTime;
-  final int applicantCount;
-
-  final String status; // 'Open', 'Closed'
+  final String category;
+  final String employmentType;
+  final String engagementType;
+  final String startDate;
+  final String paymentType;
+  final int minSalary;
+  final int maxSalary;
   final String description;
-  final List<String> requirements;
-
-  final String minSalary;
-  final String maxSalary;
-  final String salaryType; // per year, per hour
-  final String benefits;
-  final String workSchedule;
+  final String jobLocation;
+  final int applicantCount;
+  final String experienceLabel;
+  final String createdAt;
+  final String companyName;
+  final String companyLogo;
 
   JobPostModel({
     required this.id,
     required this.title,
-    required this.roleType,
+    required this.category,
     required this.employmentType,
-    required this.location,
-    required this.salaryRange,
-    required this.postedTime,
+    required this.engagementType,
+    required this.startDate,
+    required this.paymentType,
+    required this.minSalary,
+    required this.maxSalary,
+    required this.description,
+    required this.jobLocation,
     required this.applicantCount,
-    this.status = 'Open',
-    this.description = '',
-    this.requirements = const [],
-    this.minSalary = '',
-    this.maxSalary = '',
-    this.salaryType = 'per year',
-    this.benefits = '',
-    this.workSchedule = '',
+    required this.experienceLabel,
+    required this.createdAt,
+    required this.companyName,
+    required this.companyLogo,
   });
+
+  factory JobPostModel.fromJson(Map<String, dynamic> json) {
+    return JobPostModel(
+      id: json['_id'] ?? '',
+      title: json['title'] ?? '',
+      category: json['category'] ?? '',
+      employmentType: json['type'] ?? '',
+      engagementType: json['engagementType'] ?? '',
+      startDate: json['startDate'] ?? '',
+      paymentType: json['paymentType'] ?? '',
+      minSalary: json['minSalary'] ?? 0,
+      maxSalary: json['maxSalary'] ?? 0,
+      description: json['description'] ?? '',
+      jobLocation: json['jobLocation'] ?? '',
+      applicantCount: json['applicationsCount'] ?? 0,
+      experienceLabel: json['experianceLabel'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      companyName: json['user']?['profile']?['companyName'] ?? '',
+      companyLogo: json['user']?['profile']?['companyLogo'] ?? '',
+    );
+  }
 }

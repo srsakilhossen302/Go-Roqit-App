@@ -253,7 +253,7 @@ class JobPostsView extends GetView<JobPostsController> {
               Icon(Icons.location_on_outlined, size: 14.sp, color: Colors.grey),
               SizedBox(width: 4.w),
               Text(
-                job.location,
+                job.jobLocation,
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
             ],
@@ -261,13 +261,14 @@ class JobPostsView extends GetView<JobPostsController> {
           SizedBox(height: 4.h),
           Row(
             children: [
-              Text(
-                '\$ ', // Using $ per design, though original model used £. Changing to $ icon or text visually.
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+              Icon(
+                Icons.attach_money,
+                size: 14.sp,
+                color: Colors.grey.shade600,
               ),
               SizedBox(width: 4.w),
               Text(
-                job.salaryRange,
+                "${job.minSalary} - ${job.maxSalary} / ${job.paymentType}",
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
             ],
@@ -290,7 +291,9 @@ class JobPostsView extends GetView<JobPostsController> {
                   ),
                   SizedBox(width: 4.w),
                   Text(
-                    job.postedTime,
+                    job.createdAt.length > 10 
+                        ? job.createdAt.substring(0, 10) 
+                        : job.createdAt,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Colors.grey.shade500,

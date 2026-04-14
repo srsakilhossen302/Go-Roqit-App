@@ -72,16 +72,21 @@ class PostJobController extends GetxController {
 
       // Step 1
       jobTitleController.text = job.title;
-      roleTypeController.text = job.roleType;
-      locationController.text = job.location;
+      roleTypeController.text = job.category;
+      locationController.text = job.jobLocation;
       employmentTypeController.text = job.employmentType;
+      engagementTypeController.text = job.engagementType;
+      if (job.startDate.isNotEmpty) {
+        startDate.value = DateTime.tryParse(job.startDate) ?? DateTime.now();
+      }
 
       // Step 2
-      minSalaryController.text = job.minSalary;
-      maxSalaryController.text = job.maxSalary;
-      salaryTypeController.text = job.salaryType;
+      minSalaryController.text = job.minSalary.toString();
+      maxSalaryController.text = job.maxSalary.toString();
+      salaryTypeController.text = job.paymentType;
       // Step 3
       descriptionController.text = job.description;
+      experienceLabelController.text = job.experienceLabel;
     }
   }
 

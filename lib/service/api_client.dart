@@ -86,4 +86,17 @@ class ApiClient extends GetConnect implements GetxService {
       return Response(statusCode: 1, statusText: e.toString());
     }
   }
+
+  Future<Response> deleteData(String uri, {Map<String, String>? headers}) async {
+    try {
+      print("DELETE Request: $uri");
+      Response response = await delete(uri, headers: headers);
+      print("DELETE Status: ${response.statusCode}");
+      print("DELETE Response: ${response.body}");
+      return response;
+    } catch (e) {
+      print("DELETE Error: $e");
+      return Response(statusCode: 1, statusText: e.toString());
+    }
+  }
 }
