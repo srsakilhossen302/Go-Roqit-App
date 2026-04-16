@@ -2,17 +2,20 @@ class ApplicationModel {
   final String id;
   final String name;
   final String role;
-  final String status; // 'Pending', 'Shortlisted', 'Hired'
+  final String status;
   final String location;
   final String date;
   final List<String> skills;
   final bool hasUnreadMessage;
   final String imageUrl;
+  final String email;
+  final String phone;
+  final String resume;
+  final String jobId;
+  final String applicantId;
 
   // detailed info
   final String experienceYears;
-  final String email;
-  final String phone;
   final String about;
   final List<WorkExperience> workExperience;
   final List<Education> education;
@@ -20,22 +23,25 @@ class ApplicationModel {
   final List<PortfolioItem> portfolio;
   final String salaryExpectation;
   final String availability;
-  final String resumeObj; // Name of resume file
+  final String resumeObj; 
   final String additionalNotes;
 
   ApplicationModel({
     required this.id,
     required this.name,
     required this.role,
-    required this.status,
+    this.status = 'Pending',
     required this.location,
     required this.date,
-    required this.skills,
+    this.skills = const [],
     this.hasUnreadMessage = false,
-    required this.imageUrl,
-    this.experienceYears = '',
+    this.imageUrl = '',
     this.email = '',
     this.phone = '',
+    this.resume = '',
+    this.jobId = '',
+    this.applicantId = '',
+    this.experienceYears = '',
     this.about = '',
     this.workExperience = const [],
     this.education = const [],
@@ -46,13 +52,64 @@ class ApplicationModel {
     this.resumeObj = '',
     this.additionalNotes = '',
   });
+
+  factory ApplicationModel.fromJson(Map<String, dynamic> json) {
+    String resumePath = json['resume'] ?? '';
+    String resumeName = resumePath.split('/').last;
+
+    return ApplicationModel(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      role: json['job']?['title'] ?? json['title'] ?? '',
+      status: json['status'] ?? 'Pending',
+      location: json['location'] ?? '',
+      date: json['createdAt'] != null 
+          ? _formatDate(json['createdAt']) 
+          : '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      resume: resumePath,
+      resumeObj: resumeName.isNotEmpty ? resumeName : 'Resume.pdf',
+      jobId: json['job']?['_id'] ?? '',
+      applicantId: json['applicant'] ?? '',
+      imageUrl: 'https://i.pravatar.cc/300?img=5', // Default for now
+      skills: ['Hair Cutting', 'Coloring', 'Styling'], // Default for now
+      experienceYears: '5 Years', // Default for now
+      about: 'No description provided.', // Default for now
+      workExperience: [],
+      education: [],
+      languages: ['English'],
+      portfolio: [],
+      salaryExpectation: 'Negotiable',
+      availability: 'Immediate',
+      additionalNotes: 'No additional notes.',
+    );
+  }
+
+  static String _formatDate(String dateStr) {
+    try {
+      DateTime dt = DateTime.parse(dateStr);
+      return "${dt.day} ${_getMonth(dt.month)}";
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  static String _getMonth(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
+  }
 }
 
+// Keeping these for potential detailed view use, though they might need updating too
 class WorkExperience {
   final String role;
   final String company;
   final String dateRange;
-  final String type; // Full Time, etc.
+  final String type;
   final String location;
 
   WorkExperience({

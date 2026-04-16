@@ -57,25 +57,21 @@ class ApplicationsView extends GetView<ApplicationsController> {
   }
 
   Widget _buildFilterTabs() {
-    return SingleChildScrollView(
+    return Obx(() => SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         children: [
-          _buildFilterChip('All', 4),
+          _buildFilterChip('All', controller.getCount('All')),
           SizedBox(width: 12.w),
-          _buildFilterChip('Pending', 2),
+          _buildFilterChip('Pending', controller.getCount('Pending')),
           SizedBox(width: 12.w),
-          _buildFilterChip('Shortlisted', 1),
+          _buildFilterChip('Shortlisted', controller.getCount('Shortlisted')),
           SizedBox(width: 12.w),
-          _buildFilterChip(
-            'Hired',
-            0,
-            showCount: false,
-          ), // Assuming no count shown or 0
+          _buildFilterChip('Hired', controller.getCount('Hired')),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildFilterChip(String label, int count, {bool showCount = true}) {
@@ -133,12 +129,12 @@ class ApplicationsView extends GetView<ApplicationsController> {
   Widget _buildApplicationList() {
     return Expanded(
       child: Obx(() {
-        if (controller.applications.isEmpty &&
-            controller.filteredApplications.isEmpty) {
-          return Center(
-            child: CircularProgressIndicator(color: const Color(0xFF1B5E3F)),
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFF1B5E3F)),
           );
         }
+        
         if (controller.filteredApplications.isEmpty) {
           return Center(
             child: Column(
