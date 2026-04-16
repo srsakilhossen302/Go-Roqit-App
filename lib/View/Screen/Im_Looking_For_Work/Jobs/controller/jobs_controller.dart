@@ -36,6 +36,10 @@ class JobsController extends GetxController {
       Position position = await _determinePosition();
       userLatitude.value = position.latitude;
       userLongitude.value = position.longitude;
+      
+      // Update user profile with current coordinates
+      updateUserLocation(position.latitude, position.longitude);
+      
       loadJobs();
     } catch (e) {
       print("Location error: $e");
@@ -193,6 +197,24 @@ class JobsController extends GetxController {
     } catch (e) {
       print("Error creating chat: $e");
       ToastHelper.error("Connection failed.");
+    }
+  }
+
+  Future<void> updateUserLocation(double lat, double lng) async {
+    try {
+      final response = await Get.find<ApiClient>().patchData(
+        ApiUrl.updateProfile,
+        {
+          "coordinates": [lng, lat]
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("User location updated successfully on profile");
+      } else {
+        print("Failed to update user location: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error updating user location: $e");
     }
   }
 }

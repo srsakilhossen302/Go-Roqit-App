@@ -33,6 +33,16 @@ class _JobsMapViewState extends State<JobsMapView> {
   final JobsController jobsController = Get.put(JobsController());
   final MapController _mapController = MapController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Sync location to profile when map view is opened
+    jobsController.updateUserLocation(
+      jobsController.userLatitude.value,
+      jobsController.userLongitude.value,
+    );
+  }
+
   // Track map rotation
   double _currentRotation = 0.0;
 
