@@ -5,6 +5,8 @@ import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../Job_Posts/model/job_post_model.dart';
+import '../model/category_model.dart';
+
 
 class PostJobController extends GetxController {
   var currentStep = 1.obs;
@@ -14,15 +16,11 @@ class PostJobController extends GetxController {
   var longitude = 0.0.obs;
   var startDate = DateTime.now().obs;
 
-  final categories = [
-    "Salon Specialist",
-    "Hair Stylist",
-    "Receptionist",
-    "Salon Manager",
-    "Design",
-    "IT"
-  ];
+  var categories = <String>[].obs;
+  var categoryObjects = <CategoryModel>[].obs;
+  var isCategoryLoading = false.obs;
   final engagementTypes = ["Salaried", "Self-employed", "Contract", "Freelance"];
+
 
   Future<void> selectStartDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -63,6 +61,8 @@ class PostJobController extends GetxController {
   void onInit() {
     super.onInit();
     getCurrentLocation(); // Auto-fetch location on start
+    fetchCategories(); // Fetch categories from API
+
 
     // Check for arguments (Edit Mode)
     if (Get.arguments != null && Get.arguments is JobPostModel) {
@@ -165,6 +165,30 @@ class PostJobController extends GetxController {
       print("Error getting location: $e");
     }
   }
+
+  Future<void> fetchCategories() async {
+    isCategoryLoading.value = true;
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final response = await apiClient.getData("/category");
+
+      if (response.statusCode == 200 && response.body['data'] != null) {
+        final List<dynamic> categoryData = response.body['data']['data'] ?? [];
+        categoryObjects.value = categoryData
+            .map((json) => CategoryModel.fromJson(json))
+            .toList();
+        categories.value = categoryObjects.map((cat) => cat.name).toList();
+        print("Fetched categories: ${categories.value}");
+      } else {
+        Get.snackbar('Error', 'Failed to load categories');
+      }
+    } catch (e) {
+      print("Error fetching categories: $e");
+    } finally {
+      isCategoryLoading.value = false;
+    }
+  }
+
 
   Future<void> _publishJob() async {
     isLoading.value = true;

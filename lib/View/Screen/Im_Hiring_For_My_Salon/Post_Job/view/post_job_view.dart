@@ -125,12 +125,14 @@ class PostJobView extends GetView<PostJobController> {
           SizedBox(height: 20.h),
 
           _buildLabel('Role Type / Category *'),
-          _buildSelectionField(
-            context: context,
-            controller: controller.roleTypeController,
-            hint: 'Select Category',
-            options: controller.categories,
-          ),
+          Obx(() => controller.isCategoryLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : _buildSelectionField(
+                  context: context,
+                  controller: controller.roleTypeController,
+                  hint: 'Select Category',
+                  options: controller.categories,
+                )),
           SizedBox(height: 20.h),
 
           _buildLabel('Job Location (Address)'),
