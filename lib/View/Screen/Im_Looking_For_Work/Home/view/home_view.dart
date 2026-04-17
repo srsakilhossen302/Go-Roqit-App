@@ -137,17 +137,17 @@ class HomeView extends GetView<HomeController> {
                       ),
                       SizedBox(height: 16.h),
 
-                      // Filters
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildFilterDropdown("All Locations"),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(child: _buildFilterDropdown("All Levels")),
-                        ],
-                      ),
-                      SizedBox(height: 24.h),
+                      // // Filters
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       child: _buildFilterDropdown("All Locations"),
+                      //     ),
+                      //     SizedBox(width: 12.w),
+                      //     Expanded(child: _buildFilterDropdown("All Levels")),
+                      //   ],
+                      // ),
+                      // SizedBox(height: 24.h),
 
                       // Promo Card and Header (Hidden when searching)
                       Obx(
@@ -330,88 +330,91 @@ class HomeView extends GetView<HomeController> {
         Get.to(() => JobDetailsView(job: job));
       },
       child: Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey[100]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 24.r,
-                backgroundImage: NetworkImage(job.logoUrl),
-                backgroundColor: Colors.grey[200],
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.title,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      job.companyName,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Colors.grey[100]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 24.r,
+                  backgroundImage: NetworkImage(job.logoUrl),
+                  backgroundColor: Colors.grey[200],
                 ),
-              ),
-              Icon(Icons.bookmark_border, color: Colors.grey[400]),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: [
-              _buildTag(job.jobType),
-              _buildTag(job.salary),
-              _buildTag(job.workSystem),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, size: 14.sp, color: Colors.grey),
-              SizedBox(width: 4.w),
-              Text(
-                job.location,
-                style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
-              ),
-              const Spacer(),
-              Icon(Icons.access_time, size: 14.sp, color: Colors.grey),
-              SizedBox(width: 4.w),
-              Text(
-                job.postedTime,
-                style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ],
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.title,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        job.companyName,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                _buildTag(job.jobType),
+                _buildTag(job.salary),
+                _buildTag(job.workSystem),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 14.sp,
+                  color: Colors.grey,
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  job.location,
+                  style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
+                ),
+                const Spacer(),
+                Icon(Icons.access_time, size: 14.sp, color: Colors.grey),
+                SizedBox(width: 4.w),
+                Text(
+                  job.postedTime,
+                  style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 

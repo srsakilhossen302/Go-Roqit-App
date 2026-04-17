@@ -4,6 +4,7 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_mode
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import 'package:go_roqit_app/Utils/Toast/toast.dart';
+import 'package:share_plus/share_plus.dart';
 
 class JobDetailsController extends GetxController {
   var isLoading = false.obs;
@@ -83,5 +84,26 @@ class JobDetailsController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void shareJob(JobModel? job) {
+    if (job == null) return;
+
+    final String shareMessage = """
+🚀 New Job Opportunity on Go-Roqit!
+
+📌 Title: ${job.title}
+🏢 Company: ${job.companyName}
+📍 Location: ${job.location}
+💰 Salary: ${job.salary}
+
+Check out this job on the Go-Roqit app:
+https://goroqit.page.link/job/${job.id}
+
+Download Go-Roqit now and start your dream career!
+""";
+
+    print("Attempting to share job: ${job.id}");
+    Share.share(shareMessage);
   }
 }

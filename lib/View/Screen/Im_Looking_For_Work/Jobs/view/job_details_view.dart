@@ -50,13 +50,16 @@ class JobDetailsView extends StatelessWidget {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 20.w),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xFFF5F7F9),
-              child: Icon(
-                Icons.share_outlined,
-                color: Colors.black,
-                size: 20.sp,
+            padding: EdgeInsets.only(right: 12.w),
+            child: IconButton(
+              onPressed: () => controller.shareJob(controller.detailedJob.value ?? job),
+              icon: CircleAvatar(
+                backgroundColor: const Color(0xFFF5F7F9),
+                child: Icon(
+                  Icons.share_outlined,
+                  color: Colors.black,
+                  size: 20.sp,
+                ),
               ),
             ),
           ),
