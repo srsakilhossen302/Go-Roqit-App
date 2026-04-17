@@ -130,16 +130,7 @@ class _JobsViewState extends State<JobsView> {
                     ],
                   ),
                 ),
-                SizedBox(height: 16.h),
-                // Filter Buttons
-                Row(
-                  children: [
-                    _buildFilterButton("All Locations"),
-                    SizedBox(width: 12.w),
-                    _buildFilterButton("All Levels"),
-                  ],
-                ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 20.h,),
                 // Job List
                 Expanded(
                   child: Obx(() {
@@ -163,31 +154,6 @@ class _JobsViewState extends State<JobsView> {
     );
   }
 
-  Widget _buildFilterButton(String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFF3F4),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.location_on_outlined,
-            size: 16.sp,
-            color: Colors.grey,
-          ), // Placeholder icon type
-          SizedBox(width: 4.w),
-          Text(
-            text,
-            style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
-          ),
-          SizedBox(width: 4.w),
-          Icon(Icons.keyboard_arrow_down, size: 16.sp, color: Colors.grey),
-        ],
-      ),
-    );
-  }
 
   Widget _buildJobCard(JobModel job) {
     return Container(
