@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
@@ -75,40 +76,105 @@ class JobPostsController extends GetxController {
   }
 
   Future<void> deleteJob(String id) async {
-    Get.defaultDialog(
-      title: "Delete Job",
-      middleText: "Are you sure you want to delete this job post?",
-      textConfirm: "Delete",
-      textCancel: "Cancel",
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
-      onConfirm: () async {
-        // Close the dialog first
-        if (Get.isOverlaysOpen) {
-          Get.back();
-        }
-
-        try {
-          final token = await SharePrefsHelper.getString(
-            SharedPreferenceValue.token,
-          );
-          final headers = {'Authorization': 'Bearer $token'};
-
-          final response = await Get.find<ApiClient>().deleteData(
-            "/job/$id",
-            headers: headers,
-          );
-
-          if (response.statusCode == 200 || response.statusCode == 201) {
-            activeJobPosts.removeWhere((job) => job.id == id);
-            Get.snackbar('Success', 'Job post removed');
-          } else {
-            Get.snackbar('Error', 'Failed to delete job');
-          }
-        } catch (e) {
-          Get.snackbar('Error', 'Connection failed');
-        }
-      },
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(24.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              margin: EdgeInsets.only(bottom: 20.h),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.delete_outline, color: Colors.red, size: 32.sp),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              "Delete Job Post?",
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF111827),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              "Are you sure you want to remove this job post? This action cannot be undone.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Get.back(),
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: const Color(0xFF4B5563), fontSize: 14.sp),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Get.back(); // Close bottom sheet
+                      try {
+                        final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+                        final headers = {'Authorization': 'Bearer $token'};
+                        final response = await Get.find<ApiClient>().deleteData("/job/$id", headers: headers);
+                        if (response.statusCode == 200 || response.statusCode == 201) {
+                          activeJobPosts.removeWhere((job) => job.id == id);
+                          Get.snackbar('Success', 'Job post removed', backgroundColor: Colors.green, colorText: Colors.white);
+                        } else {
+                          Get.snackbar('Error', 'Failed to delete job', backgroundColor: Colors.red, colorText: Colors.white);
+                        }
+                      } catch (e) {
+                        Get.snackbar('Error', 'Connection failed', backgroundColor: Colors.red, colorText: Colors.white);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 
