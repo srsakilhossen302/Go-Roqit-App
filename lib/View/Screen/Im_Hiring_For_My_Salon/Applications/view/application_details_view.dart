@@ -4,6 +4,7 @@ import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
 import '../model/application_model.dart';
 import 'package:go_roqit_app/View/Widgegt/full_screen_image_viewer.dart';
+import 'package:go_roqit_app/View/Screen/Chat/controller/chat_controller.dart';
 
 class ApplicationDetailsView extends StatelessWidget {
   const ApplicationDetailsView({super.key});
@@ -11,6 +12,7 @@ class ApplicationDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ApplicationModel app = Get.arguments as ApplicationModel;
+    final chatController = Get.put(ChatController());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB), // Light grey background
@@ -497,7 +499,13 @@ class ApplicationDetailsView extends StatelessWidget {
                 // Message
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (app.applicantId.isNotEmpty) {
+                        chatController.createChat(app.applicantId);
+                      } else {
+                        Get.snackbar('Error', 'Applicant ID not found');
+                      }
+                    },
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       side: BorderSide(color: Colors.grey.shade300),

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/View/Widgegt/custom_snackbar.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import '../model/chat_model.dart';
+import '../view/chat_details_view.dart';
 import 'package:flutter/widgets.dart';
 
 class ChatController extends GetxController {
@@ -98,6 +100,49 @@ class ChatController extends GetxController {
       print("Error loading chats: $e");
     } finally {
       if (showLoading) isLoading.value = false;
+    }
+  }
+
+  Future<void> createChat(String participantId) async {
+    isLoading.value = true;
+    try {
+      final body = {
+        "participants": [participantId]
+      };
+      final response = await Get.find<ApiClient>().postData(ApiUrl.createChat, body);
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var rawData = response.body['data'];
+        var chatData;
+        
+        // Handle if API returns a List or a single Map
+        if (rawData is List && rawData.isNotEmpty) {
+          chatData = rawData[0];
+        } else {
+          chatData = rawData;
+        }
+
+        if (chatData != null) {
+          try {
+            final newChat = ChatListModel.fromJson(chatData);
+            CustomSnackbar.success(
+              title: 'Success', 
+              message: 'Chat created successfully! Opening chat...'
+            );
+            Get.to(() => ChatDetailsView(chat: newChat));
+          } catch (parseError) {
+            print("Error parsing chat data: $parseError");
+            CustomSnackbar.error(title: 'Error', message: 'Failed to process chat data');
+          }
+        }
+      } else {
+        CustomSnackbar.error(title: 'Error', message: 'Failed to create chat');
+      }
+    } catch (e) {
+      print("Error creating chat: $e");
+      CustomSnackbar.error(title: 'Error', message: 'Something went wrong');
+    } finally {
+      isLoading.value = false;
     }
   }
 
