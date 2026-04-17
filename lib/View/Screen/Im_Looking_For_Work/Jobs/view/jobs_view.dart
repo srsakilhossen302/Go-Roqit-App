@@ -417,29 +417,27 @@ class _JobsViewState extends State<JobsView> {
                     ),
                     SizedBox(height: 12.h),
                     Obx(
-                      () => SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            {
-                              "name": "Salon Specialist",
-                              "icon": AppIcons.salon,
-                            },
-                            {
-                              "name": "Hair Stylist",
-                              "icon": AppIcons.kachi,
-                            },
-                            {
-                              "name": "Receptionist",
-                              "icon": AppIcons.workOutline,
-                            },
-                            {
-                              "name": "Salon Manager",
-                              "icon": AppIcons.peopleOutline,
-                            },
-                          ].map((cat) {
-                            String name = cat['name'] as String;
-                            String icon = cat['icon'] as String;
+                      () => controller.isCategoryLoading.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: controller.categoryList.map((cat) {
+                                  String name = cat.name;
+                                  dynamic iconWidget;
+
+                                  if (cat.image.isNotEmpty) {
+                                    iconWidget = Image.network(
+                                      cat.image,
+                                      width: 20.w,
+                                      height: 20.h,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          _buildFallbackIcon(name),
+                                    );
+                                  } else {
+                                    iconWidget = _buildFallbackIcon(name);
+                                  }
                             bool isSelected =
                                 controller.selectedCategory.value == name;
 
@@ -467,14 +465,7 @@ class _JobsViewState extends State<JobsView> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Image.asset(
-                                      icon,
-                                      width: 18.w,
-                                      height: 18.h,
-                                      color: isSelected
-                                          ? const Color(0xFF1B5E3F)
-                                          : Colors.grey,
-                                    ),
+                                    iconWidget,
                                     SizedBox(width: 8.w),
                                     Text(
                                       name,
@@ -636,6 +627,26 @@ class _JobsViewState extends State<JobsView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFallbackIcon(String name) {
+    String iconPath;
+    if (name.toLowerCase().contains("salon")) {
+      iconPath = AppIcons.salon;
+    } else if (name.toLowerCase().contains("hair")) {
+      iconPath = AppIcons.kachi;
+    } else if (name.toLowerCase().contains("reception")) {
+      iconPath = AppIcons.workOutline;
+    } else {
+      iconPath = AppIcons.peopleOutline;
+    }
+
+    return Image.asset(
+      iconPath,
+      width: 20.w,
+      height: 20.h,
+      color: const Color(0xFF1B5E3F),
     );
   }
 }

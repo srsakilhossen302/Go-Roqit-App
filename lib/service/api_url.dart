@@ -20,4 +20,5 @@ class ApiUrl {
   static const String createCheckout = "/plan/create-checkout-session";
   static const String getMessages = "/message";
   static const String getJobsByDistance = "/job/get-jobs-by-distance";
+  static const String getCategories = "/category";
 }

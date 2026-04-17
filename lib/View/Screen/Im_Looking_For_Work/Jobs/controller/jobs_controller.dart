@@ -5,11 +5,15 @@ import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/model/job_mode
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import 'package:go_roqit_app/Utils/Toast/toast.dart';
+import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Post_Job/model/category_model.dart';
 
 class JobsController extends GetxController {
   var jobList = <JobModel>[].obs;
   var isLoadingLocation = true.obs;
   var isLoadingJobs = false.obs;
+  
+  var categoryList = <CategoryModel>[].obs;
+  var isCategoryLoading = false.obs;
 
   var userLatitude = 0.0.obs; // Default Dhaka
   var userLongitude = 0.0.obs;
@@ -29,6 +33,7 @@ class JobsController extends GetxController {
   void onInit() {
     super.onInit();
     _initLocationAndJobs();
+    fetchCategories();
   }
 
   Future<void> _initLocationAndJobs() async {
@@ -218,6 +223,21 @@ class JobsController extends GetxController {
       }
     } catch (e) {
       print("Error updating user location: $e");
+    }
+  }
+
+  Future<void> fetchCategories() async {
+    isCategoryLoading.value = true;
+    try {
+      final response = await Get.find<ApiClient>().getData(ApiUrl.getCategories);
+      if (response.statusCode == 200 && response.body['data'] != null) {
+        final List<dynamic> data = response.body['data']['data'] ?? [];
+        categoryList.assignAll(data.map((json) => CategoryModel.fromJson(json)).toList());
+      }
+    } catch (e) {
+      print("Error fetching categories: $e");
+    } finally {
+      isCategoryLoading.value = false;
     }
   }
 }
