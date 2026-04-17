@@ -424,22 +424,8 @@ class _JobsViewState extends State<JobsView> {
                               child: Row(
                                 children: controller.categoryList.map((cat) {
                                   String name = cat.name;
-                                  dynamic iconWidget;
-
-                                  if (cat.image.isNotEmpty) {
-                                    iconWidget = Image.network(
-                                      cat.image,
-                                      width: 20.w,
-                                      height: 20.h,
-                                      fit: BoxFit.contain,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          _buildFallbackIcon(name),
-                                    );
-                                  } else {
-                                    iconWidget = _buildFallbackIcon(name);
-                                  }
-                            bool isSelected =
-                                controller.selectedCategory.value == name;
+                                  bool isSelected =
+                                      controller.selectedCategory.value == name;
 
                             return GestureDetector(
                               onTap: () {
@@ -449,37 +435,26 @@ class _JobsViewState extends State<JobsView> {
                               child: Container(
                                 margin: EdgeInsets.only(right: 12.w),
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 8.h,
+                                  horizontal: 20.w,
+                                  vertical: 10.h,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? const Color(0xFFE8F5E9)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? const Color(0xFF1B5E3F)
-                                        : Colors.grey.shade200,
-                                  ),
+                                      ? const Color(0xFF1B5E3F)
+                                      : const Color(0xFFF5F5F5),
+                                  borderRadius: BorderRadius.circular(20.r),
                                 ),
-                                child: Row(
-                                  children: [
-                                    iconWidget,
-                                    SizedBox(width: 8.w),
-                                    Text(
-                                      name,
-                                      style: TextStyle(
-                                        fontSize: 13.sp,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                        color: isSelected
-                                            ? const Color(0xFF1B5E3F)
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ],
+                                child: Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.grey[700],
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    fontSize: 14.sp,
+                                  ),
                                 ),
                               ),
                             );
@@ -627,26 +602,6 @@ class _JobsViewState extends State<JobsView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildFallbackIcon(String name) {
-    String iconPath;
-    if (name.toLowerCase().contains("salon")) {
-      iconPath = AppIcons.salon;
-    } else if (name.toLowerCase().contains("hair")) {
-      iconPath = AppIcons.kachi;
-    } else if (name.toLowerCase().contains("reception")) {
-      iconPath = AppIcons.workOutline;
-    } else {
-      iconPath = AppIcons.peopleOutline;
-    }
-
-    return Image.asset(
-      iconPath,
-      width: 20.w,
-      height: 20.h,
-      color: const Color(0xFF1B5E3F),
     );
   }
 }
