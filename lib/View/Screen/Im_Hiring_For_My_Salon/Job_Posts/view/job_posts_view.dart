@@ -63,6 +63,10 @@ class JobPostsView extends GetView<JobPostsController> {
 
               // Search Bar
               TextField(
+                controller: controller.searchController,
+                onChanged: (value) {
+                  controller.loadJobPosts(searchTerm: value);
+                },
                 decoration: InputDecoration(
                   hintText: 'Search jobs..',
                   hintStyle: TextStyle(

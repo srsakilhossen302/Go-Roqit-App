@@ -11,6 +11,7 @@ import '../../Post_Job/view/post_job_view.dart';
 class JobPostsController extends GetxController {
   var activeJobPosts = <JobPostModel>[].obs;
   var isLoading = false.obs;
+  final searchController = TextEditingController();
 
   @override
   void onInit() {
@@ -18,15 +19,23 @@ class JobPostsController extends GetxController {
     loadJobPosts();
   }
 
-  Future<void> loadJobPosts() async {
-    isLoading.value = true;
+  Future<void> loadJobPosts({String? searchTerm}) async {
+    if (activeJobPosts.isEmpty) {
+      isLoading.value = true;
+    }
     try {
       final token = await SharePrefsHelper.getString(
         SharedPreferenceValue.token,
       );
       final headers = {'Authorization': 'Bearer $token'};
+      
+      String url = ApiUrl.myJobs;
+      if (searchTerm != null && searchTerm.isNotEmpty) {
+        url = "$url?searchTerm=$searchTerm";
+      }
+
       final response = await Get.find<ApiClient>().getData(
-        ApiUrl.myJobs,
+        url,
         headers: headers,
       );
 
