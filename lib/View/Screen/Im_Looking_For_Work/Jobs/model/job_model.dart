@@ -20,6 +20,7 @@ class JobModel {
   final double? latitude;
   final double? longitude;
   final String recruiterId;
+  final double? distance;
 
   JobModel({
     required this.id,
@@ -40,6 +41,7 @@ class JobModel {
     this.latitude,
     this.longitude,
     required this.recruiterId,
+    this.distance,
   });
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,15 @@ class JobModel {
 
     double? lat = json["latitude"]?.toDouble();
     double? lng = json["longitude"]?.toDouble();
+
+    // Check for GeoJSON location field if top-level lat/lng are missing
+    if (json["location"] != null && json["location"]["coordinates"] != null) {
+      List coords = json["location"]["coordinates"];
+      if (coords.length >= 2) {
+        lng = coords[0]?.toDouble();
+        lat = coords[1]?.toDouble();
+      }
+    }
     
     if (lat == null || lng == null) {
       final random = Random();
@@ -103,6 +114,7 @@ class JobModel {
         latitude: lat, 
         longitude: lng,
         recruiterId: json["user"] != null ? (json["user"]["_id"] ?? "") : "",
+        distance: json["distance"]?.toDouble(),
     );
   }
 }

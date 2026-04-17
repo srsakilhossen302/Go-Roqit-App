@@ -109,8 +109,8 @@ class PostJobController extends GetxController {
     if (currentStep.value < 4) {
       // Basic validation for each step
       if (currentStep.value == 1) {
-        if (jobTitleController.text.isEmpty) {
-          Get.snackbar('Error', 'Please fill in required fields');
+        if (jobTitleController.text.isEmpty || roleTypeController.text.isEmpty) {
+          Get.snackbar('Error', 'Please fill in required fields (Job Title & Category)');
           return;
         }
       } else if (currentStep.value == 2) {

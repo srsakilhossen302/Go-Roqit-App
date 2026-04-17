@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_view.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get_core/src/get_main.dart';
@@ -11,7 +12,7 @@ import 'package:get_x/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get_x/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
-import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/jobs_view.dart';
+import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/controller/nearby_jobs_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/controller/jobs_controller.dart';
 import 'package:go_roqit_app/View/Screen/Im_Looking_For_Work/Jobs/view/job_details_view.dart';
 
@@ -30,17 +31,14 @@ class JobsMapView extends StatefulWidget {
 }
 
 class _JobsMapViewState extends State<JobsMapView> {
-  final JobsController jobsController = Get.put(JobsController());
+  final NearbyJobsController nearbyController = Get.put(NearbyJobsController());
+  final JobsController jobsController =
+      Get.put(JobsController()); // Use put to ensure it's available
   final MapController _mapController = MapController();
 
   @override
   void initState() {
     super.initState();
-    // Sync location to profile when map view is opened
-    jobsController.updateUserLocation(
-      jobsController.userLatitude.value,
-      jobsController.userLongitude.value,
-    );
   }
 
   // Track map rotation
@@ -103,434 +101,10 @@ class _JobsMapViewState extends State<JobsMapView> {
     );
   }
 
-  void _showFilterSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.65,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        ),
-        padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-        child: Column(
-          children: [
-            // Handle Bar
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 5.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.h),
-
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Search & Filter",
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: CircleAvatar(
-                    radius: 15.r,
-                    backgroundColor: Colors.grey[100],
-                    child: Icon(Icons.close, color: Colors.black, size: 18.sp),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 20.h),
-
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    // Search Box
-                    TextField(
-                      controller: jobsController.searchController,
-                      decoration: InputDecoration(
-                        hintText: "Search jobs, salons, locations...",
-                        hintStyle: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: 14.sp,
-                        ),
-                        prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-                        filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                          borderSide: BorderSide(color: Colors.grey[200]!),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                          borderSide: BorderSide(color: Colors.grey[200]!),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    // Job Category (With Images)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Job Category",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Obx(
-                      () => SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children:
-                              [
-                                {
-                                  "name": "Salon Specialist",
-                                  "icon": AppIcons.salon,
-                                },
-                                {
-                                  "name": "Hair Stylist",
-                                  "icon": AppIcons.kachi,
-                                },
-                                {
-                                  "name": "Receptionist",
-                                  "icon": AppIcons.workOutline,
-                                },
-                                {
-                                  "name": "Salon Manager",
-                                  "icon": AppIcons.peopleOutline,
-                                },
-                              ].map((cat) {
-                                String name = cat['name'] as String;
-                                String icon = cat['icon'] as String;
-                                bool isSelected =
-                                    jobsController.selectedCategory.value ==
-                                    name;
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    jobsController.selectedCategory.value =
-                                        isSelected ? "" : name;
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(right: 12.w),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 8.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? const Color(0xFFE8F5E9)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? const Color(0xFF1B5E3F)
-                                            : Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          icon,
-                                          width: 18.w,
-                                          height: 18.h,
-                                          color: isSelected
-                                              ? const Color(0xFF1B5E3F)
-                                              : Colors.grey,
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Text(
-                                          name,
-                                          style: TextStyle(
-                                            fontSize: 13.sp,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                            color: isSelected
-                                                ? const Color(0xFF1B5E3F)
-                                                : Colors.black87,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    // Job Type
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Job Type",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Obx(
-                      () => SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children:
-                              [
-                                    "Full-time",
-                                    "Part-time",
-                                    "Contract",
-                                    "Freelance",
-                                  ]
-                                  .map(
-                                    (type) => Padding(
-                                      padding: EdgeInsets.only(right: 8.w),
-                                      child: ChoiceChip(
-                                        label: Text(type),
-                                        selected:
-                                            jobsController.selectedType.value ==
-                                            type,
-                                        onSelected: (selected) {
-                                          jobsController.selectedType.value =
-                                              selected ? type : "";
-                                        },
-                                        selectedColor: const Color(0xFFE8F5E9),
-                                        backgroundColor: const Color(
-                                          0xFFF3F4F6,
-                                        ),
-                                        labelStyle: TextStyle(
-                                          color:
-                                              jobsController
-                                                      .selectedType
-                                                      .value ==
-                                                  type
-                                              ? const Color(0xFF1B5E3F)
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        side: BorderSide.none,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            20.r,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    // Distance
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Distance",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Text(
-                          "${_selectedDistance}km",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1B5E3F),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12.h),
-                    StatefulBuilder(
-                      builder: (context, setSheetState) {
-                        return Row(
-                          children: [20, 50, 100].map((dist) {
-                            bool isSelected = _selectedDistance == dist;
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setSheetState(() {
-                                    _selectedDistance = dist;
-                                  });
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 4.w),
-                                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? const Color(0xFF1B5E3F)
-                                        : const Color(0xFFF3F4F6),
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  child: Text(
-                                    "${dist}km",
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    // Summary Card
-                    Obx(() {
-                      return Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5E9),
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${jobsController.jobList.length} jobs found",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.sp,
-                                    color: const Color(0xFF1B5E3F),
-                                  ),
-                                ),
-                                Text(
-                                  "Showing results within ${_selectedDistance}km",
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.location_on_outlined,
-                              color: const Color(0xFF1B5E3F),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 16.h),
-
-            // Bottom Buttons
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 20.h),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          jobsController.searchController.clear();
-                          jobsController.selectedCategory.value = "";
-                          jobsController.selectedType.value = "";
-                          jobsController.loadJobs();
-                          Navigator.pop(context);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.r),
-                          ),
-                          side: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        child: Text(
-                          "Clear All",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          jobsController.loadJobs();
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1B5E3F),
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.r),
-                          ),
-                        ),
-                        child: Text(
-                          "Show Results",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (jobsController.isLoadingLocation.value) {
+      if (nearbyController.isLoadingLocation.value) {
         return const Scaffold(
           body: Center(
             child: CircularProgressIndicator(color: Color(0xFF1B5E3F)),
@@ -539,23 +113,21 @@ class _JobsMapViewState extends State<JobsMapView> {
       }
 
       final LatLng userPosition = LatLng(
-        jobsController.userLatitude.value,
-        jobsController.userLongitude.value,
+        nearbyController.userLatitude.value,
+        nearbyController.userLongitude.value,
       );
 
-      // Generate markers based on current jobList and selected filter
+      // Generate markers based on nearbyJobs
       List<Marker> currentMarkers = [];
       const Distance distance = Distance();
 
-      for (var job in jobsController.jobList) {
+      for (var job in nearbyController.nearbyJobs) {
         if (job.latitude != null && job.longitude != null) {
-          final double meter = distance(
-            userPosition,
-            LatLng(job.latitude!, job.longitude!),
-          );
-          double km = meter / 1000;
+          final double kmValue =
+              job.distance ??
+              (distance(userPosition, LatLng(job.latitude!, job.longitude!)) /
+                  1000);
 
-          if (km <= _selectedDistance) {
             bool isSelected = selectedJob.value?.id == job.id;
 
             currentMarkers.add(
@@ -570,13 +142,12 @@ class _JobsMapViewState extends State<JobsMapView> {
                     selectedJob.value = job;
                   },
                   child: _buildCustomMarkerWidget(
-                    "${km.toStringAsFixed(1)}km",
+                    "${kmValue < 0.01 && kmValue > 0 ? "0.01" : kmValue.toStringAsFixed(2)}km",
                     isSelected,
                   ),
                 ),
               ),
             );
-          }
         }
       }
 
@@ -681,7 +252,7 @@ class _JobsMapViewState extends State<JobsMapView> {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              "${currentMarkers.length - 1} jobs within ${_selectedDistance}km", // -1 for user marker
+                              "${currentMarkers.length - 1} jobs near your location", // -1 for user marker
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: Colors.grey,
@@ -730,46 +301,7 @@ class _JobsMapViewState extends State<JobsMapView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Search & Filter Pill
-                        GestureDetector(
-                          onTap: () {
-                            _showFilterSheet(context);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 10.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.filter_list,
-                                  color: const Color(0xFF1B5E3F),
-                                  size: 20.sp,
-                                ), // Or funnel icon
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Search & Filter",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF333333),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        const Spacer(),
 
                         // Legend
                         Container(
@@ -835,93 +367,42 @@ class _JobsMapViewState extends State<JobsMapView> {
             // We use standard 'if' because we are inside Obx
             if (selectedJob.value == null)
               Positioned(
-                bottom: 150.h, // Space for Bottom Nav Bar + FAB
-                left: 16.w,
+                bottom: 150.h,
                 right: 16.w,
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween, // Distribute space
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Distance Selector
-                    Container(
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
+                child: SizedBox(
+                  width: 56.w,
+                  height: 56.w,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      _mapController.rotate(0);
+                      _mapController.move(userPosition, 13.0);
+                      setState(() {
+                        _currentRotation = 0.0;
+                      });
+                      Get.snackbar(
+                        "Locating",
+                        "Moved to your location",
+                        snackPosition: SnackPosition.bottom,
+                        backgroundColor: Colors.black87,
+                        colorText: Colors.white,
+                        margin: EdgeInsets.all(16.w),
+                        duration: const Duration(seconds: 1),
+                      );
+                    },
+                    backgroundColor: const Color(0xFF246BFD),
+                    elevation: 4,
+                    shape: CircleBorder(
+                      side: BorderSide(color: Colors.white, width: 4.w),
+                    ),
+                    child: Transform.rotate(
+                      angle: _currentRotation * (math.pi / 180),
+                      child: Icon(
+                        Icons.near_me,
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "Distance",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Row(
-                            children: [
-                              _buildDistanceChip("20km", 20),
-                              SizedBox(width: 8.w),
-                              _buildDistanceChip("50km", 50),
-                              SizedBox(width: 8.w),
-                              _buildDistanceChip("100km", 100),
-                            ],
-                          ),
-                        ],
+                        size: 24.sp,
                       ),
                     ),
-
-                    // FAB (Location / Navigation)
-                    SizedBox(
-                      width: 56.w,
-                      height: 56.w,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          // Reset rotation and move to location
-                          _mapController.rotate(0);
-                          _mapController.move(userPosition, 13.0);
-                          setState(() {
-                            _currentRotation = 0.0;
-                          });
-
-                          Get.snackbar(
-                            "Locating",
-                            "Moved to your location",
-                            snackPosition: SnackPosition.bottom,
-                            backgroundColor: Colors.black87,
-                            colorText: Colors.white,
-                            margin: EdgeInsets.all(16.w),
-                            duration: const Duration(seconds: 1),
-                          );
-                        },
-                        backgroundColor: const Color(0xFF246BFD),
-                        elevation: 4,
-                        shape: CircleBorder(
-                          side: BorderSide(color: Colors.white, width: 4.w),
-                        ),
-                        child: Transform.rotate(
-                          angle: _currentRotation * (math.pi / 180),
-                          child: Icon(
-                            Icons.near_me,
-                            color: Colors.white,
-                            size: 24.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
 
@@ -941,34 +422,6 @@ class _JobsMapViewState extends State<JobsMapView> {
     });
   }
 
-  int _selectedDistance = 20;
-
-  Widget _buildDistanceChip(String text, int distance) {
-    bool isSelected = _selectedDistance == distance;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedDistance = distance;
-          // Here you would typically filter the map markers or zoom
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF1B5E3F) : const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: isSelected ? Colors.white : Colors.black,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildJobPreviewCard(JobModel job, LatLng userPosition) {
     // Calculate distance for display
@@ -1150,7 +603,8 @@ class _JobsMapViewState extends State<JobsMapView> {
                       borderRadius: BorderRadius.circular(15.r),
                     ),
                     child: IconButton(
-                      onPressed: () => jobsController.createChat(job.recruiterId),
+                      onPressed: () =>
+                          jobsController.createChat(job.recruiterId),
                       icon: Icon(
                         Icons.chat_bubble_outline,
                         color: const Color(0xFF1B5E3F),

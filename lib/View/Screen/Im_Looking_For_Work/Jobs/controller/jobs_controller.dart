@@ -10,9 +10,9 @@ class JobsController extends GetxController {
   var jobList = <JobModel>[].obs;
   var isLoadingLocation = true.obs;
   var isLoadingJobs = false.obs;
-  
-  var userLatitude = 23.8103.obs; // Default Dhaka
-  var userLongitude = 90.4125.obs;
+
+  var userLatitude = 0.0.obs; // Default Dhaka
+  var userLongitude = 0.0.obs;
 
   // Search & Filter
   final searchController = TextEditingController();
@@ -36,11 +36,9 @@ class JobsController extends GetxController {
       Position position = await _determinePosition();
       userLatitude.value = position.latitude;
       userLongitude.value = position.longitude;
-      
+
       // Update user profile with current coordinates
-      updateUserLocation(position.latitude, position.longitude);
-      
-      loadJobs();
+      await updateUserLocation(position.latitude, position.longitude);
     } catch (e) {
       print("Location error: $e");
       loadJobs();
@@ -90,16 +88,19 @@ class JobsController extends GetxController {
       String queryString = "?page=${currentPage.value}&limit=10";
 
       if (searchController.text.isNotEmpty) {
-        queryString += "&searchTerm=${Uri.encodeComponent(searchController.text)}";
+        queryString +=
+            "&searchTerm=${Uri.encodeComponent(searchController.text)}";
       }
       if (selectedCategory.value.isNotEmpty) {
-        queryString += "&category=${Uri.encodeComponent(selectedCategory.value)}";
+        queryString +=
+            "&category=${Uri.encodeComponent(selectedCategory.value)}";
       }
       if (selectedType.value.isNotEmpty) {
         queryString += "&type=${Uri.encodeComponent(selectedType.value)}";
       }
       if (selectedLocation.value.isNotEmpty) {
-        queryString += "&jobLocation=${Uri.encodeComponent(selectedLocation.value)}";
+        queryString +=
+            "&jobLocation=${Uri.encodeComponent(selectedLocation.value)}";
       }
       if (minSalary.value.isNotEmpty) {
         queryString += "&minSalary=${Uri.encodeComponent(minSalary.value)}";
@@ -107,7 +108,7 @@ class JobsController extends GetxController {
 
       String finalUrl = ApiUrl.getJobs + queryString;
       final response = await Get.find<ApiClient>().getData(finalUrl);
-      
+
       print("Fetch Jobs Status Code: ${response.statusCode}");
       print("Fetch Jobs Response Body: ${response.body}");
 
@@ -115,8 +116,10 @@ class JobsController extends GetxController {
         var data = response.body['data'];
         if (data != null && data['data'] != null) {
           List jobsData = data['data'];
-          List<JobModel> loadedJobs = jobsData.map((job) => JobModel.fromJson(job)).toList();
-          
+          List<JobModel> loadedJobs = jobsData
+              .map((job) => JobModel.fromJson(job))
+              .toList();
+
           if (isRefresh) {
             jobList.assignAll(loadedJobs);
           } else {
@@ -150,10 +153,9 @@ class JobsController extends GetxController {
   Future<void> applyToJob(String jobId) async {
     isApplying.value = true;
     try {
-      final response = await Get.find<ApiClient>().postData(
-        ApiUrl.applyJob,
-        {"job": jobId},
-      );
+      final response = await Get.find<ApiClient>().postData(ApiUrl.applyJob, {
+        "job": jobId,
+      });
       if (response.statusCode == 200 || response.statusCode == 201) {
         ToastHelper.success("Application submitted successfully! 🚀");
       } else {
@@ -174,8 +176,9 @@ class JobsController extends GetxController {
       isApplying.value = false;
     }
   }
+
   void onChangeSearchTriggered(String value) {
-     loadJobs();
+    loadJobs();
   }
 
   Future<void> createChat(String recruiterId) async {
@@ -183,7 +186,7 @@ class JobsController extends GetxController {
       ToastHelper.error("Recruiter information not available.");
       return;
     }
-    
+
     try {
       final response = await Get.find<ApiClient>().postData(ApiUrl.createChat, {
         "participants": [recruiterId],
@@ -205,7 +208,7 @@ class JobsController extends GetxController {
       final response = await Get.find<ApiClient>().patchData(
         ApiUrl.updateProfile,
         {
-          "coordinates": [lng, lat]
+          "coordinates": [lng, lat],
         },
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
