@@ -114,7 +114,7 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                     SizedBox(height: 20.h),
 
                     // Profile Info
-                    Row(
+                    Obx(() => Row(
                       children: [
                         Container(
                           width: 50.w,
@@ -122,10 +122,10 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12.r),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                'https://i.pravatar.cc/150?u=salon_logo',
-                              ), // Placeholder
+                            image: DecorationImage(
+                              image: controller.userImage.value.isNotEmpty
+                                  ? NetworkImage(controller.userImage.value)
+                                  : const NetworkImage('https://i.pravatar.cc/150?u=salon_logo') as ImageProvider,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -135,7 +135,7 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Glow Beauty Salon',
+                              controller.userName.value,
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                           ],
                         ),
                       ],
-                    ),
+                    )),
                     SizedBox(height: 16.h),
                     Text(
                       'Welcome back! Here\'s your recruitment overview.',

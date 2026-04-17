@@ -1,5 +1,9 @@
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
+import 'package:go_roqit_app/service/api_client.dart';
+import 'package:go_roqit_app/service/api_url.dart';
 import '../model/recruiter_models.dart';
+
 
 class RecruiterPanelController extends GetxController {
   // Dashboard Stats
@@ -8,15 +12,46 @@ class RecruiterPanelController extends GetxController {
   var applicantTrend = 12.obs; // +12%
 
   // Lists
+  // Lists
   var recentApplications = <ApplicantModel>[].obs;
   var topPerformingJobs = <JobStatModel>[].obs;
+
+  // Profile Info
+  var userName = 'Loading...'.obs;
+  var userImage = ''.obs;
 
   var isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    fetchProfileInfo();
     fetchDashboardData();
+  }
+
+  Future<void> fetchProfileInfo() async {
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final response = await apiClient.getData(ApiUrl.getProfile, headers: headers);
+
+      if (response.statusCode == 200) {
+        final resData = response.body['data'];
+
+        userName.value = resData['name'] ?? 'User Name';
+        
+        String? imagePath = resData['image'];
+        if (imagePath != null && imagePath.isNotEmpty) {
+          userImage.value = imagePath.startsWith('http') 
+              ? imagePath 
+              : "${ApiUrl.IMGUrl}$imagePath";
+        }
+      }
+    } catch (e) {
+      print("Error fetching recruiter profile: $e");
+    }
   }
 
   void fetchDashboardData() {
