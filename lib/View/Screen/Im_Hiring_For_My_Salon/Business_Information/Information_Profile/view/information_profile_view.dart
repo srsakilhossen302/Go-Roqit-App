@@ -166,6 +166,12 @@ class InformationProfileView extends GetView<InformationProfileController> {
 
   Widget _buildBusinessTypeGrid() {
     return Obx(() {
+      if (controller.isLoadingCategories.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (controller.categoryList.isEmpty) {
+        return const Center(child: Text('No categories available'));
+      }
       return GridView.count(
         crossAxisCount: 2,
         shrinkWrap: true,
@@ -173,13 +179,13 @@ class InformationProfileView extends GetView<InformationProfileController> {
         mainAxisSpacing: 12.h,
         crossAxisSpacing: 12.w,
         childAspectRatio: 3, // Adjust for button height
-        children: controller.businessTypes.map((type) {
-          final isSelected = controller.selectedBusinessType.value == type;
+        children: controller.categoryList.map((category) {
+          final isSelected = controller.selectedBusinessType.value?.id == category.id;
           return GestureDetector(
-            onTap: () => controller.selectBusinessType(type),
+            onTap: () => controller.selectBusinessType(category),
             child: Container(
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(30.r),
                 border: Border.all(
                   color: isSelected
@@ -190,7 +196,7 @@ class InformationProfileView extends GetView<InformationProfileController> {
               ),
               child: Center(
                 child: Text(
-                  type,
+                  category.name,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: isSelected

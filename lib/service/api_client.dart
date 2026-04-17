@@ -7,7 +7,7 @@ class ApiClient extends GetConnect implements GetxService {
   @override
   void onInit() {
     httpClient.baseUrl = ApiUrl.baseUrl;
-    httpClient.timeout = const Duration(seconds: 30);
+    httpClient.timeout = const Duration(seconds: 60);
 
     httpClient.addRequestModifier<void>((request) async {
       String token =

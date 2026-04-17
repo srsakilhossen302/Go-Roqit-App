@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_x/get.dart';
 import 'package:get_x/get_connect.dart';
+import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Post_Job/model/category_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
@@ -13,8 +14,9 @@ class InformationProfileController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Business Type Selection
-  final selectedBusinessType = Rxn<String>();
-  final businessTypes = ['Salon', 'Barbershop', 'Spa', 'Mobile'];
+  final selectedBusinessType = Rxn<CategoryModel>();
+  final categoryList = <CategoryModel>[].obs;
+  final isLoadingCategories = false.obs;
 
   // About Text Controller
   final aboutController = TextEditingController();
@@ -25,8 +27,47 @@ class InformationProfileController extends GetxController {
   // Loading State
   final isLoading = false.obs;
 
-  void selectBusinessType(String type) {
-    selectedBusinessType.value = type;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    isLoadingCategories.value = true;
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final response = await apiClient.getData(ApiUrl.getCategories);
+      print("Categories Status: ${response.statusCode}");
+      print("Categories Body: ${response.body}");
+
+      if (response.statusCode == 200 && response.body != null) {
+        dynamic rawData = response.body['data'];
+        List<dynamic> dataList = [];
+
+        if (rawData is List) {
+          dataList = rawData;
+        } else if (rawData is Map && rawData['data'] is List) {
+          dataList = rawData['data'];
+        }
+
+        print("Categories Data List length: ${dataList.length}");
+        categoryList.assignAll(
+          dataList.map((e) => CategoryModel.fromJson(e)).toList(),
+        );
+      } else {
+        Get.snackbar('Error', 'Failed to load categories');
+      }
+    } catch (e) {
+      print("Categories Error: $e");
+      Get.snackbar('Error', 'An error occurred while fetching categories');
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
+
+  void selectBusinessType(CategoryModel category) {
+    selectedBusinessType.value = category;
   }
 
   Future<void> pickGalleryImage() async {
@@ -89,23 +130,30 @@ class InformationProfileController extends GetxController {
       for (var path in galleryImages) {
         final bytes = await File(path).readAsBytes();
         portfolioFiles.add(
-          MultipartFile(bytes,
-              filename: path.split('/').last, contentType: 'image/jpeg'),
+          MultipartFile(
+            bytes,
+            filename: path.split('/').last,
+            contentType: 'image/jpeg',
+          ),
         );
       }
 
       final body = FormData({
-        "title": selectedBusinessType.value ?? "Business Portfolio",
+        "title": selectedBusinessType.value?.name ?? "Business Portfolio",
         "description": aboutController.text,
         "portfolio": portfolioFiles,
       });
 
-      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
-      final headers = {
-        'Authorization': 'Bearer $token',
-      };
+      final token = await SharePrefsHelper.getString(
+        SharedPreferenceValue.token,
+      );
+      final headers = {'Authorization': 'Bearer $token'};
 
-      final response = await apiClient.postData(ApiUrl.addPortfolio, body, headers: headers);
+      final response = await apiClient.postData(
+        ApiUrl.addPortfolio,
+        body,
+        headers: headers,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Success Body: ${response.body}");
