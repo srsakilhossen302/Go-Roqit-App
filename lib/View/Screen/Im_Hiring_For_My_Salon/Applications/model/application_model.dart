@@ -71,7 +71,7 @@ class ApplicationModel {
       resume: resumePath,
       resumeObj: resumeName.isNotEmpty ? resumeName : 'Resume.pdf',
       jobId: json['job']?['_id'] ?? '',
-      applicantId: json['applicant'] != null ? (json['applicant']['_id'] ?? json['applicant'].toString()) : '',
+      applicantId: json['applicant'] is Map ? (json['applicant']['_id'] ?? '') : (json['applicant']?.toString() ?? ''),
       imageUrl: json['imageUrl'] ?? 'https://i.pravatar.cc/300?img=5',
       skills: [''], // Default for now
       experienceYears: '', // Default for now
