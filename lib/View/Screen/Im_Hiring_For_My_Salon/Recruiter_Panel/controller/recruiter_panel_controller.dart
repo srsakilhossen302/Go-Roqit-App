@@ -3,6 +3,9 @@ import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import '../model/recruiter_models.dart';
+import 'package:flutter/material.dart';
+import '../../Applications/model/application_model.dart';
+import '../../Applications/view/application_details_view.dart';
 
 class RecruiterPanelController extends GetxController {
   // Dashboard Stats
@@ -85,8 +88,31 @@ class RecruiterPanelController extends GetxController {
         }
       }
 
-      // Recent Applications (We can fetch from API if available or leave empty)
-      recentApplications.value = [];
+      // Recent Applications
+      final appResponse = await apiClient.getData(ApiUrl.applyJob, headers: headers);
+      if (appResponse.statusCode == 200 && appResponse.body['data'] != null) {
+        final List<dynamic> appData = appResponse.body['data']['data'] ?? [];
+        
+        recentApplications.value = appData.take(3).map((json) {
+          String imgPath = json['resume'] ?? ''; 
+          if (imgPath.isNotEmpty && !imgPath.startsWith('http')) {
+            imgPath = "${ApiUrl.IMGUrl}$imgPath";
+          } else if (imgPath.isEmpty) {
+            imgPath = "https://ui-avatars.com/api/?name=${Uri.encodeComponent(json['name'] ?? 'User')}";
+          }
+
+          return ApplicantModel(
+            id: json['_id'] ?? '',
+            name: json['name'] ?? 'Applicant',
+            role: json['job']?['title'] ?? 'Role',
+            status: json['status'] ?? 'new',
+            timeAgo: 'Recent',
+            imageUrl: imgPath,
+          );
+        }).toList();
+      } else {
+        recentApplications.value = [];
+      }
     } catch (e) {
       print("Error fetching recruiter dashboard data: $e");
     } finally {
@@ -97,5 +123,39 @@ class RecruiterPanelController extends GetxController {
   Future<void> refreshDashboard() async {
     isLoading.value = true;
     fetchDashboardData();
+  }
+
+  Future<void> fetchApplicationDetails(String id) async {
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {'Authorization': 'Bearer $token'};
+      
+      final response = await apiClient.getData('${ApiUrl.applyJob}/$id', headers: headers);
+      
+      if (Get.isDialogOpen ?? false) Get.back(); // close dialog
+      
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        final resData = response.body['data'];
+        
+        Map<String, dynamic> data = resData;
+        if (data['applicant'] != null && data['applicant']['image'] != null) {
+            String imgPath = data['applicant']['image'];
+            data['imageUrl'] = imgPath.startsWith('http') ? imgPath : "${ApiUrl.IMGUrl}$imgPath";
+        }
+        
+        final ApplicationModel appDetails = ApplicationModel.fromJson(data);
+        
+        Get.to(() => const ApplicationDetailsView(), arguments: appDetails);
+      } else {
+        Get.snackbar('Error', 'Failed to fetch application details');
+      }
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back(); // close dialog if error
+      print("Error fetching application details: $e");
+      Get.snackbar('Error', 'Something went wrong');
+    }
   }
 }

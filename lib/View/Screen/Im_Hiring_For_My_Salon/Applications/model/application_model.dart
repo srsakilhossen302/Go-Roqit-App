@@ -71,18 +71,18 @@ class ApplicationModel {
       resume: resumePath,
       resumeObj: resumeName.isNotEmpty ? resumeName : 'Resume.pdf',
       jobId: json['job']?['_id'] ?? '',
-      applicantId: json['applicant'] ?? '',
-      imageUrl: 'https://i.pravatar.cc/300?img=5', // Default for now
-      skills: ['Hair Cutting', 'Coloring', 'Styling'], // Default for now
-      experienceYears: '5 Years', // Default for now
+      applicantId: json['applicant'] != null ? (json['applicant']['_id'] ?? json['applicant'].toString()) : '',
+      imageUrl: json['imageUrl'] ?? 'https://i.pravatar.cc/300?img=5',
+      skills: [''], // Default for now
+      experienceYears: '', // Default for now
       about: 'No description provided.', // Default for now
       workExperience: [],
       education: [],
-      languages: ['English'],
+      languages: [''],
       portfolio: [],
-      salaryExpectation: 'Negotiable',
-      availability: 'Immediate',
-      additionalNotes: 'No additional notes.',
+      salaryExpectation: '',
+      availability: '',
+      additionalNotes: '',
     );
   }
 

@@ -477,7 +477,11 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
   }
 
   Widget _buildApplicationItem(ApplicantModel app) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        controller.fetchApplicationDetails(app.id);
+      },
+      child: Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -523,24 +527,6 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: app.status == 'new'
-                      ? Colors.blue.shade50
-                      : Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  app.status,
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                    color: app.status == 'new' ? Colors.blue : Colors.grey,
-                  ),
-                ),
-              ),
-              SizedBox(height: 4.h),
               Text(
                 app.timeAgo,
                 style: TextStyle(fontSize: 10.sp, color: Colors.grey),
@@ -549,6 +535,7 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
           ),
         ],
       ),
+      )
     );
   }
 
