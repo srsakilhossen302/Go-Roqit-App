@@ -1,14 +1,23 @@
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import '../model/notification_model.dart';
 
 class NotificationController extends GetxController {
   var notifications = <NotificationModel>[].obs;
   var unreadCount = 0.obs;
+  var userRole = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+    _loadUserRole();
     loadNotifications();
+  }
+
+  Future<void> _loadUserRole() async {
+    userRole.value = await SharePrefsHelper.getString(
+      SharedPreferenceValue.role,
+    );
   }
 
   void loadNotifications() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_x/get.dart';
 import 'package:go_roqit_app/View/Widgegt/HiringNavBar.dart';
+import 'package:go_roqit_app/View/Widgegt/JobSeekerNavBar.dart';
 import '../controller/notification_controller.dart';
 import '../model/notification_model.dart';
 import 'package:go_roqit_app/Utils/AppIcons/app_icons.dart';
@@ -14,7 +15,13 @@ class NotificationView extends GetView<NotificationController> {
     Get.put(NotificationController());
 
     return Scaffold(
-      bottomNavigationBar: const HiringNavBar(selectedIndex: 0),
+      bottomNavigationBar: Obx(() {
+        if (controller.userRole.value == 'recruiter') {
+          return const HiringNavBar(selectedIndex: 0);
+        } else {
+          return const JobSeekerNavBar(selectedIndex: 0); 
+        }
+      }),
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
