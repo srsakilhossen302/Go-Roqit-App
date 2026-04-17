@@ -101,7 +101,7 @@ class JobPostsView extends GetView<JobPostsController> {
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator(color: Color(0xFF1B5E3F)));
                   }
                   return MyRefreshIndicator(
                     onRefresh: controller.refreshJobs,

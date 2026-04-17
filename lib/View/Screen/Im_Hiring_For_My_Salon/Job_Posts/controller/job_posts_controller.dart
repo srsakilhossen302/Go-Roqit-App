@@ -50,27 +50,27 @@ class JobPostsController extends GetxController {
   }
 
   Future<void> editJob(String id) async {
+    isLoading.value = true;
     try {
-      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
       final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
       final headers = {'Authorization': 'Bearer $token'};
       
       final response = await Get.find<ApiClient>().getData("/job/$id", headers: headers);
       
-      if (Get.isDialogOpen ?? false) Get.back(); // close dialog
-      
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jobData = response.body['data'];
         final job = JobPostModel.fromJson(jobData);
+        isLoading.value = false;
         await Get.to(() => const PostJobView(), arguments: job);
-        loadJobPosts(); // Refresh list after returning
+        await loadJobPosts(); // Refresh list after returning
       } else {
         Get.snackbar('Error', 'Failed to fetch job details');
       }
     } catch (e) {
-      if (Get.isDialogOpen ?? false) Get.back();
       print("Error fetching job details: $e");
       Get.snackbar('Error', 'Something went wrong');
+    } finally {
+      isLoading.value = false;
     }
   }
 

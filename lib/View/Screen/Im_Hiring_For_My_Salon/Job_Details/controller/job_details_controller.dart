@@ -67,19 +67,21 @@ class JobDetailsController extends GetxController {
     }
   }
   Future<void> editJob() async {
+    isLoading.value = true;
     try {
-      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
       if (job.value != null) {
         await fetchJobDetails(job.value!.id);
       }
-      if (Get.isDialogOpen ?? false) Get.back();
       
       if (job.value != null) {
-        Get.to(() => const PostJobView(), arguments: job.value);
+        isLoading.value = false;
+        await Get.to(() => const PostJobView(), arguments: job.value);
+        await fetchJobDetails(job.value!.id); // Refresh details after returning
       }
     } catch (e) {
-      if (Get.isDialogOpen ?? false) Get.back();
       print("Error in editJob: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 }
