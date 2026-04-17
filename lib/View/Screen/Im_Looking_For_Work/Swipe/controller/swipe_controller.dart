@@ -22,8 +22,9 @@ class SwipeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // In a real app we might fetch specific swipe candidates
-    // For now we use the job list from JobsController
+    if (jobsController.jobList.isEmpty) {
+      jobsController.loadJobs();
+    }
   }
 
   void swipeLeft() {

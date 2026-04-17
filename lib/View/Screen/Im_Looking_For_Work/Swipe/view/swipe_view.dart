@@ -47,6 +47,11 @@ class SwipeView extends StatelessWidget {
             // Swiper Area
             Expanded(
               child: Obx(() {
+                if (controller.jobsController.isLoadingJobs.value && controller.jobsController.jobList.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF1B5E3F)),
+                  );
+                }
                 if (controller.jobsController.jobList.isEmpty) {
                   return Center(child: Text("No more jobs to show"));
                 }
