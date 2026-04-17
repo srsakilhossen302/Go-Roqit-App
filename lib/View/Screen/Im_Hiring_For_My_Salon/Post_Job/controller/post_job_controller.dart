@@ -259,9 +259,14 @@ class PostJobController extends GetxController {
 
       final headers = {'Authorization': 'Bearer $token'};
       
-      final response = await apiClient.postData("/job", body, headers: headers);
-
-      print("Post Job Response: ${response.body}");
+      Response response;
+      if (isEditMode.value && editingJobId != null) {
+        response = await apiClient.patchData("/job/$editingJobId", body, headers: headers);
+        print("Update Job Response: ${response.body}");
+      } else {
+        response = await apiClient.postData("/job", body, headers: headers);
+        print("Post Job Response: ${response.body}");
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.snackbar(

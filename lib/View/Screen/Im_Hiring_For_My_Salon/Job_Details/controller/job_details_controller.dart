@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_x/get.dart';
+import 'package:go_roqit_app/View/Screen/Im_Hiring_For_My_Salon/Post_Job/view/post_job_view.dart';
 import 'package:go_roqit_app/helper/shared_prefe/shared_prefe.dart';
 import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
@@ -61,6 +64,22 @@ class JobDetailsController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+    }
+  }
+  Future<void> editJob() async {
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      if (job.value != null) {
+        await fetchJobDetails(job.value!.id);
+      }
+      if (Get.isDialogOpen ?? false) Get.back();
+      
+      if (job.value != null) {
+        Get.to(() => const PostJobView(), arguments: job.value);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back();
+      print("Error in editJob: $e");
     }
   }
 }

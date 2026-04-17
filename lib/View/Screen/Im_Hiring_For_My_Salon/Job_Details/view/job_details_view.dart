@@ -225,7 +225,7 @@ class JobDetailsView extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Get.to(() => const PostJobView(), arguments: job);
+                        controller.editJob();
                       },
                       child: Container(
                         height: 36.h,
