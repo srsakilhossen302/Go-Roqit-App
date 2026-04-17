@@ -21,4 +21,5 @@ class ApiUrl {
   static const String getMessages = "/message";
   static const String getJobsByDistance = "/job/get-jobs-by-distance";
   static const String getCategories = "/category";
+  static const String recruiterStatistics = "/job/recruiter-statistics";
 }

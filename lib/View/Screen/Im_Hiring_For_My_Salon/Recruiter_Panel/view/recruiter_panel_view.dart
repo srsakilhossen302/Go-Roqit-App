@@ -167,11 +167,11 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                 offset: const Offset(0, -25),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Row(
+                  child: Obx(() => Row(
                     children: [
                       _buildStatCard(
                         icon: AppIcons.workOutline,
-                        value: controller.totalJobs.toString(),
+                        value: controller.totalJobs.value.toString(),
                         label: 'Total Jobs',
                         iconColor: Colors.blueAccent,
                         bgColor: Colors.blue.shade50,
@@ -179,14 +179,13 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                       SizedBox(width: 16.w),
                       _buildStatCard(
                         icon: AppIcons.peopleOutline,
-                        value: controller.applicants.toString(),
+                        value: controller.applicants.value.toString(),
                         label: 'Applicants',
                         iconColor: const Color(0xff0F5F3E),
                         bgColor: Colors.green.shade50,
-                        trend: '+12%',
                       ),
                     ],
-                  ),
+                  )),
                 ),
               ),
 
@@ -313,13 +312,6 @@ class RecruiterPanelView extends GetView<RecruiterPanelController> {
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Review 45 pending',
-                                        style: TextStyle(
-                                          fontSize: 10.sp,
-                                          color: Colors.grey,
                                         ),
                                       ),
                                     ],

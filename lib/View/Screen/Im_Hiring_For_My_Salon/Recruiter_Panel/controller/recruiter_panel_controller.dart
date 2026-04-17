@@ -4,14 +4,12 @@ import 'package:go_roqit_app/service/api_client.dart';
 import 'package:go_roqit_app/service/api_url.dart';
 import '../model/recruiter_models.dart';
 
-
 class RecruiterPanelController extends GetxController {
   // Dashboard Stats
-  var totalJobs = 12.obs;
-  var applicants = 248.obs;
-  var applicantTrend = 12.obs; // +12%
+  var totalJobs = 0.obs;
+  var applicants = 0.obs;
+  var applicantTrend = 0.obs; // +12%
 
-  // Lists
   // Lists
   var recentApplications = <ApplicantModel>[].obs;
   var topPerformingJobs = <JobStatModel>[].obs;
@@ -32,20 +30,25 @@ class RecruiterPanelController extends GetxController {
   Future<void> fetchProfileInfo() async {
     try {
       final apiClient = Get.find<ApiClient>();
-      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final token = await SharePrefsHelper.getString(
+        SharedPreferenceValue.token,
+      );
       final headers = {'Authorization': 'Bearer $token'};
 
-      final response = await apiClient.getData(ApiUrl.getProfile, headers: headers);
+      final response = await apiClient.getData(
+        ApiUrl.getProfile,
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
         final resData = response.body['data'];
 
         userName.value = resData['name'] ?? 'User Name';
-        
+
         String? imagePath = resData['image'];
         if (imagePath != null && imagePath.isNotEmpty) {
-          userImage.value = imagePath.startsWith('http') 
-              ? imagePath 
+          userImage.value = imagePath.startsWith('http')
+              ? imagePath
               : "${ApiUrl.IMGUrl}$imagePath";
         }
       }
@@ -54,62 +57,45 @@ class RecruiterPanelController extends GetxController {
     }
   }
 
-  void fetchDashboardData() {
+  Future<void> fetchDashboardData() async {
     isLoading.value = true;
 
-    // Simulate API Call
-    Future.delayed(const Duration(seconds: 1), () {
-      // Mock Data: Recent Applications
-      recentApplications.value = [
-        ApplicantModel(
-          id: '1',
-          name: 'Sarah Mitchell',
-          role: 'Senior Hair Stylist',
-          status: 'new',
-          timeAgo: '2h ago',
-          imageUrl: 'https://i.pravatar.cc/150?u=1', // Placeholder
-        ),
-        ApplicantModel(
-          id: '2',
-          name: 'Marcus Thompson',
-          role: 'Barber',
-          status: 'new',
-          timeAgo: '5h ago',
-          imageUrl: 'https://i.pravatar.cc/150?u=2',
-        ),
-        ApplicantModel(
-          id: '3',
-          name: 'Emily Chen',
-          role: 'Nail Technician',
-          status: 'reviewed',
-          timeAgo: '1d ago',
-          imageUrl: 'https://i.pravatar.cc/150?u=3',
-        ),
-      ];
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final token = await SharePrefsHelper.getString(SharedPreferenceValue.token);
+      final headers = {'Authorization': 'Bearer $token'};
 
-      // Mock Data: Top Performing Jobs
-      topPerformingJobs.value = [
-        JobStatModel(
-          roleName: 'Senior Hair Stylist',
-          count: 42,
-          totalCapacity: 50,
-        ),
-        JobStatModel(
-          roleName: 'Experienced Barber',
-          count: 38,
-          totalCapacity: 50,
-        ),
-        JobStatModel(roleName: 'Nail Technician', count: 31, totalCapacity: 50),
-      ];
+      // Fetch from API
+      final response = await apiClient.getData(ApiUrl.recruiterStatistics, headers: headers);
+      if (response.statusCode == 200) {
+        final resData = response.body['data'];
 
+        totalJobs.value = resData['totalJobs'] ?? 0;
+        applicants.value = resData['totalApplications'] ?? 0;
+
+        if (resData['topJobs'] != null) {
+          final topJobsList = resData['topJobs'] as List;
+          topPerformingJobs.value = topJobsList.map((job) {
+            return JobStatModel(
+              roleName: job['title'] ?? 'Unknown',
+              count: job['applicationsCount'] ?? 0,
+              totalCapacity: 50, // Keep static for progress bar UI
+            );
+          }).toList();
+        }
+      }
+
+      // Recent Applications (We can fetch from API if available or leave empty)
+      recentApplications.value = [];
+    } catch (e) {
+      print("Error fetching recruiter dashboard data: $e");
+    } finally {
       isLoading.value = false;
-    });
+    }
   }
 
   Future<void> refreshDashboard() async {
     isLoading.value = true;
-    // Simulate API Call
-    await Future.delayed(const Duration(seconds: 1));
     fetchDashboardData();
   }
 }
